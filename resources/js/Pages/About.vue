@@ -69,6 +69,9 @@ const formatContent = (content) => {
         <meta name="twitter:description" :content="about.subtitle" />
         <meta name="twitter:image" content="/logo.webp" />
         <link rel="canonical" href="/about" />
+        <link rel="alternate" hreflang="en" href="/about?lang=en" />
+        <link rel="alternate" hreflang="mk" href="/about?lang=mk" />
+        <link rel="alternate" hreflang="x-default" href="/about" />
     </Head>
 
     <div class="main-wrapper">

@@ -63,6 +63,9 @@ const isExpanded = (itemId) => {
         <meta name="twitter:title" :content="seoTitle" />
         <meta name="twitter:description" :content="seoDescription" />
         <link rel="canonical" href="/services" />
+        <link rel="alternate" hreflang="en" href="/services?lang=en" />
+        <link rel="alternate" hreflang="mk" href="/services?lang=mk" />
+        <link rel="alternate" hreflang="x-default" href="/services" />
     </Head>
 
     <div class="services-page">

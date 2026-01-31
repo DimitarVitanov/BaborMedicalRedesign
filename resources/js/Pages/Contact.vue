@@ -131,6 +131,9 @@ const submitForm = async () => {
         <meta name="twitter:description" :content="seoDescription" />
         <meta name="twitter:image" content="/logo.webp" />
         <link rel="canonical" href="/contact" />
+        <link rel="alternate" hreflang="en" href="/contact?lang=en" />
+        <link rel="alternate" hreflang="mk" href="/contact?lang=mk" />
+        <link rel="alternate" hreflang="x-default" href="/contact" />
     </Head>
 
     <div class="main-wrapper">
