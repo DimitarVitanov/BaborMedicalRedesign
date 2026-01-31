@@ -551,7 +551,7 @@ onUnmounted(() => {
     }
 
     .hero-slide{
-        height: 80vh;
+        height: 70vh;
     }
     
     .hero-title {
@@ -613,33 +613,120 @@ onUnmounted(() => {
         min-height: calc(100vh - 65px);
     }
     
-    .hero-title {
-        font-size: 2rem;
+    .hero-slide {
+        padding-top: 0;
+    }
+    
+    .hero-slide .row {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .hero-slide .col-lg-5:first-child {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
     
     .hero-subtitle {
-        font-size: 0.8rem;
-        margin-bottom: 0.5rem;
+        margin-top: 0;
+    }
+    
+    .hero-title {
+        font-size: 2.2rem;
+        line-height: 1.2;
+        margin-bottom: 10px;
+    }
+    
+    .hero-title span {
+        display: block;
+        background: linear-gradient(135deg, #c9a87c, #e8d5c4);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .hero-subtitle {
+        font-size: 0.75rem;
+        margin-bottom: 8px;
+        letter-spacing: 2px;
     }
     
     .hero-description {
         font-size: 0.9rem;
-        padding: 0 10px;
+        padding: 0 15px;
+        margin-bottom: 20px !important;
+        line-height: 1.6;
+        color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .hero-slide .d-flex.gap-3 {
+        gap: 10px !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    .hero-slide .btn {
+        padding: 14px 24px !important;
+        font-size: 0.9rem !important;
+        flex: 1;
+        text-align: center;
+        white-space: nowrap;
+        border-radius: 50px !important;
+    }
+    
+    .hero-slide .btn-cta {
+        background: linear-gradient(135deg, #c9a87c, #b8956b);
+        border: none;
+        color: #0a0f14;
+        font-weight: 600;
+    }
+    
+    .hero-slide .btn-outline-light {
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        background: rgba(255, 255, 255, 0.05);
+    }
+    
+    .hero-image-container {
+        margin-top: 15px !important;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+    }
+    
+    .hero-image-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .hero-image {
+        max-height: 260px;
+        width: auto;
+        margin: 0 auto;
     }
     
     .hero-glow {
-        width: 200px;
-        height: 200px;
+        width: 220px;
+        height: 220px;
     }
     
     .slider-dots {
-        margin-top: 15px;
-        gap: 8px;
+        margin-top: 20px;
+        gap: 10px;
     }
     
     .slider-dot {
-        width: 10px;
-        height: 10px;
+        width: 8px;
+        height: 8px;
+    }
+    
+    .slider-dot.active {
+        width: 24px;
+        border-radius: 4px;
     }
     
     .stats-row {
