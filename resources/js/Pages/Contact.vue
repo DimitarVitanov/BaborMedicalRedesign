@@ -130,10 +130,10 @@ const submitForm = async () => {
         <meta name="twitter:title" :content="seoTitle" />
         <meta name="twitter:description" :content="seoDescription" />
         <meta name="twitter:image" content="/logo.webp" />
-        <link rel="canonical" href="/contact" />
-        <link rel="alternate" hreflang="en" href="/contact?lang=en" />
-        <link rel="alternate" hreflang="mk" href="/contact?lang=mk" />
-        <link rel="alternate" hreflang="x-default" href="/contact" />
+        <link rel="canonical" href="https://babormedical.com/contact" />
+        <link rel="alternate" hreflang="en" href="https://babormedical.com/contact?lang=en" />
+        <link rel="alternate" hreflang="mk" href="https://babormedical.com/contact?lang=mk" />
+        <link rel="alternate" hreflang="x-default" href="https://babormedical.com/contact" />
     </Head>
 
     <div class="main-wrapper">

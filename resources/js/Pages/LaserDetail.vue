@@ -45,10 +45,10 @@ const content = computed(() => ({
         <meta name="twitter:title" :content="seoTitle" />
         <meta name="twitter:description" :content="equipment.description" />
         <meta name="twitter:image" :content="equipment.image ? '/storage/' + equipment.image : '/logo.webp'" />
-        <link rel="canonical" :href="`/lasers/${equipment.slug}`" />
-        <link rel="alternate" hreflang="en" :href="`/lasers/${equipment.slug}?lang=en`" />
-        <link rel="alternate" hreflang="mk" :href="`/lasers/${equipment.slug}?lang=mk`" />
-        <link rel="alternate" hreflang="x-default" :href="`/lasers/${equipment.slug}`" />
+        <link rel="canonical" :href="`https://babormedical.com/lasers/${equipment.slug}`" />
+        <link rel="alternate" hreflang="en" :href="`https://babormedical.com/lasers/${equipment.slug}?lang=en`" />
+        <link rel="alternate" hreflang="mk" :href="`https://babormedical.com/lasers/${equipment.slug}?lang=mk`" />
+        <link rel="alternate" hreflang="x-default" :href="`https://babormedical.com/lasers/${equipment.slug}`" />
     </Head>
 
     <Navbar />

@@ -72,9 +72,9 @@ const ogLocale = computed(() => locale.value === 'mk' ? 'mk_MK' : 'en_US');
         <meta name="twitter:description" :content="seoDescription" />
         <meta name="twitter:image" content="/logo.webp" />
         
-        <link rel="alternate" hreflang="en" href="/?lang=en" />
-        <link rel="alternate" hreflang="mk" href="/?lang=mk" />
-        <link rel="alternate" hreflang="x-default" href="/" />
+        <link rel="alternate" hreflang="en" href="https://babormedical.com/?lang=en" />
+        <link rel="alternate" hreflang="mk" href="https://babormedical.com/?lang=mk" />
+        <link rel="alternate" hreflang="x-default" href="https://babormedical.com/" />
     </Head>
 
     <div class="main-wrapper">

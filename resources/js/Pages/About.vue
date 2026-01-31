@@ -68,10 +68,10 @@ const formatContent = (content) => {
         <meta name="twitter:title" :content="seoTitle" />
         <meta name="twitter:description" :content="about.subtitle" />
         <meta name="twitter:image" content="/logo.webp" />
-        <link rel="canonical" href="/about" />
-        <link rel="alternate" hreflang="en" href="/about?lang=en" />
-        <link rel="alternate" hreflang="mk" href="/about?lang=mk" />
-        <link rel="alternate" hreflang="x-default" href="/about" />
+        <link rel="canonical" href="https://babormedical.com/about" />
+        <link rel="alternate" hreflang="en" href="https://babormedical.com/about?lang=en" />
+        <link rel="alternate" hreflang="mk" href="https://babormedical.com/about?lang=mk" />
+        <link rel="alternate" hreflang="x-default" href="https://babormedical.com/about" />
     </Head>
 
     <div class="main-wrapper">

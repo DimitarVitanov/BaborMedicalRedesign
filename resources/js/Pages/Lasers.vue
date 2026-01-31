@@ -52,10 +52,10 @@ const content = computed(() => ({
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" :content="seoTitle" />
         <meta name="twitter:description" :content="seoDescription" />
-        <link rel="canonical" href="/lasers" />
-        <link rel="alternate" hreflang="en" href="/lasers?lang=en" />
-        <link rel="alternate" hreflang="mk" href="/lasers?lang=mk" />
-        <link rel="alternate" hreflang="x-default" href="/lasers" />
+        <link rel="canonical" href="https://babormedical.com/lasers" />
+        <link rel="alternate" hreflang="en" href="https://babormedical.com/lasers?lang=en" />
+        <link rel="alternate" hreflang="mk" href="https://babormedical.com/lasers?lang=mk" />
+        <link rel="alternate" hreflang="x-default" href="https://babormedical.com/lasers" />
     </Head>
 
     <Navbar />
