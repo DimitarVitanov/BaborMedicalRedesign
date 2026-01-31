@@ -48,7 +48,8 @@ const content = computed(() => ({
             desc: locale.value === 'mk' ? 'Официјален Babor партнер' : 'Official Babor partner'
         },
     ],
-    cta: locale.value === 'mk' ? 'Прочитај повеќе' : 'Read More',
+    cta: locale.value === 'mk' ? 'Прочитај повеќе' : 'Read more',
+    ctaAriaLabel: locale.value === 'mk' ? 'Прочитај повеќе за Babor Medical' : 'Read more about Babor Medical',
     ctaContact: locale.value === 'mk' ? 'Закажи консултација' : 'Book Consultation'
 }));
 </script>
@@ -92,13 +93,13 @@ const content = computed(() => ({
                     </div>
 
                     <div class="about-cta-group">
-                        <a href="/about" class="btn-cta about-cta">
+                        <a href="/about" class="btn-cta about-cta" :aria-label="content.ctaAriaLabel">
                             {{ content.cta }}
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M5 12h14M12 5l7 7-7 7"/>
                             </svg>
                         </a>
-                        <a href="#contact" class="btn-outline about-cta-secondary">
+                        <a href="/contact" class="btn-outline about-cta-secondary" :aria-label="locale === 'mk' ? 'Закажи консултација во Babor Medical' : 'Book a consultation at Babor Medical'">
                             {{ content.ctaContact }}
                         </a>
                     </div>

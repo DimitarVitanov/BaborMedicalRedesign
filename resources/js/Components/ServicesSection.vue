@@ -82,8 +82,8 @@ const getDescription = (service) => {
                         </div>
                         <h3 class="service-title">{{ getTitle(service) }}</h3>
                         <p class="service-description">{{ getDescription(service) }}</p>
-                        <span class="service-link">
-                            {{ locale === 'mk' ? 'Дознај повеќе' : 'Learn More' }}
+                        <span class="service-link" :aria-label="locale === 'mk' ? `Дознај повеќе за ${getTitle(service)}` : `Learn more about ${getTitle(service)}`">
+                            {{ locale === 'mk' ? 'Дознај повеќе' : 'Learn more' }}
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M5 12h14M12 5l7 7-7 7"/>
                             </svg>

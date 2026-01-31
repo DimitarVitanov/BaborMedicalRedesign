@@ -49,7 +49,7 @@ const content = computed(() => ({
             <div class="container">
                 <div class="footer-grid">
                     <div class="footer-brand">
-                        <a href="/" class="footer-logo">
+                        <a href="/" class="footer-logo" aria-label="Babor Medical - Home">
                             <img src="/logo.webp" alt="Babor Medical" />
                         </a>
                         <p class="footer-tagline">{{ content.tagline }}</p>

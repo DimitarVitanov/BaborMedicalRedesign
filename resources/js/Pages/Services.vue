@@ -182,6 +182,7 @@ const isExpanded = (itemId) => {
                                     :key="item.id"
                                     :href="item.url"
                                     class="service-link"
+                                    :aria-label="locale === 'mk' ? `Погледни ${item.name}` : `View ${item.name}`"
                                 >
                                     {{ item.name }}
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

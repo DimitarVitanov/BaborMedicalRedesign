@@ -22,7 +22,7 @@ const content = computed(() => ({
     subtitle: locale.value === 'mk' 
         ? 'Најсовремена технологија за третмани на кожа и тело'
         : 'State-of-the-art technology for skin and body treatments',
-    learnMore: locale.value === 'mk' ? 'Дознај повеќе' : 'Learn More',
+    learnMore: locale.value === 'mk' ? 'Погледни детали за ласерот' : 'View laser details',
 }));
 
 const nextSlide = () => {
@@ -105,8 +105,8 @@ const goToSlide = (index) => {
                                     <div class="card-content">
                                         <h3 class="card-title">{{ item.title }}</h3>
                                         <p v-if="item.description" class="card-description">{{ item.description }}</p>
-                                        <a :href="item.link || '#'" class="card-link">
-                                            {{ content.learnMore }}
+                                        <a :href="item.link || '#'" class="card-link" :aria-label="locale === 'mk' ? `Погледни детали за ${item.title}` : `View ${item.title} details`">
+                                            {{ locale === 'mk' ? 'Погледни детали' : 'View details' }}
                                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                                 <path d="M5 12h14M12 5l7 7-7 7"/>
                                             </svg>

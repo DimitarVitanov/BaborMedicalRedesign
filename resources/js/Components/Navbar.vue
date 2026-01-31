@@ -45,7 +45,7 @@ const ctaText = computed(() => currentLocale.value === 'mk' ? 'Контакт' :
         <div class="container">
             <div class="header-inner">
                 <!-- Logo -->
-                <a href="/" class="header-logo">
+                <a href="/" class="header-logo" aria-label="Babor Medical - Home">
                     <img src="/logo.webp" alt="Babor Medical" />
                 </a>
 
@@ -78,7 +78,7 @@ const ctaText = computed(() => currentLocale.value === 'mk' ? 'Контакт' :
                     </div>
 
                     <!-- CTA Button -->
-                    <a href="/contact" class="header-cta">
+                    <a href="/contact" class="header-cta" :aria-label="currentLocale === 'mk' ? 'Контактирајте го Babor Medical' : 'Contact Babor Medical'">
                         <span>{{ ctaText }}</span>
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M5 12h14M12 5l7 7-7 7"/>
@@ -86,7 +86,7 @@ const ctaText = computed(() => currentLocale.value === 'mk' ? 'Контакт' :
                     </a>
 
                     <!-- Mobile Menu Toggle -->
-                    <button class="mobile-toggle" @click="toggleMobileMenu" :class="{ active: mobileMenuOpen }">
+                    <button class="mobile-toggle" @click="toggleMobileMenu" :class="{ active: mobileMenuOpen }" :aria-label="currentLocale === 'mk' ? 'Отвори мени' : 'Open menu'">
                         <span></span>
                         <span></span>
                         <span></span>
