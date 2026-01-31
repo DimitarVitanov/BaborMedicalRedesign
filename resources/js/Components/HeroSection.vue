@@ -661,20 +661,25 @@ onUnmounted(() => {
     }
     
     .hero-slide .d-flex.gap-3 {
-        gap: 10px !important;
+        gap: 12px !important;
         flex-direction: row !important;
         flex-wrap: nowrap !important;
+        justify-content: center !important;
         width: 100%;
-        max-width: 300px;
+        max-width: 280px;
+        margin: 0 auto;
     }
     
     .hero-slide .btn {
-        padding: 14px 24px !important;
-        font-size: 0.9rem !important;
-        flex: 1;
+        padding: 12px 28px !important;
+        font-size: 0.85rem !important;
         text-align: center;
         white-space: nowrap;
         border-radius: 50px !important;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 120px;
     }
     
     .hero-slide .btn-cta {
@@ -685,8 +690,9 @@ onUnmounted(() => {
     }
     
     .hero-slide .btn-outline-light {
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        background: transparent;
+        color: #fff;
     }
     
     .hero-image-container {
