@@ -51,7 +51,14 @@ class DetectLanguage
             return session('locale');
         }
 
-        $ip = $request->ip();
+        $ip = $request->header('CF-Connecting-IP') 
+            ?? $request->header('X-Forwarded-For')
+            ?? $request->ip();
+        
+        // Handle comma-separated IPs (X-Forwarded-For can have multiple)
+        if (str_contains($ip, ',')) {
+            $ip = trim(explode(',', $ip)[0]);
+        }
         
         if ($this->isMacedonianIp($ip)) {
             return 'mk';
