@@ -5,31 +5,12 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 class DetectLanguage
 {
-    protected array $macedonianIpRanges = [
-        '185.225.', // MK range
-        '185.71.',  // MK range
-        '46.217.',  // MK range
-        '77.28.',   // MK range
-        '78.157.',  // MK range
-        '84.22.',   // MK range
-        '91.185.',  // MK range
-        '94.156.',  // MK range
-        '95.180.',  // MK range
-        '109.86.',  // MK range
-        '178.79.',  // MK range
-        '185.17.',  // MK range
-        '188.120.', // MK range
-        '193.104.', // MK range
-        '194.149.', // MK range
-        '195.26.',  // MK range
-        '213.135.', // MK range
-        '217.16.',  // MK range
-    ];
-
     public function handle(Request $request, Closure $next): Response
     {
         $locale = $this->detectLocale($request);
@@ -42,15 +23,35 @@ class DetectLanguage
 
     protected function detectLocale(Request $request): string
     {
+        // 1. Check URL parameter first (user explicitly chose language)
         if ($request->has('lang') && in_array($request->get('lang'), ['en', 'mk'])) {
-            session(['locale' => $request->get('lang')]);
             return $request->get('lang');
         }
 
+        // 2. Check if user already has a session locale
         if (session()->has('locale')) {
             return session('locale');
         }
 
+        // 3. Detect from IP for first-time visitors
+        $ip = $this->getClientIp($request);
+        
+        // Skip detection for local/private IPs
+        if ($this->isPrivateIp($ip)) {
+            return 'en';
+        }
+        
+        $country = $this->getCountryFromIp($ip);
+        
+        if ($country === 'MK') {
+            return 'mk';
+        }
+
+        return 'en';
+    }
+
+    protected function getClientIp(Request $request): string
+    {
         $ip = $request->header('CF-Connecting-IP') 
             ?? $request->header('X-Forwarded-For')
             ?? $request->ip();
@@ -60,21 +61,35 @@ class DetectLanguage
             $ip = trim(explode(',', $ip)[0]);
         }
         
-        if ($this->isMacedonianIp($ip)) {
-            return 'mk';
-        }
-
-        return 'en';
+        return $ip;
     }
 
-    protected function isMacedonianIp(string $ip): bool
+    protected function isPrivateIp(string $ip): bool
     {
-        foreach ($this->macedonianIpRanges as $range) {
-            if (str_starts_with($ip, $range)) {
-                return true;
-            }
-        }
+        return filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false;
+    }
+
+    protected function getCountryFromIp(string $ip): ?string
+    {
+        // Cache the result for 24 hours to avoid repeated API calls
+        $cacheKey = 'geoip_' . md5($ip);
         
-        return false;
+        return Cache::remember($cacheKey, 86400, function () use ($ip) {
+            try {
+                // Use ip-api.com (free, no API key needed, 45 requests/minute)
+                $response = @file_get_contents("http://ip-api.com/json/{$ip}?fields=countryCode", false, stream_context_create([
+                    'http' => ['timeout' => 2]
+                ]));
+                
+                if ($response) {
+                    $data = json_decode($response, true);
+                    return $data['countryCode'] ?? null;
+                }
+            } catch (\Exception $e) {
+                Log::warning('GeoIP lookup failed: ' . $e->getMessage());
+            }
+            
+            return null;
+        });
     }
 }
