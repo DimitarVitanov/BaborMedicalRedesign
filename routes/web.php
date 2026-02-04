@@ -190,6 +190,10 @@ Route::get('/lasers/{equipment:slug}', function (\App\Models\Equipment $equipmen
     ]);
 })->name('laser.detail');
 
+Route::get('/privacy-policy', function () {
+    return Inertia::render('PrivacyPolicy');
+})->name('privacy-policy');
+
 Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe'])->name('newsletter.subscribe');
 Route::post('/contact/submit', [ContactController::class, 'store'])->name('contact.submit');
 
