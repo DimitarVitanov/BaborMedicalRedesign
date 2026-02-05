@@ -40,7 +40,9 @@ const handleImageChange = (e, type = 'image') => {
 };
 
 const submit = () => {
-    form.post(route('admin.equipment.store'));
+    form.post(route('admin.equipment.store'), {
+        forceFormData: true,
+    });
 };
 </script>
 
