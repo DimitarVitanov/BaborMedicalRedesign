@@ -33,20 +33,20 @@ const props = defineProps({
 
 const seoTitle = computed(() => {
     return locale.value === 'mk' 
-        ? 'Babor Medical - Најдобар Спа, Ласерски и Дерматолошки Центар' 
-        : 'Babor Medical - Premium Skincare & Dermatology';
+        ? 'Babor Medical - Ласерски Центар, Естетски Центар и Ласерско Естетски Центар' 
+        : 'Babor Medical - Laser Center, Aesthetic Center & Laser Aesthetic Center';
 });
 
 const seoDescription = computed(() => {
     return locale.value === 'mk'
-        ? 'Најдобар спа центар, најдобар ласерски центар и најдобар дерматолошки центар во Македонија. Премиум третмани за нега на кожа.'
-        : 'Premium skincare treatments and dermatological solutions. Experience the perfect blend of science and nature for radiant, healthy skin.';
+        ? 'Ласерски центар, естетски центар и ласерско естетски центар во Македонија. Премиум третмани за нега на кожа и естетика.'
+        : 'Laser center, aesthetic center and laser aesthetic center in Macedonia. Premium skincare treatments and aesthetic solutions.';
 });
 
 const seoKeywords = computed(() => {
     return locale.value === 'mk'
-        ? 'најдобар спа центар, najdobar spa center, најдобар ласерски центар, najdobar laserski centar, најдобар дерматолошки центар, najdobar dermatoloski centar, babor medical, нега на кожа'
-        : 'babor medical, skincare, dermatology, spa center, laser treatments, skin care, premium skincare, beauty treatments';
+        ? 'ласерски центар, laserski centar, естетски центар, estetski centar, ласерско естетски центар, lasersko estetski centar, најдобар спа центар, najdobar spa center, најдобар ласерски центар, najdobar laserski centar, најдобар дерматолошки центар, najdobar dermatoloski centar, babor medical, нега на кожа'
+        : 'laser center, aesthetic center, laser aesthetic center, babor medical, skincare, dermatology, spa center, laser treatments, skin care, premium skincare, beauty treatments';
 });
 
 const ogLocale = computed(() => locale.value === 'mk' ? 'mk_MK' : 'en_US');
