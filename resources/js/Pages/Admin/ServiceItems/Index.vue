@@ -85,7 +85,21 @@ const filterByCategory = (categoryId) => {
                                                 {{ item.category?.name_en }}
                                             </span>
                                         </td>
-                                        <td>{{ item.price ? `${item.price} MKD` : '-' }}</td>
+                                        <td>
+                                            <template v-if="item.price_from && item.price_to">
+                                                {{ item.price_from }} - {{ item.price_to }} MKD
+                                            </template>
+                                            <template v-else-if="item.price_from">
+                                                од {{ item.price_from }} MKD
+                                            </template>
+                                            <template v-else-if="item.price_to">
+                                                до {{ item.price_to }} MKD
+                                            </template>
+                                            <template v-else-if="item.price">
+                                                {{ item.price }} MKD
+                                            </template>
+                                            <template v-else>-</template>
+                                        </td>
                                         <td>{{ item.duration || '-' }}</td>
                                         <td>
                                             <span 

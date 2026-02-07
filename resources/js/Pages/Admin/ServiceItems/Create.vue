@@ -23,7 +23,9 @@ const form = useForm({
 });
 
 const submit = () => {
-    form.post(route('admin.service-items.store'));
+    form.post(route('admin.service-items.store'), {
+        preserveScroll: true,
+    });
 };
 </script>
 

@@ -24,7 +24,9 @@ const form = useForm({
 });
 
 const submit = () => {
-    form.post(route('admin.service-items.update', props.item.id));
+    form.post(route('admin.service-items.update', props.item.id), {
+        preserveScroll: true,
+    });
 };
 </script>
 

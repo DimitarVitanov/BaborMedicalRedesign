@@ -56,6 +56,11 @@ class ServiceItemController extends Controller
 
         $validated['sort_order'] = ServiceItem::where('service_category_id', $validated['service_category_id'])->max('sort_order') + 1;
 
+        // Convert empty strings to null for price fields
+        $validated['price'] = $validated['price'] !== '' ? $validated['price'] : null;
+        $validated['price_from'] = $validated['price_from'] !== '' ? $validated['price_from'] : null;
+        $validated['price_to'] = $validated['price_to'] !== '' ? $validated['price_to'] : null;
+
         ServiceItem::create($validated);
 
         return redirect()->route('admin.service-items.index')->with('success', 'Service created successfully.');
@@ -87,6 +92,11 @@ class ServiceItemController extends Controller
             'is_expandable' => 'boolean',
             'is_active' => 'boolean',
         ]);
+
+        // Convert empty strings to null for price fields
+        $validated['price'] = $validated['price'] !== '' ? $validated['price'] : null;
+        $validated['price_from'] = $validated['price_from'] !== '' ? $validated['price_from'] : null;
+        $validated['price_to'] = $validated['price_to'] !== '' ? $validated['price_to'] : null;
 
         $serviceItem->update($validated);
 

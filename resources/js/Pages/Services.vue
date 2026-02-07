@@ -162,7 +162,7 @@ const formatPrice = (item) => {
                                     >
                                         <div class="service-info">
                                             <h3 class="service-name">{{ item.name }}</h3>
-                                            <div v-if="item.price || item.duration" class="service-quick-info">
+                                            <div v-if="item.price || item.price_from || item.price_to || item.duration" class="service-quick-info">
                                                 <span v-if="item.duration" class="duration">
                                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                                         <circle cx="12" cy="12" r="10"/>
