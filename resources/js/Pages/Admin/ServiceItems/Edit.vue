@@ -15,6 +15,8 @@ const form = useForm({
     description_en: props.item.description_en || '',
     description_mk: props.item.description_mk || '',
     price: props.item.price || '',
+    price_from: props.item.price_from || '',
+    price_to: props.item.price_to || '',
     duration: props.item.duration || '',
     url: props.item.url || '',
     is_expandable: props.item.is_expandable,
@@ -104,7 +106,7 @@ const submit = () => {
                             </div>
 
                             <div class="row">
-                                <div class="col-md-4 mb-3">
+                                <div class="col-md-3 mb-3">
                                     <label class="form-label">Price (MKD)</label>
                                     <input 
                                         v-model="form.price"
@@ -113,8 +115,31 @@ const submit = () => {
                                         min="0"
                                         class="form-control"
                                     />
+                                    <small class="text-muted">Single fixed price</small>
                                 </div>
-                                <div class="col-md-4 mb-3">
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">Price From (MKD)</label>
+                                    <input 
+                                        v-model="form.price_from"
+                                        type="number"
+                                        step="0.01"
+                                        min="0"
+                                        class="form-control"
+                                    />
+                                    <small class="text-muted">од / from</small>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">Price To (MKD)</label>
+                                    <input 
+                                        v-model="form.price_to"
+                                        type="number"
+                                        step="0.01"
+                                        min="0"
+                                        class="form-control"
+                                    />
+                                    <small class="text-muted">до / to</small>
+                                </div>
+                                <div class="col-md-3 mb-3">
                                     <label class="form-label">Duration</label>
                                     <input 
                                         v-model="form.duration"
@@ -122,7 +147,9 @@ const submit = () => {
                                         class="form-control"
                                     />
                                 </div>
-                                <div class="col-md-4 mb-3">
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
                                     <label class="form-label">URL (for button links)</label>
                                     <input 
                                         v-model="form.url"

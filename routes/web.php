@@ -135,6 +135,8 @@ Route::get('/services', function () {
                     'name' => $item->getTranslated('name', $locale),
                     'description' => $item->getTranslated('description', $locale),
                     'price' => $item->price,
+                    'price_from' => $item->price_from,
+                    'price_to' => $item->price_to,
                     'duration' => $item->duration,
                     'url' => $item->url,
                     'is_expandable' => $item->is_expandable,

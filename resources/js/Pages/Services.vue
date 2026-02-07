@@ -47,6 +47,23 @@ const toggleItem = (itemId) => {
 const isExpanded = (itemId) => {
     return expandedItemId.value === itemId;
 };
+
+const formatPrice = (item) => {
+    if (item.price_from && item.price_to) {
+        const fromLabel = locale.value === 'mk' ? 'од' : 'from';
+        const toLabel = locale.value === 'mk' ? 'до' : 'to';
+        return `${fromLabel} ${Number(item.price_from).toLocaleString()} ${toLabel} ${Number(item.price_to).toLocaleString()} MKD`;
+    } else if (item.price_from) {
+        const fromLabel = locale.value === 'mk' ? 'од' : 'from';
+        return `${fromLabel} ${Number(item.price_from).toLocaleString()} MKD`;
+    } else if (item.price_to) {
+        const toLabel = locale.value === 'mk' ? 'до' : 'to';
+        return `${toLabel} ${Number(item.price_to).toLocaleString()} MKD`;
+    } else if (item.price) {
+        return `${Number(item.price).toLocaleString()} MKD`;
+    }
+    return null;
+};
 </script>
 
 <template>
@@ -154,7 +171,7 @@ const isExpanded = (itemId) => {
                                                     </svg>
                                                     {{ item.duration }}
                                                 </span>
-                                                <span v-if="item.price" class="price">{{ item.price }} MKD</span>
+                                                <span v-if="formatPrice(item)" class="price">{{ formatPrice(item) }}</span>
                                             </div>
                                         </div>
                                         <div v-if="item.is_expandable" class="expand-btn">
@@ -184,10 +201,13 @@ const isExpanded = (itemId) => {
                                     class="service-link"
                                     :aria-label="locale === 'mk' ? `Погледни ${item.name}` : `View ${item.name}`"
                                 >
-                                    {{ item.name }}
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M5 12h14M12 5l7 7-7 7"/>
-                                    </svg>
+                                    <span class="link-name">{{ item.name }}</span>
+                                    <div class="link-right">
+                                        <span v-if="formatPrice(item)" class="link-price">{{ formatPrice(item) }}</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                                        </svg>
+                                    </div>
                                 </a>
                             </div>
                         </div>
@@ -681,6 +701,22 @@ const isExpanded = (itemId) => {
 
 .service-link:hover svg {
     transform: translateX(4px);
+}
+
+.link-name {
+    flex: 1;
+}
+
+.link-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.link-price {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #c9a87c;
 }
 
 /* CTA Section */

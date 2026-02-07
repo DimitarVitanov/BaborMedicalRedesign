@@ -13,6 +13,8 @@ class ServiceItem extends Model
         'description_en',
         'description_mk',
         'price',
+        'price_from',
+        'price_to',
         'duration',
         'url',
         'is_expandable',
@@ -24,6 +26,8 @@ class ServiceItem extends Model
         'is_expandable' => 'boolean',
         'is_active' => 'boolean',
         'price' => 'decimal:2',
+        'price_from' => 'decimal:2',
+        'price_to' => 'decimal:2',
     ];
 
     public function category()
