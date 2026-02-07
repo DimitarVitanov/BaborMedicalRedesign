@@ -12,10 +12,11 @@
         <link rel="icon" type="image/webp" href="{{ asset('favicon.webp') }}">
         <link rel="apple-touch-icon" href="{{ asset('logo.webp') }}">
 
-        <!-- Fonts -->
+        <!-- Fonts - Async loading to prevent render blocking -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+        <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"></noscript>
 
         <!-- Page Loader Styles (inline for instant load) -->
         <style>
