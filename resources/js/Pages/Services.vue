@@ -49,18 +49,17 @@ const isExpanded = (itemId) => {
 };
 
 const formatPrice = (item) => {
+    const fromLabel = locale.value === 'mk' ? 'од' : 'from';
+    const toLabel = locale.value === 'mk' ? 'до' : 'to';
+    
     if (item.price_from && item.price_to) {
-        const fromLabel = locale.value === 'mk' ? 'од' : 'from';
-        const toLabel = locale.value === 'mk' ? 'до' : 'to';
         return `${fromLabel} ${Number(item.price_from).toLocaleString()} ${toLabel} ${Number(item.price_to).toLocaleString()} MKD`;
     } else if (item.price_from) {
-        const fromLabel = locale.value === 'mk' ? 'од' : 'from';
         return `${fromLabel} ${Number(item.price_from).toLocaleString()} MKD`;
     } else if (item.price_to) {
-        const toLabel = locale.value === 'mk' ? 'до' : 'to';
         return `${toLabel} ${Number(item.price_to).toLocaleString()} MKD`;
     } else if (item.price) {
-        return `${Number(item.price).toLocaleString()} MKD`;
+        return `${fromLabel} ${Number(item.price).toLocaleString()} MKD`;
     }
     return null;
 };
