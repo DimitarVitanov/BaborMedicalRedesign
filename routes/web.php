@@ -200,7 +200,57 @@ Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe'])
 Route::post('/contact/submit', [ContactController::class, 'store'])->name('contact.submit');
 
 Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
+    $searchConsoleData = null;
+    
+    try {
+        $searchConsole = app(\App\Services\GoogleSearchConsoleService::class);
+        $endDate = date('Y-m-d');
+        $startDate = date('Y-m-d', strtotime('-28 days'));
+        
+        $summary = $searchConsole->getSummary($startDate, $endDate);
+        $topQueries = $searchConsole->getSearchAnalytics($startDate, $endDate, 'query', 10);
+        $topPages = $searchConsole->getSearchAnalytics($startDate, $endDate, 'page', 10);
+        
+        $formattedQueries = collect($topQueries)->map(function ($row) {
+            return [
+                'query' => $row->getKeys()[0],
+                'clicks' => $row->getClicks(),
+                'impressions' => $row->getImpressions(),
+                'ctr' => round($row->getCtr() * 100, 2),
+                'position' => round($row->getPosition(), 1),
+            ];
+        });
+
+        $formattedPages = collect($topPages)->map(function ($row) {
+            return [
+                'page' => $row->getKeys()[0],
+                'clicks' => $row->getClicks(),
+                'impressions' => $row->getImpressions(),
+                'ctr' => round($row->getCtr() * 100, 2),
+                'position' => round($row->getPosition(), 1),
+            ];
+        });
+
+        $searchConsoleData = [
+            'summary' => $summary,
+            'topQueries' => $formattedQueries,
+            'topPages' => $formattedPages,
+            'dateRange' => ['start' => $startDate, 'end' => $endDate],
+            'error' => null,
+        ];
+    } catch (\Exception $e) {
+        $searchConsoleData = [
+            'summary' => null,
+            'topQueries' => [],
+            'topPages' => [],
+            'dateRange' => ['start' => date('Y-m-d', strtotime('-28 days')), 'end' => date('Y-m-d')],
+            'error' => $e->getMessage(),
+        ];
+    }
+    
+    return Inertia::render('Dashboard', [
+        'searchConsole' => $searchConsoleData,
+    ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
