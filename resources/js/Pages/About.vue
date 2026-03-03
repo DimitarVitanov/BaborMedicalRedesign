@@ -83,7 +83,7 @@ const formatContent = (content) => {
                     <div class="hero-content fade-in-left">
                         <span class="section-badge">{{ locale === 'mk' ? 'ЗА НАС' : 'ABOUT US' }}</span>
                         <h1 class="hero-title">{{ about.title }}</h1>
-                        <p class="hero-subtitle">{{ about.subtitle }}</p>
+                        <div class="hero-subtitle" v-html="about.subtitle"></div>
                     </div>
                     <div class="hero-image fade-in-right">
                         <picture>
@@ -137,9 +137,7 @@ const formatContent = (content) => {
                 </div>
                 <div class="story-content fade-in-up">
                     <div class="content-paragraphs">
-                        <p v-for="(paragraph, index) in formatContent(about.full_content)" :key="index" class="content-paragraph">
-                            {{ paragraph }}
-                        </p>
+                        <div class="content-paragraph" v-html="about.full_content"></div>
                     </div>
                 </div>
             </div>

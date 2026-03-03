@@ -61,8 +61,8 @@ const content = computed(() => ({
                 <div class="about-content fade-in-left">
                     <span class="section-badge">{{ content.badge }}</span>
                     <h2 class="about-title">{{ content.title }}</h2>
-                    <p class="about-subtitle">{{ content.subtitle }}</p>
-                    <p class="about-description">{{ content.description }}</p>
+                    <div class="about-subtitle" v-html="content.subtitle"></div>
+                    <div class="about-description" v-html="content.description"></div>
                     
                     <div class="features-list d-none">
                         <div v-for="(feature, index) in content.features" :key="index" class="feature-item">
