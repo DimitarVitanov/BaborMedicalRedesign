@@ -118,35 +118,16 @@ Route::get('/contact', function () {
     ]);
 })->name('contact');
 
+Route::get('/services/cosmetology', [\App\Http\Controllers\ServicePageController::class, 'cosmetology'])->name('services.cosmetology');
+Route::get('/services/laser-aesthetic', [\App\Http\Controllers\ServicePageController::class, 'laserAesthetic'])->name('services.laser-aesthetic');
+Route::get('/services/injectable-methods', [\App\Http\Controllers\ServicePageController::class, 'injectableMethods'])->name('services.injectable-methods');
+
 Route::get('/services', function () {
     $locale = request()->get('lang', session('locale', 'en'));
     session(['locale' => $locale]);
     
-    $categories = \App\Models\ServiceCategory::active()->ordered()->with(['activeItems'])->get()->map(function ($category) use ($locale) {
-        return [
-            'id' => $category->id,
-            'name' => $category->getTranslated('name', $locale),
-            'description' => $category->getTranslated('description', $locale),
-            'slug' => $category->slug,
-            'display_type' => $category->display_type,
-            'items' => $category->activeItems->map(function ($item) use ($locale) {
-                return [
-                    'id' => $item->id,
-                    'name' => $item->getTranslated('name', $locale),
-                    'description' => $item->getTranslated('description', $locale),
-                    'price' => $item->price,
-                    'price_from' => $item->price_from,
-                    'price_to' => $item->price_to,
-                    'duration' => $item->duration,
-                    'url' => $item->url,
-                    'is_expandable' => $item->is_expandable,
-                ];
-            }),
-        ];
-    });
-    
-    return Inertia::render('Services', [
-        'categories' => $categories,
+    return Inertia::render('Services/Index', [
+        'locale' => $locale,
     ]);
 })->name('services');
 

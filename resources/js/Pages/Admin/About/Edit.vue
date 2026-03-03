@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import RichTextEditor from '@/Components/Admin/RichTextEditor.vue';
 
 const activeTab = ref('en');
 
@@ -100,28 +101,18 @@ const submit = () => {
 
                                 <div class="mb-3">
                                     <label class="form-label">Short Description (EN)</label>
-                                    <textarea 
-                                        class="form-control"
-                                        :class="{ 'is-invalid': form.errors.short_description }"
-                                        v-model="form.short_description"
-                                        rows="3"
-                                    ></textarea>
+                                    <RichTextEditor v-model="form.short_description" placeholder="Short description..." />
                                     <small class="text-muted">Shown on homepage</small>
-                                    <div v-if="form.errors.short_description" class="invalid-feedback">
+                                    <div v-if="form.errors.short_description" class="text-danger small mt-1">
                                         {{ form.errors.short_description }}
                                     </div>
                                 </div>
 
                                 <div class="mb-3">
                                     <label class="form-label">Full Content (EN)</label>
-                                    <textarea 
-                                        class="form-control"
-                                        :class="{ 'is-invalid': form.errors.full_content }"
-                                        v-model="form.full_content"
-                                        rows="8"
-                                    ></textarea>
+                                    <RichTextEditor v-model="form.full_content" placeholder="Full about content..." />
                                     <small class="text-muted">Shown on dedicated About page</small>
-                                    <div v-if="form.errors.full_content" class="invalid-feedback">
+                                    <div v-if="form.errors.full_content" class="text-danger small mt-1">
                                         {{ form.errors.full_content }}
                                     </div>
                                 </div>
@@ -148,21 +139,13 @@ const submit = () => {
 
                                 <div class="mb-3">
                                     <label class="form-label">Краток опис (MK)</label>
-                                    <textarea 
-                                        class="form-control"
-                                        v-model="form.short_description_mk"
-                                        rows="3"
-                                    ></textarea>
+                                    <RichTextEditor v-model="form.short_description_mk" placeholder="Краток опис..." />
                                     <small class="text-muted">Прикажано на почетна страница</small>
                                 </div>
 
                                 <div class="mb-3">
                                     <label class="form-label">Целосна содржина (MK)</label>
-                                    <textarea 
-                                        class="form-control"
-                                        v-model="form.full_content_mk"
-                                        rows="8"
-                                    ></textarea>
+                                    <RichTextEditor v-model="form.full_content_mk" placeholder="Целосна содржина..." />
                                     <small class="text-muted">Прикажано на За нас страница</small>
                                 </div>
                             </div>

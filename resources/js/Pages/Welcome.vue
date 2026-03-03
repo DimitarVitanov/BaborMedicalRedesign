@@ -3,6 +3,7 @@ import { Head, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import Navbar from '@/Components/Navbar.vue';
 import HeroSection from '@/Components/HeroSection.vue';
+import ServiceCategoriesSection from '@/Components/ServiceCategoriesSection.vue';
 import ServicesSection from '@/Components/ServicesSection.vue';
 import AboutSection from '@/Components/AboutSection.vue';
 import EquipmentSection from '@/Components/EquipmentSection.vue';
@@ -82,6 +83,7 @@ const ogLocale = computed(() => locale.value === 'mk' ? 'mk_MK' : 'en_US');
         <HeroSection :slides="slides" />
         <AboutSection :about="about" />
         <ServicesSection :services="services" />
+        <ServiceCategoriesSection />
         <EquipmentSection :equipment="equipment" />
         <NewsletterSection />
         <Footer />

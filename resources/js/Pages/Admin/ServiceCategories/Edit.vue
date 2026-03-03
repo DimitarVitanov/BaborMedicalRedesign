@@ -10,6 +10,7 @@ const form = useForm({
     name_en: props.category.name_en,
     name_mk: props.category.name_mk,
     slug: props.category.slug,
+    parent_type: props.category.parent_type || 'cosmetology',
     description_en: props.category.description_en || '',
     description_mk: props.category.description_mk || '',
     display_type: props.category.display_type,
@@ -86,6 +87,17 @@ const submit = () => {
                                         <option value="accordion">Accordion (expandable items)</option>
                                         <option value="buttons">Buttons (non-expandable)</option>
                                     </select>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Parent Category *</label>
+                                    <select v-model="form.parent_type" class="form-select">
+                                        <option value="cosmetology">Козметологија / Cosmetology</option>
+                                        <option value="laser_aesthetic">Ласерско Естетски Третмани / Laser Aesthetic Treatments</option>
+                                    </select>
+                                    <small class="text-muted">Choose which main service category this belongs to</small>
                                 </div>
                             </div>
 

@@ -12,8 +12,22 @@ const form = useForm({
     service_category_id: props.item.service_category_id,
     name_en: props.item.name_en,
     name_mk: props.item.name_mk,
+    subtitle_en: props.item.subtitle_en || '',
+    subtitle_mk: props.item.subtitle_mk || '',
     description_en: props.item.description_en || '',
     description_mk: props.item.description_mk || '',
+    includes_en: props.item.includes_en || '',
+    includes_mk: props.item.includes_mk || '',
+    indications_en: props.item.indications_en || '',
+    indications_mk: props.item.indications_mk || '',
+    components_en: props.item.components_en || '',
+    components_mk: props.item.components_mk || '',
+    effects_en: props.item.effects_en || '',
+    effects_mk: props.item.effects_mk || '',
+    suitable_for_en: props.item.suitable_for_en || '',
+    suitable_for_mk: props.item.suitable_for_mk || '',
+    note_en: props.item.note_en || '',
+    note_mk: props.item.note_mk || '',
     price: props.item.price || '',
     price_from: props.item.price_from || '',
     price_to: props.item.price_to || '',
@@ -98,6 +112,17 @@ const submit = () => {
                                 </div>
                             </div>
 
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Subtitle (English)</label>
+                                    <input v-model="form.subtitle_en" type="text" class="form-control" placeholder="e.g., Initial diagnostic treatment" />
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Subtitle (Macedonian)</label>
+                                    <input v-model="form.subtitle_mk" type="text" class="form-control" />
+                                </div>
+                            </div>
+
                             <div class="mb-3">
                                 <label class="form-label">Description (English)</label>
                                 <RichTextEditor v-model="form.description_en" />
@@ -105,6 +130,60 @@ const submit = () => {
                             <div class="mb-3">
                                 <label class="form-label">Description (Macedonian)</label>
                                 <RichTextEditor v-model="form.description_mk" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Includes (English)</label>
+                                <RichTextEditor v-model="form.includes_en" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Includes (Macedonian)</label>
+                                <RichTextEditor v-model="form.includes_mk" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Indications (English)</label>
+                                <RichTextEditor v-model="form.indications_en" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Indications (Macedonian)</label>
+                                <RichTextEditor v-model="form.indications_mk" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Active Components (English)</label>
+                                <RichTextEditor v-model="form.components_en" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Active Components (Macedonian)</label>
+                                <RichTextEditor v-model="form.components_mk" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Effects (English)</label>
+                                <RichTextEditor v-model="form.effects_en" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Effects (Macedonian)</label>
+                                <RichTextEditor v-model="form.effects_mk" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Suitable For (English)</label>
+                                <RichTextEditor v-model="form.suitable_for_en" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Suitable For (Macedonian)</label>
+                                <RichTextEditor v-model="form.suitable_for_mk" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Note (English)</label>
+                                <RichTextEditor v-model="form.note_en" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Note (Macedonian)</label>
+                                <RichTextEditor v-model="form.note_mk" />
                             </div>
 
                             <div class="row">

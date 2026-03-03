@@ -1,11 +1,49 @@
 <script setup>
 import { usePage } from '@inertiajs/vue3';
-import { computed, ref, onMounted, onUnmounted } from 'vue';
+import { computed, ref, onMounted, onUnmounted, nextTick, watch } from 'vue';
 
 const page = usePage();
 const currentLocale = computed(() => page.props.locale || 'en');
 const mobileMenuOpen = ref(false);
 const isScrolled = ref(false);
+const servicesDropdownOpen = ref(false);
+const mobileServicesOpen = ref(false);
+const triggerRef = ref(null);
+const dropdownStyle = ref({});
+
+const positionDropdown = () => {
+    if (triggerRef.value) {
+        const rect = triggerRef.value.getBoundingClientRect();
+        dropdownStyle.value = {
+            position: 'fixed',
+            top: `${rect.bottom + 8}px`,
+            left: `${rect.left + rect.width / 2}px`,
+            transform: 'translateX(-50%)',
+            zIndex: '999999',
+        };
+    }
+};
+
+const toggleServicesDropdown = (e) => {
+    e.preventDefault();
+    servicesDropdownOpen.value = !servicesDropdownOpen.value;
+    if (servicesDropdownOpen.value) {
+        nextTick(positionDropdown);
+    }
+};
+
+watch(isScrolled, () => {
+    if (servicesDropdownOpen.value) {
+        positionDropdown();
+    }
+});
+
+const closeDropdownOutside = (e) => {
+    if (triggerRef.value && triggerRef.value.contains(e.target)) return;
+    const dd = document.getElementById('services-dropdown');
+    if (dd && dd.contains(e.target)) return;
+    servicesDropdownOpen.value = false;
+};
 
 const switchLanguage = (lang) => {
     window.location.href = `${window.location.pathname}?lang=${lang}`;
@@ -16,25 +54,43 @@ const toggleMobileMenu = () => {
     document.body.style.overflow = mobileMenuOpen.value ? 'hidden' : '';
 };
 
+const toggleMobileServices = () => {
+    mobileServicesOpen.value = !mobileServicesOpen.value;
+};
+
 const handleScroll = () => {
     isScrolled.value = window.scrollY > 50;
 };
 
 onMounted(() => {
     window.addEventListener('scroll', handleScroll);
+    document.addEventListener('click', closeDropdownOutside);
     handleScroll();
 });
 
 onUnmounted(() => {
     window.removeEventListener('scroll', handleScroll);
+    document.removeEventListener('click', closeDropdownOutside);
 });
 
 const navLinks = computed(() => [
     { name: currentLocale.value === 'mk' ? 'Почетна' : 'Home', href: '/' },
     { name: currentLocale.value === 'mk' ? 'За нас' : 'About', href: '/about' },
     { name: currentLocale.value === 'mk' ? 'Ласери' : 'Lasers', href: '/lasers' },
-    { name: currentLocale.value === 'mk' ? 'Услуги' : 'Services', href: '/services' },
     { name: currentLocale.value === 'mk' ? 'Контакт' : 'Contact', href: '/contact' },
+]);
+
+const servicesLabel = computed(() => currentLocale.value === 'mk' ? 'Услуги' : 'Services');
+
+const servicesDropdownItems = computed(() => [
+    { 
+        name: currentLocale.value === 'mk' ? 'Козметологија' : 'Cosmetology', 
+        href: '/services/cosmetology' 
+    },
+    { 
+        name: currentLocale.value === 'mk' ? 'Ласерско Естетски Третмани' : 'Laser Aesthetic Treatments', 
+        href: '/services/laser-aesthetic' 
+    },
 ]);
 
 const ctaText = computed(() => currentLocale.value === 'mk' ? 'Контакт' : 'Contact');
@@ -44,15 +100,35 @@ const ctaText = computed(() => currentLocale.value === 'mk' ? 'Контакт' :
     <header class="site-header" :class="{ scrolled: isScrolled }">
         <div class="container">
             <div class="header-inner">
-                <!-- Logo -->
-                <a href="/" class="header-logo" aria-label="Babor Medical - Home">
-                    <img src="/logo.webp" alt="Babor Medical" />
-                </a>
-
-                <!-- Desktop Navigation -->
+                <!-- Desktop Navigation (with logo inside) -->
                 <nav class="desktop-nav">
+                    <a href="/" class="nav-logo" aria-label="Babor Medical - Home">
+                        <img src="/logo.webp" alt="Babor Medical" />
+                    </a>
+                    
                     <a 
-                        v-for="link in navLinks" 
+                        v-for="link in navLinks.slice(0, 3)" 
+                        :key="link.name" 
+                        :href="link.href"
+                        class="nav-link"
+                    >
+                        {{ link.name }}
+                    </a>
+                    
+                    <a 
+                        ref="triggerRef"
+                        href="/services" 
+                        class="nav-link dropdown-trigger"
+                        @click="toggleServicesDropdown"
+                    >
+                        {{ servicesLabel }}
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" :class="{ rotated: servicesDropdownOpen }">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </a>
+                    
+                    <a 
+                        v-for="link in navLinks.slice(3)" 
                         :key="link.name" 
                         :href="link.href"
                         class="nav-link"
@@ -60,6 +136,31 @@ const ctaText = computed(() => currentLocale.value === 'mk' ? 'Контакт' :
                         {{ link.name }}
                     </a>
                 </nav>
+
+                <!-- Mobile Logo (visible only on mobile) -->
+                <a href="/" class="header-logo-mobile" aria-label="Babor Medical - Home">
+                    <img src="/logo.webp" alt="Babor Medical" />
+                </a>
+
+                <!-- Teleported dropdown -->
+                <Teleport to="body">
+                    <div 
+                        v-show="servicesDropdownOpen"
+                        id="services-dropdown"
+                        :style="dropdownStyle"
+                        class="services-dropdown-portal"
+                    >
+                        <a href="/services/cosmetology" class="sdd-item">
+                            {{ currentLocale === 'mk' ? 'Козметологија' : 'Cosmetology' }}
+                        </a>
+                        <a href="/services/laser-aesthetic" class="sdd-item">
+                            {{ currentLocale === 'mk' ? 'Ласерско Естетски Третмани' : 'Laser Aesthetic Treatments' }}
+                        </a>
+                        <a href="/services/injectable-methods" class="sdd-item">
+                            {{ currentLocale === 'mk' ? 'Инјектибилни методи' : 'Injectable Methods' }}
+                        </a>
+                    </div>
+                </Teleport>
 
                 <!-- Right Section -->
                 <div class="header-right">
@@ -99,7 +200,41 @@ const ctaText = computed(() => currentLocale.value === 'mk' ? 'Контакт' :
         <div class="mobile-menu" :class="{ open: mobileMenuOpen }">
             <nav class="mobile-nav">
                 <a 
-                    v-for="link in navLinks" 
+                    v-for="link in navLinks.slice(0, 3)" 
+                    :key="link.name" 
+                    :href="link.href"
+                    class="mobile-link"
+                    @click="mobileMenuOpen = false"
+                >
+                    {{ link.name }}
+                </a>
+                
+                <!-- Mobile Services Dropdown -->
+                <div class="mobile-dropdown">
+                    <button 
+                        class="mobile-link mobile-dropdown-trigger"
+                        @click="toggleMobileServices"
+                    >
+                        {{ servicesLabel }}
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" :class="{ rotated: mobileServicesOpen }">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </button>
+                    <div class="mobile-dropdown-menu" :class="{ open: mobileServicesOpen }">
+                        <a href="/services/cosmetology" class="mobile-dropdown-item" @click="mobileMenuOpen = false">
+                            {{ currentLocale === 'mk' ? 'Козметологија' : 'Cosmetology' }}
+                        </a>
+                        <a href="/services/laser-aesthetic" class="mobile-dropdown-item" @click="mobileMenuOpen = false">
+                            {{ currentLocale === 'mk' ? 'Ласерско Естетски Третмани' : 'Laser Aesthetic Treatments' }}
+                        </a>
+                        <a href="/services/injectable-methods" class="mobile-dropdown-item" @click="mobileMenuOpen = false">
+                            {{ currentLocale === 'mk' ? 'Инјектибилни методи' : 'Injectable Methods' }}
+                        </a>
+                    </div>
+                </div>
+                
+                <a 
+                    v-for="link in navLinks.slice(3)" 
                     :key="link.name" 
                     :href="link.href"
                     class="mobile-link"
@@ -147,25 +282,12 @@ const ctaText = computed(() => currentLocale.value === 'mk' ? 'Контакт' :
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
 }
 
-.site-header.scrolled .header-logo img {
-    height: 75px;
-}
 
 .header-inner {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 40px;
-}
-
-.header-logo img {
-    height: 90px;
-    width: auto;
-    transition: all 0.3s ease;
-}
-
-.header-logo:hover img {
-    transform: scale(1.02);
+    position: relative;
 }
 
 /* Desktop Navigation */
@@ -178,6 +300,43 @@ const ctaText = computed(() => currentLocale.value === 'mk' ? 'Контакт' :
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 50px;
     padding: 8px;
+}
+
+.nav-logo {
+    display: flex;
+    align-items: center;
+    padding: 0 12px 0 8px;
+    margin-right: 4px;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    overflow: visible;
+}
+
+.nav-logo img {
+    height: 56px;
+    width: auto;
+    margin: -12px 0;
+    filter: brightness(0) invert(1);
+    transition: all 0.3s ease;
+}
+
+.site-header.scrolled .nav-logo img {
+    height: 50px;
+    margin: -10px 0;
+}
+
+.nav-logo:hover img {
+    transform: scale(1.05);
+}
+
+/* Mobile Logo (hidden on desktop) */
+.header-logo-mobile {
+    display: none;
+}
+
+.header-logo-mobile img {
+    height: 80px;
+    width: auto;
+    transition: all 0.3s ease;
 }
 
 .nav-link {
@@ -193,6 +352,24 @@ const ctaText = computed(() => currentLocale.value === 'mk' ? 'Контакт' :
 .nav-link:hover {
     color: #fff;
     background: rgba(201, 168, 124, 0.2);
+}
+
+/* Services Dropdown */
+.dropdown-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+
+.dropdown-trigger svg {
+    width: 14px;
+    height: 14px;
+    transition: transform 0.3s ease;
+}
+
+.dropdown-trigger svg.rotated {
+    transform: rotate(180deg);
 }
 
 /* Header Right */
@@ -347,6 +524,57 @@ const ctaText = computed(() => currentLocale.value === 'mk' ? 'Контакт' :
     color: #c9a87c;
 }
 
+/* Mobile Dropdown */
+.mobile-dropdown {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mobile-dropdown-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: none;
+    cursor: pointer;
+    text-align: left;
+}
+
+.mobile-dropdown-trigger svg {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.3s ease;
+}
+
+.mobile-dropdown-trigger svg.rotated {
+    transform: rotate(180deg);
+}
+
+.mobile-dropdown-menu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.mobile-dropdown-menu.open {
+    max-height: 300px;
+}
+
+.mobile-dropdown-item {
+    display: block;
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    font-size: 1.1rem;
+    font-weight: 400;
+    padding: 12px 0 12px 24px;
+    transition: color 0.3s ease;
+}
+
+.mobile-dropdown-item:hover {
+    color: #c9a87c;
+}
+
 .mobile-footer {
     display: flex;
     flex-direction: column;
@@ -397,6 +625,10 @@ const ctaText = computed(() => currentLocale.value === 'mk' ? 'Контакт' :
         display: none;
     }
     
+    .header-logo-mobile {
+        display: block;
+    }
+    
     .header-cta {
         display: none;
     }
@@ -409,7 +641,7 @@ const ctaText = computed(() => currentLocale.value === 'mk' ? 'Контакт' :
         display: flex;
     }
     
-    .header-logo img {
+    .header-logo-mobile img {
         height: 85px;
     }
 }
@@ -419,12 +651,52 @@ const ctaText = computed(() => currentLocale.value === 'mk' ? 'Контакт' :
         padding: 12px 0;
     }
     
-    .header-logo img {
+    .header-logo-mobile img {
         height: 70px;
     }
     
     .mobile-link {
         font-size: 1.25rem;
     }
+}
+</style>
+
+<style>
+.services-dropdown-portal {
+    min-width: 280px;
+    background: rgba(30, 45, 61, 0.98);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
+    padding: 8px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    animation: dropdownFadeIn 0.2s ease;
+}
+
+@keyframes dropdownFadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+.sdd-item {
+    display: block;
+    padding: 14px 18px;
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+}
+
+.sdd-item:hover {
+    color: #fff;
+    background: rgba(201, 168, 124, 0.15);
 }
 </style>

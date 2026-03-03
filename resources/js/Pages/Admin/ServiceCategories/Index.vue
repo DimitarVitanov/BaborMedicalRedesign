@@ -35,7 +35,7 @@ const deleteCategory = (id) => {
                                 <thead class="table-light">
                                     <tr>
                                         <th>Name</th>
-                                        <th>Slug</th>
+                                        <th>Parent Category</th>
                                         <th>Display Type</th>
                                         <th>Services</th>
                                         <th>Status</th>
@@ -49,7 +49,11 @@ const deleteCategory = (id) => {
                                             <br>
                                             <small class="text-muted">{{ category.name_mk }}</small>
                                         </td>
-                                        <td><code>{{ category.slug }}</code></td>
+                                        <td>
+                                            <span class="badge" :class="category.parent_type === 'cosmetology' ? 'bg-primary' : 'bg-secondary'">
+                                                {{ category.parent_type === 'cosmetology' ? 'Козметологија' : 'Ласерско Естетски' }}
+                                            </span>
+                                        </td>
                                         <td>
                                             <span class="badge" :class="category.display_type === 'accordion' ? 'bg-info' : 'bg-warning'">
                                                 {{ category.display_type }}

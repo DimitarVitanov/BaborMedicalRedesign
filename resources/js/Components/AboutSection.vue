@@ -64,7 +64,7 @@ const content = computed(() => ({
                     <p class="about-subtitle">{{ content.subtitle }}</p>
                     <p class="about-description">{{ content.description }}</p>
                     
-                    <div class="features-list">
+                    <div class="features-list d-none">
                         <div v-for="(feature, index) in content.features" :key="index" class="feature-item">
                             <div class="feature-icon">
                                 <svg v-if="feature.icon === 'certified'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
