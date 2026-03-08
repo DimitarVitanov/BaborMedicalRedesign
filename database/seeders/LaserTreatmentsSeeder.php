@@ -23,6 +23,52 @@ class LaserTreatmentsSeeder extends Seeder
                 'display_type' => 'cards',
                 'is_active' => true,
                 'sort_order' => 1,
+                'extra_data_en' => [
+                    'treatment_areas' => [
+                        'Pigmentation and sun damage',
+                        'Vascular changes and redness',
+                        'Unwanted hair',
+                        'Scars and post-acne changes',
+                        'Uneven texture and enlarged pores',
+                        'Signs of aging and loss of elasticity',
+                        'Overall improvement of skin quality and tone',
+                    ],
+                    'approach_strategies' => [
+                        'Laser + collagen stimulators',
+                        'Laser + RF technologies',
+                        'Laser + medical cosmetology (Babor Clinical programs)',
+                        'Phased treatment with clearly defined sequence',
+                    ],
+                    'assessment_points' => [
+                        'which technology is most appropriate',
+                        'how many treatments are needed',
+                        'at what intensity',
+                        'whether a combined strategy is needed',
+                    ],
+                ],
+                'extra_data_mk' => [
+                    'treatment_areas' => [
+                        'Пигментации и сончеви оштетувања',
+                        'Васкуларни промени и црвенило',
+                        'Нежелана влакнетост',
+                        'Лузни и постакне промени',
+                        'Нерамна текстура и проширени пори',
+                        'Знаци на стареење и губење на еластичност',
+                        'Општо подобрување на квалитетот и тонусот на кожата',
+                    ],
+                    'approach_strategies' => [
+                        'Ласер + колаген стимулатори',
+                        'Ласер + RF технологии',
+                        'Ласер + медицинска козметологија (Babor Clinical програми)',
+                        'Фазен третман со јасно дефиниран редослед',
+                    ],
+                    'assessment_points' => [
+                        'која технологија е најсоодветна',
+                        'колку третмани се потребни',
+                        'со каков интензитет',
+                        'дали е потребна комбинирана стратегија',
+                    ],
+                ],
             ]);
         } else {
             $category->update([
@@ -30,6 +76,52 @@ class LaserTreatmentsSeeder extends Seeder
                 'name_mk' => 'Ласерски третмани',
                 'description_en' => 'At Babor Medical, we don\'t view laser treatments as isolated procedures, but as part of carefully crafted personalized protocols. Every skin has a different structure, different history and different needs. That\'s why our approach is based on precise assessment and selection of appropriate technology at the right moment. Our strategy is not "one device for all", but a combination of technologies with clear clinical logic.',
                 'description_mk' => 'Во Babor Medical, ласерските третмани не ги гледаме како поединечни процедури, туку како дел од внимателно креирани персонализирани протоколи. Секоја кожа има различна структура, различна историја и различни потреби. Затоа нашиот пристап се базира на прецизна проценка и избор на соодветна технологија во вистинскиот момент. Нашата стратегија не е „еден апарат за сите", туку комбинација на технологии со јасна клиничка логика.',
+                'extra_data_en' => [
+                    'treatment_areas' => [
+                        'Pigmentation and sun damage',
+                        'Vascular changes and redness',
+                        'Unwanted hair',
+                        'Scars and post-acne changes',
+                        'Uneven texture and enlarged pores',
+                        'Signs of aging and loss of elasticity',
+                        'Overall improvement of skin quality and tone',
+                    ],
+                    'approach_strategies' => [
+                        'Laser + collagen stimulators',
+                        'Laser + RF technologies',
+                        'Laser + medical cosmetology (Babor Clinical programs)',
+                        'Phased treatment with clearly defined sequence',
+                    ],
+                    'assessment_points' => [
+                        'which technology is most appropriate',
+                        'how many treatments are needed',
+                        'at what intensity',
+                        'whether a combined strategy is needed',
+                    ],
+                ],
+                'extra_data_mk' => [
+                    'treatment_areas' => [
+                        'Пигментации и сончеви оштетувања',
+                        'Васкуларни промени и црвенило',
+                        'Нежелана влакнетост',
+                        'Лузни и постакне промени',
+                        'Нерамна текстура и проширени пори',
+                        'Знаци на стареење и губење на еластичност',
+                        'Општо подобрување на квалитетот и тонусот на кожата',
+                    ],
+                    'approach_strategies' => [
+                        'Ласер + колаген стимулатори',
+                        'Ласер + RF технологии',
+                        'Ласер + медицинска козметологија (Babor Clinical програми)',
+                        'Фазен третман со јасно дефиниран редослед',
+                    ],
+                    'assessment_points' => [
+                        'која технологија е најсоодветна',
+                        'колку третмани се потребни',
+                        'со каков интензитет',
+                        'дали е потребна комбинирана стратегија',
+                    ],
+                ],
             ]);
         }
 

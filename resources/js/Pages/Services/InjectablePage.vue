@@ -11,6 +11,10 @@ const props = defineProps({
     categories: Array,
     pageTitle: String,
     pageSubtitle: String,
+    extraData: {
+        type: Object,
+        default: () => ({}),
+    },
 });
 
 const page = usePage();
@@ -31,29 +35,9 @@ const treatments = computed(() => {
     return props.categories.flatMap(cat => cat.items || []);
 });
 
-const protocolAreas = computed(() => [
-    t('Колаген стимулатори', 'Collagen stimulators'),
-    t('Ботулинска терапија (Botox)', 'Botulinum therapy (Botox)'),
-    t('Дермални филери', 'Dermal fillers'),
-    t('Мезококтели и биоревитализација', 'Mesococktails and biorevitalization'),
-    t('Пептидни формулации', 'Peptide formulations'),
-    t('PRP (плазма богата со тромбоцити)', 'PRP (platelet-rich plasma)'),
-]);
-
-const combinedStrategies = computed(() => [
-    t('Колаген стимулатор + ботулинска терапија', 'Collagen stimulator + botulinum therapy'),
-    t('Филер + биоревитализација', 'Filler + biorevitalization'),
-    t('PRP + ласер', 'PRP + laser'),
-    t('Фазен anti-age протокол', 'Phased anti-age protocol'),
-]);
-
-const assessmentPoints = computed(() => [
-    t('анатомска структура', 'anatomical structure'),
-    t('тип на кожа', 'skin type'),
-    t('степен на стареење', 'degree of aging'),
-    t('претходни интервенции', 'previous interventions'),
-    t('очекувања на пациентот', 'patient expectations'),
-]);
+const protocolAreas = computed(() => props.extraData?.protocol_areas || []);
+const combinedStrategies = computed(() => props.extraData?.combined_strategies || []);
+const assessmentPoints = computed(() => props.extraData?.assessment_points || []);
 </script>
 
 <template>

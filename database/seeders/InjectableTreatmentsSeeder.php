@@ -23,6 +23,52 @@ class InjectableTreatmentsSeeder extends Seeder
                 'display_type' => 'cards',
                 'is_active' => true,
                 'sort_order' => 1,
+                'extra_data_en' => [
+                    'protocol_areas' => [
+                        'Collagen stimulators',
+                        'Botulinum therapy (Botox)',
+                        'Dermal fillers',
+                        'Mesococktails and biorevitalization',
+                        'Peptide formulations',
+                        'PRP (platelet-rich plasma)',
+                    ],
+                    'combined_strategies' => [
+                        'Collagen stimulator + botulinum therapy',
+                        'Filler + biorevitalization',
+                        'PRP + laser',
+                        'Phased anti-age protocol',
+                    ],
+                    'assessment_points' => [
+                        'anatomical structure',
+                        'skin type',
+                        'degree of aging',
+                        'previous interventions',
+                        'patient expectations',
+                    ],
+                ],
+                'extra_data_mk' => [
+                    'protocol_areas' => [
+                        'Колаген стимулатори',
+                        'Ботулинска терапија (Botox)',
+                        'Дермални филери',
+                        'Мезококтели и биоревитализација',
+                        'Пептидни формулации',
+                        'PRP (плазма богата со тромбоцити)',
+                    ],
+                    'combined_strategies' => [
+                        'Колаген стимулатор + ботулинска терапија',
+                        'Филер + биоревитализација',
+                        'PRP + ласер',
+                        'Фазен anti-age протокол',
+                    ],
+                    'assessment_points' => [
+                        'анатомска структура',
+                        'тип на кожа',
+                        'степен на стареење',
+                        'претходни интервенции',
+                        'очекувања на пациентот',
+                    ],
+                ],
             ]);
         } else {
             $category->update([
@@ -30,6 +76,52 @@ class InjectableTreatmentsSeeder extends Seeder
                 'name_mk' => 'Инјектбилни методи',
                 'description_en' => 'At Babor Medical, we don\'t use injectable treatments as isolated corrections, but as part of carefully structured medical protocols. Our goal is not to "add volume" or "smooth a wrinkle", but to establish balance between structure, dynamics and skin quality. Every patient receives an individual assessment, after which a strategy is defined – whether muscle relaxation, biostimulation, structural support or a combined approach is needed.',
                 'description_mk' => 'Во Babor Medical, инјектбилните третмани не ги користиме како изолирани корекции, туку како дел од внимателно структурирани медицински протоколи. Нашата цел не е да „додадеме волумен" или да „измазниме брчка", туку да воспоставиме рамнотежа помеѓу структура, динамика и квалитет на кожата. Секој пациент добива индивидуална проценка, по што се дефинира стратегија – дали е потребна релаксација на мускулатурата, биостимулација, структурна поддршка или комбиниран пристап.',
+                'extra_data_en' => [
+                    'protocol_areas' => [
+                        'Collagen stimulators',
+                        'Botulinum therapy (Botox)',
+                        'Dermal fillers',
+                        'Mesococktails and biorevitalization',
+                        'Peptide formulations',
+                        'PRP (platelet-rich plasma)',
+                    ],
+                    'combined_strategies' => [
+                        'Collagen stimulator + botulinum therapy',
+                        'Filler + biorevitalization',
+                        'PRP + laser',
+                        'Phased anti-age protocol',
+                    ],
+                    'assessment_points' => [
+                        'anatomical structure',
+                        'skin type',
+                        'degree of aging',
+                        'previous interventions',
+                        'patient expectations',
+                    ],
+                ],
+                'extra_data_mk' => [
+                    'protocol_areas' => [
+                        'Колаген стимулатори',
+                        'Ботулинска терапија (Botox)',
+                        'Дермални филери',
+                        'Мезококтели и биоревитализација',
+                        'Пептидни формулации',
+                        'PRP (плазма богата со тромбоцити)',
+                    ],
+                    'combined_strategies' => [
+                        'Колаген стимулатор + ботулинска терапија',
+                        'Филер + биоревитализација',
+                        'PRP + ласер',
+                        'Фазен anti-age протокол',
+                    ],
+                    'assessment_points' => [
+                        'анатомска структура',
+                        'тип на кожа',
+                        'степен на стареење',
+                        'претходни интервенции',
+                        'очекувања на пациентот',
+                    ],
+                ],
             ]);
         }
 

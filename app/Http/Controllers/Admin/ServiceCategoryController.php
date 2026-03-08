@@ -30,12 +30,14 @@ class ServiceCategoryController extends Controller
             'name_en' => 'required|string|max:255',
             'name_mk' => 'required|string|max:255',
             'slug' => 'nullable|string|max:255|unique:service_categories',
-            'parent_type' => 'required|in:cosmetology,laser_aesthetic',
+            'parent_type' => 'required|in:cosmetology,laser_aesthetic,injectable',
             'description_en' => 'nullable|string',
             'description_mk' => 'nullable|string',
             'icon' => 'nullable|string|max:255',
-            'display_type' => 'required|in:accordion,buttons',
+            'display_type' => 'required|in:accordion,buttons,cards',
             'is_active' => 'boolean',
+            'extra_data_en' => 'nullable|array',
+            'extra_data_mk' => 'nullable|array',
         ]);
 
         if (empty($validated['slug'])) {
@@ -62,12 +64,14 @@ class ServiceCategoryController extends Controller
             'name_en' => 'required|string|max:255',
             'name_mk' => 'required|string|max:255',
             'slug' => 'nullable|string|max:255|unique:service_categories,slug,' . $serviceCategory->id,
-            'parent_type' => 'required|in:cosmetology,laser_aesthetic',
+            'parent_type' => 'required|in:cosmetology,laser_aesthetic,injectable',
             'description_en' => 'nullable|string',
             'description_mk' => 'nullable|string',
             'icon' => 'nullable|string|max:255',
-            'display_type' => 'required|in:accordion,buttons',
+            'display_type' => 'required|in:accordion,buttons,cards',
             'is_active' => 'boolean',
+            'extra_data_en' => 'nullable|array',
+            'extra_data_mk' => 'nullable|array',
         ]);
 
         if (empty($validated['slug'])) {

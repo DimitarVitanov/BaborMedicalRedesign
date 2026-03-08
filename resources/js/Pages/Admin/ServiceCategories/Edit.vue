@@ -1,6 +1,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, useForm, Link } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
 const props = defineProps({
     category: Object,
@@ -15,7 +16,46 @@ const form = useForm({
     description_mk: props.category.description_mk || '',
     display_type: props.category.display_type,
     is_active: props.category.is_active,
+    extra_data_en: props.category.extra_data_en || {},
+    extra_data_mk: props.category.extra_data_mk || {},
 });
+
+const extraDataKeys = computed(() => {
+    const enKeys = Object.keys(form.extra_data_en || {});
+    const mkKeys = Object.keys(form.extra_data_mk || {});
+    return [...new Set([...enKeys, ...mkKeys])];
+});
+
+const keyLabel = (key) => {
+    return key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+};
+
+const addItem = (key, lang) => {
+    const data = lang === 'en' ? form.extra_data_en : form.extra_data_mk;
+    if (!data[key]) data[key] = [];
+    data[key].push('');
+};
+
+const removeItem = (key, lang, index) => {
+    const data = lang === 'en' ? form.extra_data_en : form.extra_data_mk;
+    if (data[key]) data[key].splice(index, 1);
+};
+
+const addNewListKey = () => {
+    const key = prompt('Enter list key name (e.g. treatment_areas, combined_strategies):');
+    if (key && key.trim()) {
+        const cleanKey = key.trim().toLowerCase().replace(/\s+/g, '_');
+        if (!form.extra_data_en[cleanKey]) form.extra_data_en[cleanKey] = [];
+        if (!form.extra_data_mk[cleanKey]) form.extra_data_mk[cleanKey] = [];
+    }
+};
+
+const removeListKey = (key) => {
+    if (confirm(`Remove the entire "${keyLabel(key)}" list?`)) {
+        delete form.extra_data_en[key];
+        delete form.extra_data_mk[key];
+    }
+};
 
 const submit = () => {
     form.post(route('admin.service-categories.update', props.category.id));
@@ -86,6 +126,7 @@ const submit = () => {
                                     <select v-model="form.display_type" class="form-select">
                                         <option value="accordion">Accordion (expandable items)</option>
                                         <option value="buttons">Buttons (non-expandable)</option>
+                                        <option value="cards">Cards</option>
                                     </select>
                                 </div>
                             </div>
@@ -96,6 +137,7 @@ const submit = () => {
                                     <select v-model="form.parent_type" class="form-select">
                                         <option value="cosmetology">Козметологија / Cosmetology</option>
                                         <option value="laser_aesthetic">Ласерско Естетски Третмани / Laser Aesthetic Treatments</option>
+                                        <option value="injectable">Инјектибилни методи / Injectable Methods</option>
                                     </select>
                                     <small class="text-muted">Choose which main service category this belongs to</small>
                                 </div>
@@ -120,7 +162,7 @@ const submit = () => {
                                 </div>
                             </div>
 
-                            <div class="form-check form-switch">
+                            <div class="form-check form-switch mb-3">
                                 <input 
                                     v-model="form.is_active"
                                     type="checkbox"
@@ -131,6 +173,62 @@ const submit = () => {
                                     Active
                                 </label>
                             </div>
+                        </div>
+                    </div>
+
+                    <div class="card mb-4" v-if="extraDataKeys.length > 0 || form.parent_type === 'laser_aesthetic' || form.parent_type === 'injectable'">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Page Content Lists</h5>
+                            <button type="button" class="btn btn-sm btn-outline-primary" @click="addNewListKey">
+                                + Add List
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div v-for="key in extraDataKeys" :key="key" class="mb-4 border rounded p-3">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h6 class="mb-0 text-primary">{{ keyLabel(key) }}</h6>
+                                    <button type="button" class="btn btn-sm btn-outline-danger" @click="removeListKey(key)">
+                                        Remove List
+                                    </button>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">English</label>
+                                        <div v-for="(item, index) in (form.extra_data_en[key] || [])" :key="'en-'+index" class="input-group mb-2">
+                                            <input 
+                                                v-model="form.extra_data_en[key][index]"
+                                                type="text"
+                                                class="form-control form-control-sm"
+                                            />
+                                            <button type="button" class="btn btn-sm btn-outline-danger" @click="removeItem(key, 'en', index)">
+                                                &times;
+                                            </button>
+                                        </div>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary" @click="addItem(key, 'en')">
+                                            + Add Item (EN)
+                                        </button>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Macedonian</label>
+                                        <div v-for="(item, index) in (form.extra_data_mk[key] || [])" :key="'mk-'+index" class="input-group mb-2">
+                                            <input 
+                                                v-model="form.extra_data_mk[key][index]"
+                                                type="text"
+                                                class="form-control form-control-sm"
+                                            />
+                                            <button type="button" class="btn btn-sm btn-outline-danger" @click="removeItem(key, 'mk', index)">
+                                                &times;
+                                            </button>
+                                        </div>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary" @click="addItem(key, 'mk')">
+                                            + Add Item (MK)
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <p v-if="extraDataKeys.length === 0" class="text-muted mb-0">
+                                No content lists yet. Click "+ Add List" to create one.
+                            </p>
                         </div>
                     </div>
 

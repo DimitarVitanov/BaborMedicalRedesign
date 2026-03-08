@@ -11,6 +11,10 @@ const props = defineProps({
     categories: Array,
     pageTitle: String,
     pageSubtitle: String,
+    extraData: {
+        type: Object,
+        default: () => ({}),
+    },
 });
 
 const page = usePage();
@@ -31,29 +35,9 @@ const technologies = computed(() => {
     return props.categories.flatMap(cat => cat.items || []);
 });
 
-const treatmentAreas = computed(() => [
-    t('Пигментации и сончеви оштетувања', 'Pigmentation and sun damage'),
-    t('Васкуларни промени и црвенило', 'Vascular changes and redness'),
-    t('Нежелана влакнетост', 'Unwanted hair'),
-    t('Лузни и постакне промени', 'Scars and post-acne changes'),
-    t('Нерамна текстура и проширени пори', 'Uneven texture and enlarged pores'),
-    t('Знаци на стареење и губење на еластичност', 'Signs of aging and loss of elasticity'),
-    t('Општо подобрување на квалитетот и тонусот на кожата', 'Overall improvement of skin quality and tone'),
-]);
-
-const approachStrategies = computed(() => [
-    t('Ласер + колаген стимулатори', 'Laser + collagen stimulators'),
-    t('Ласер + RF технологии', 'Laser + RF technologies'),
-    t('Ласер + медицинска козметологија (Babor Clinical програми)', 'Laser + medical cosmetology (Babor Clinical programs)'),
-    t('Фазен третман со јасно дефиниран редослед', 'Phased treatment with clearly defined sequence'),
-]);
-
-const assessmentPoints = computed(() => [
-    t('која технологија е најсоодветна', 'which technology is most appropriate'),
-    t('колку третмани се потребни', 'how many treatments are needed'),
-    t('со каков интензитет', 'at what intensity'),
-    t('дали е потребна комбинирана стратегија', 'whether a combined strategy is needed'),
-]);
+const treatmentAreas = computed(() => props.extraData?.treatment_areas || []);
+const approachStrategies = computed(() => props.extraData?.approach_strategies || []);
+const assessmentPoints = computed(() => props.extraData?.assessment_points || []);
 </script>
 
 <template>

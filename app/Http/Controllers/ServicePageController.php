@@ -101,10 +101,13 @@ class ServicePageController extends Controller
             ? 'Прецизна технологија. Персонализирани протоколи. Долгорочни резултати.'
             : 'Precise technology. Personalized protocols. Long-term results.';
 
+        $extraData = $category ? $category->getTranslated('extra_data', $locale) : [];
+
         return Inertia::render('Services/LaserPage', [
             'categories' => $categories,
             'pageTitle' => $pageTitle,
             'pageSubtitle' => $pageSubtitle,
+            'extraData' => $extraData ?: [],
         ]);
     }
 
@@ -151,10 +154,13 @@ class ServicePageController extends Controller
             ? 'Прецизна апликација. Биолошка регенерација. Контролирана естетика.'
             : 'Precise application. Biological regeneration. Controlled aesthetics.';
 
+        $extraData = $category ? $category->getTranslated('extra_data', $locale) : [];
+
         return Inertia::render('Services/InjectablePage', [
             'categories' => $categories,
             'pageTitle' => $pageTitle,
             'pageSubtitle' => $pageSubtitle,
+            'extraData' => $extraData ?: [],
         ]);
     }
 }

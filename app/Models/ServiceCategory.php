@@ -8,6 +8,7 @@ class ServiceCategory extends Model
 {
     public const TYPE_COSMETOLOGY = 'cosmetology';
     public const TYPE_LASER_AESTHETIC = 'laser_aesthetic';
+    public const TYPE_INJECTABLE = 'injectable';
 
     public const PARENT_TYPES = [
         self::TYPE_COSMETOLOGY => [
@@ -17,6 +18,10 @@ class ServiceCategory extends Model
         self::TYPE_LASER_AESTHETIC => [
             'en' => 'Laser Aesthetic Treatments',
             'mk' => 'Ласерско Естетски Третмани',
+        ],
+        self::TYPE_INJECTABLE => [
+            'en' => 'Injectable Methods',
+            'mk' => 'Инјектибилни методи',
         ],
     ];
 
@@ -31,6 +36,8 @@ class ServiceCategory extends Model
         'display_type',
         'is_active',
         'sort_order',
+        'extra_data_en',
+        'extra_data_mk',
     ];
 
     public function getParentTypeName($locale = 'en')
@@ -45,6 +52,8 @@ class ServiceCategory extends Model
 
     protected $casts = [
         'is_active' => 'boolean',
+        'extra_data_en' => 'array',
+        'extra_data_mk' => 'array',
     ];
 
     public function items()
