@@ -38,6 +38,10 @@ class ServiceCategory extends Model
         'sort_order',
         'extra_data_en',
         'extra_data_mk',
+        'price_list_pdf_en',
+        'price_list_pdf_mk',
+        'price_list_items_en',
+        'price_list_items_mk',
     ];
 
     public function getParentTypeName($locale = 'en')
@@ -54,6 +58,8 @@ class ServiceCategory extends Model
         'is_active' => 'boolean',
         'extra_data_en' => 'array',
         'extra_data_mk' => 'array',
+        'price_list_items_en' => 'array',
+        'price_list_items_mk' => 'array',
     ];
 
     public function items()

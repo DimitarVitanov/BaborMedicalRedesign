@@ -14,7 +14,7 @@ class AdminUserSeeder extends Seeder
             ['email' => 'admin@babor.com'],
             [
                 'name' => 'Admin',
-                'password' => Hash::make('teonix_babor_password_1@!'),
+                'password' => Hash::make('password123'),
             ]
         );
     }

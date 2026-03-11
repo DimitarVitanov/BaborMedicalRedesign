@@ -120,7 +120,9 @@ Route::get('/contact', function () {
 
 Route::get('/services/cosmetology', [\App\Http\Controllers\ServicePageController::class, 'cosmetology'])->name('services.cosmetology');
 Route::get('/services/laser-aesthetic', [\App\Http\Controllers\ServicePageController::class, 'laserAesthetic'])->name('services.laser-aesthetic');
+Route::get('/services/laser-aesthetic/price-list.pdf', [\App\Http\Controllers\ServicePageController::class, 'laserPriceListPdf'])->name('services.laser.price-list-pdf');
 Route::get('/services/injectable-methods', [\App\Http\Controllers\ServicePageController::class, 'injectableMethods'])->name('services.injectable-methods');
+Route::get('/services/injectable-methods/price-list.pdf', [\App\Http\Controllers\ServicePageController::class, 'injectablePriceListPdf'])->name('services.injectable.price-list-pdf');
 
 Route::get('/services', function () {
     $locale = request()->get('lang', session('locale', 'en'));

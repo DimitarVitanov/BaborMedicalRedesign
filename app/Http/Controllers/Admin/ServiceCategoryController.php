@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\ServiceCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 
@@ -72,6 +73,12 @@ class ServiceCategoryController extends Controller
             'is_active' => 'boolean',
             'extra_data_en' => 'nullable|array',
             'extra_data_mk' => 'nullable|array',
+            'price_list_items_en' => 'nullable|array',
+            'price_list_items_en.*.name' => 'required|string',
+            'price_list_items_en.*.price' => 'required|numeric|min:0',
+            'price_list_items_mk' => 'nullable|array',
+            'price_list_items_mk.*.name' => 'required|string',
+            'price_list_items_mk.*.price' => 'required|numeric|min:0',
         ]);
 
         if (empty($validated['slug'])) {

@@ -15,6 +15,10 @@ const props = defineProps({
         type: Object,
         default: () => ({}),
     },
+    priceListPdf: {
+        type: String,
+        default: null,
+    },
 });
 
 const page = usePage();
@@ -159,6 +163,32 @@ const assessmentPoints = computed(() => props.extraData?.assessment_points || []
                         <li v-for="point in assessmentPoints" :key="point">{{ point }}</li>
                     </ul>
                     <p class="block-note">{{ t('Врз основа на тоа се креира персонализиран план.', 'Based on this, a personalized plan is created.') }}</p>
+                </div>
+
+                <!-- Pricing / PDF -->
+                <div v-if="priceListPdf" class="content-block fade-in-up pricing-block">
+                    <h2 class="block-title">{{ t('Ценовник', 'Pricing') }}</h2>
+                    <p class="block-text">{{ t('Погледнете го нашиот комплетен ценовник за инјектибилни третмани.', 'View our complete price list for injectable treatments.') }}</p>
+                    <div class="pdf-actions">
+                        <a :href="priceListPdf" target="_blank" class="pdf-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                <line x1="16" y1="17" x2="8" y2="17"/>
+                                <polyline points="10 9 9 9 8 9"/>
+                            </svg>
+                            {{ t('Отвори ценовник (PDF)', 'View Price List (PDF)') }}
+                        </a>
+                        <a :href="priceListPdf" download class="pdf-btn pdf-btn-secondary">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="7 10 12 15 17 10"/>
+                                <line x1="12" y1="15" x2="12" y2="3"/>
+                            </svg>
+                            {{ t('Преземи ценовник', 'Download Price List') }}
+                        </a>
+                    </div>
                 </div>
 
                 <!-- Closing -->
@@ -654,5 +684,62 @@ const assessmentPoints = computed(() => props.extraData?.assessment_points || []
     .closing-title {
         font-size: 1.25rem;
     }
+
+    .pdf-actions {
+        flex-direction: column;
+    }
+
+    .pdf-btn {
+        justify-content: center;
+    }
+}
+
+/* Pricing / PDF Section */
+.pricing-block {
+    border: 1px solid rgba(201, 168, 124, 0.15);
+    border-radius: 16px;
+    padding: 40px;
+    background: rgba(201, 168, 124, 0.03);
+}
+
+.pdf-actions {
+    display: flex;
+    gap: 16px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+}
+
+.pdf-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 28px;
+    background: rgba(201, 168, 124, 0.1);
+    border: 1px solid rgba(201, 168, 124, 0.3);
+    border-radius: 100px;
+    color: #c9a87c;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    letter-spacing: 0.5px;
+}
+
+.pdf-btn:hover {
+    background: rgba(201, 168, 124, 0.2);
+    border-color: rgba(201, 168, 124, 0.5);
+    color: #c9a87c;
+    transform: translateY(-2px);
+}
+
+.pdf-btn-secondary {
+    background: transparent;
+    border-color: rgba(201, 168, 124, 0.15);
+    color: rgba(201, 168, 124, 0.7);
+}
+
+.pdf-btn-secondary:hover {
+    background: rgba(201, 168, 124, 0.08);
+    color: #c9a87c;
 }
 </style>

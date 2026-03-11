@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ServiceCategory;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -102,13 +103,53 @@ class ServicePageController extends Controller
             : 'Precise technology. Personalized protocols. Long-term results.';
 
         $extraData = $category ? $category->getTranslated('extra_data', $locale) : [];
+        $priceListItems = $category ? $category->getTranslated('price_list_items', $locale) : [];
+        $hasPriceList = !empty($priceListItems);
 
         return Inertia::render('Services/LaserPage', [
             'categories' => $categories,
             'pageTitle' => $pageTitle,
             'pageSubtitle' => $pageSubtitle,
             'extraData' => $extraData ?: [],
+            'priceListPdf' => $hasPriceList ? route('services.laser.price-list-pdf', ['lang' => $locale]) : null,
         ]);
+    }
+
+    public function laserPriceListPdf(Request $request)
+    {
+        $locale = $request->get('lang', session('locale', 'en'));
+
+        $category = ServiceCategory::active()
+            ->where('slug', 'laser-treatments')
+            ->first();
+
+        if (!$category) {
+            abort(404);
+        }
+
+        $items = $category->getTranslated('price_list_items', $locale) ?: [];
+
+        if (empty($items)) {
+            abort(404);
+        }
+
+        $isMk = $locale === 'mk';
+
+        $data = [
+            'items' => $items,
+            'title' => $isMk ? 'Ценовник - Ласерски третмани' : 'Price List - Laser Treatments',
+            'serviceLabel' => $isMk ? 'Услуги' : 'Service',
+            'priceLabel' => $isMk ? 'Цена' : 'Price',
+            'currency' => 'ден.',
+            'footerNote' => $isMk ? 'Цените се во денари.' : 'Prices are in MKD denars.',
+        ];
+
+        $pdf = Pdf::loadView('pdf.price-list', $data);
+        $pdf->setPaper('a4', 'portrait');
+
+        $filename = $isMk ? 'cenovnik-laserski-tretmani.pdf' : 'price-list-laser-treatments.pdf';
+
+        return $pdf->stream($filename);
     }
 
     public function injectableMethods(Request $request)
@@ -155,12 +196,52 @@ class ServicePageController extends Controller
             : 'Precise application. Biological regeneration. Controlled aesthetics.';
 
         $extraData = $category ? $category->getTranslated('extra_data', $locale) : [];
+        $priceListItems = $category ? $category->getTranslated('price_list_items', $locale) : [];
+        $hasPriceList = !empty($priceListItems);
 
         return Inertia::render('Services/InjectablePage', [
             'categories' => $categories,
             'pageTitle' => $pageTitle,
             'pageSubtitle' => $pageSubtitle,
             'extraData' => $extraData ?: [],
+            'priceListPdf' => $hasPriceList ? route('services.injectable.price-list-pdf', ['lang' => $locale]) : null,
         ]);
+    }
+
+    public function injectablePriceListPdf(Request $request)
+    {
+        $locale = $request->get('lang', session('locale', 'en'));
+
+        $category = ServiceCategory::active()
+            ->where('slug', 'injectable-methods')
+            ->first();
+
+        if (!$category) {
+            abort(404);
+        }
+
+        $items = $category->getTranslated('price_list_items', $locale) ?: [];
+
+        if (empty($items)) {
+            abort(404);
+        }
+
+        $isMk = $locale === 'mk';
+
+        $data = [
+            'items' => $items,
+            'title' => $isMk ? 'Ценовник - Инјектибилни методи' : 'Price List - Injectable Methods',
+            'serviceLabel' => $isMk ? 'Назив услуге' : 'Service',
+            'priceLabel' => $isMk ? 'Цена' : 'Price',
+            'currency' => 'ден.',
+            'footerNote' => $isMk ? 'Цените се во денари.' : 'Prices are in MKD denars.',
+        ];
+
+        $pdf = Pdf::loadView('pdf.price-list', $data);
+        $pdf->setPaper('a4', 'portrait');
+
+        $filename = $isMk ? 'cenovnik-inektibilni-metodi.pdf' : 'price-list-injectable-methods.pdf';
+
+        return $pdf->stream($filename);
     }
 }

@@ -18,6 +18,8 @@ const form = useForm({
     is_active: props.category.is_active,
     extra_data_en: props.category.extra_data_en || {},
     extra_data_mk: props.category.extra_data_mk || {},
+    price_list_items_en: props.category.price_list_items_en || [],
+    price_list_items_mk: props.category.price_list_items_mk || [],
 });
 
 const extraDataKeys = computed(() => {
@@ -57,8 +59,22 @@ const removeListKey = (key) => {
     }
 };
 
+const addPriceItem = (lang) => {
+    const list = lang === 'en' ? form.price_list_items_en : form.price_list_items_mk;
+    list.push({ name: '', price: 0 });
+};
+
+const removePriceItem = (lang, index) => {
+    const list = lang === 'en' ? form.price_list_items_en : form.price_list_items_mk;
+    list.splice(index, 1);
+};
+
 const submit = () => {
-    form.post(route('admin.service-categories.update', props.category.id));
+    form.post(route('admin.service-categories.update', props.category.id), {
+        onError: (errors) => {
+            console.error('Validation errors:', errors);
+        },
+    });
 };
 </script>
 
@@ -229,6 +245,41 @@ const submit = () => {
                             <p v-if="extraDataKeys.length === 0" class="text-muted mb-0">
                                 No content lists yet. Click "+ Add List" to create one.
                             </p>
+                        </div>
+                    </div>
+
+                    <div class="card mb-4" v-if="form.parent_type === 'injectable' || form.parent_type === 'laser_aesthetic'">
+                        <div class="card-header">
+                            <h5 class="mb-0">Price List Items</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted small mb-3">These items are used to auto-generate the PDF price list shown on the frontend.</p>
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <label class="form-label fw-bold mb-0">Macedonian</label>
+                                        <button type="button" class="btn btn-sm btn-outline-primary" @click="addPriceItem('mk')">+ Add</button>
+                                    </div>
+                                    <div v-for="(item, index) in form.price_list_items_mk" :key="'mk-'+index" class="input-group input-group-sm mb-2">
+                                        <input v-model="item.name" type="text" class="form-control" placeholder="Service name" />
+                                        <input v-model.number="item.price" type="number" class="form-control" style="max-width: 100px;" placeholder="Price" />
+                                        <button type="button" class="btn btn-outline-danger btn-sm" @click="removePriceItem('mk', index)">&times;</button>
+                                    </div>
+                                    <p v-if="!form.price_list_items_mk.length" class="text-muted small">No items yet.</p>
+                                </div>
+                                <div class="col-md-6 mb-4">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <label class="form-label fw-bold mb-0">English</label>
+                                        <button type="button" class="btn btn-sm btn-outline-primary" @click="addPriceItem('en')">+ Add</button>
+                                    </div>
+                                    <div v-for="(item, index) in form.price_list_items_en" :key="'en-'+index" class="input-group input-group-sm mb-2">
+                                        <input v-model="item.name" type="text" class="form-control" placeholder="Service name" />
+                                        <input v-model.number="item.price" type="number" class="form-control" style="max-width: 100px;" placeholder="Price" />
+                                        <button type="button" class="btn btn-outline-danger btn-sm" @click="removePriceItem('en', index)">&times;</button>
+                                    </div>
+                                    <p v-if="!form.price_list_items_en.length" class="text-muted small">No items yet.</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
