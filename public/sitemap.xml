@@ -22,5 +22,80 @@
         <changefreq>weekly</changefreq>
         <priority>1.0</priority>
     </url>
-    
+
+    <!-- Laser Treatments / Ласерска епилација -->
+    <url>
+        <loc>https://babormedical.com/services/laser-aesthetic</loc>
+        <xhtml:link rel="alternate" hreflang="en" href="https://babormedical.com/services/laser-aesthetic?lang=en"/>
+        <xhtml:link rel="alternate" hreflang="mk" href="https://babormedical.com/services/laser-aesthetic?lang=mk"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://babormedical.com/services/laser-aesthetic"/>
+        <lastmod>2026-03-12</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.9</priority>
+    </url>
+
+    <url>
+        <loc>https://babormedical.com/services/laser-aesthetic?lang=mk</loc>
+        <xhtml:link rel="alternate" hreflang="en" href="https://babormedical.com/services/laser-aesthetic?lang=en"/>
+        <xhtml:link rel="alternate" hreflang="mk" href="https://babormedical.com/services/laser-aesthetic?lang=mk"/>
+        <lastmod>2026-03-12</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.9</priority>
+    </url>
+
+    <!-- Injectable Methods -->
+    <url>
+        <loc>https://babormedical.com/services/injectable-methods</loc>
+        <xhtml:link rel="alternate" hreflang="en" href="https://babormedical.com/services/injectable-methods?lang=en"/>
+        <xhtml:link rel="alternate" hreflang="mk" href="https://babormedical.com/services/injectable-methods?lang=mk"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://babormedical.com/services/injectable-methods"/>
+        <lastmod>2026-03-12</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <!-- Services -->
+    <url>
+        <loc>https://babormedical.com/services</loc>
+        <xhtml:link rel="alternate" hreflang="en" href="https://babormedical.com/services?lang=en"/>
+        <xhtml:link rel="alternate" hreflang="mk" href="https://babormedical.com/services?lang=mk"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://babormedical.com/services"/>
+        <lastmod>2026-03-12</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <!-- About -->
+    <url>
+        <loc>https://babormedical.com/about</loc>
+        <xhtml:link rel="alternate" hreflang="en" href="https://babormedical.com/about?lang=en"/>
+        <xhtml:link rel="alternate" hreflang="mk" href="https://babormedical.com/about?lang=mk"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://babormedical.com/about"/>
+        <lastmod>2026-03-12</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+
+    <!-- Contact -->
+    <url>
+        <loc>https://babormedical.com/contact</loc>
+        <xhtml:link rel="alternate" hreflang="en" href="https://babormedical.com/contact?lang=en"/>
+        <xhtml:link rel="alternate" hreflang="mk" href="https://babormedical.com/contact?lang=mk"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://babormedical.com/contact"/>
+        <lastmod>2026-03-12</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+
+    <!-- Lasers / Equipment -->
+    <url>
+        <loc>https://babormedical.com/lasers</loc>
+        <xhtml:link rel="alternate" hreflang="en" href="https://babormedical.com/lasers?lang=en"/>
+        <xhtml:link rel="alternate" hreflang="mk" href="https://babormedical.com/lasers?lang=mk"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://babormedical.com/lasers"/>
+        <lastmod>2026-03-12</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+
 </urlset>

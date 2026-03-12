@@ -26,8 +26,79 @@ const locale = computed(() => page.props.locale || 'en');
 
 const t = (mk, en) => locale.value === 'mk' ? mk : en;
 
-const seoTitle = computed(() => `${props.pageTitle} - Babor Medical`);
-const seoDescription = computed(() => props.pageSubtitle);
+const seoTitle = computed(() => {
+    if (locale.value === 'mk') {
+        return 'Ласерски третмани и ласерска епилација Скопје | Babor Medical';
+    }
+    return 'Laser Treatments & Laser Hair Removal Skopje | Babor Medical';
+});
+
+const seoDescription = computed(() => {
+    if (locale.value === 'mk') {
+        return 'Ласерска епилација и ласерски третмани во Скопје со Alma Soprano Titanium. Професионални ласерски третмани за лице и тело во Babor Medical.';
+    }
+    return 'Laser hair removal and laser treatments in Skopje with Alma Soprano Titanium. Professional laser treatments for face and body at Babor Medical.';
+});
+
+const seoKeywords = computed(() => {
+    if (locale.value === 'mk') {
+        return 'ласерска епилација скопје, ласерски третмани скопје, Alma Soprano Titanium, ласерска епилација цена, ласер за лице, ласерско подмладување, Babor Medical, естетска медицина скопје, ласерска епилација лице, ласерска епилација тело, Ultraformer, Accent Prime, Alma Hybrid, ласер за пигментации';
+    }
+    return 'laser hair removal skopje, laser treatments skopje, Alma Soprano Titanium, laser hair removal price, facial laser, laser rejuvenation, Babor Medical, aesthetic medicine skopje, laser hair removal face, laser hair removal body, Ultraformer, Accent Prime, Alma Hybrid, laser for pigmentation';
+});
+
+const jsonLd = computed(() => {
+    return JSON.stringify({
+        '@context': 'https://schema.org',
+        '@graph': [
+            {
+                '@type': 'MedicalBusiness',
+                '@id': 'https://babormedical.com/#organization',
+                'name': 'Babor Medical',
+                'url': 'https://babormedical.com',
+                'logo': 'https://babormedical.com/logo.webp',
+                'image': 'https://babormedical.com/logo.webp',
+                'address': {
+                    '@type': 'PostalAddress',
+                    'addressLocality': 'Skopje',
+                    'addressCountry': 'MK'
+                },
+                'priceRange': '$$',
+                'medicalSpecialty': 'Dermatology'
+            },
+            {
+                '@type': 'Service',
+                'name': locale.value === 'mk' ? 'Ласерска епилација' : 'Laser Hair Removal',
+                'description': locale.value === 'mk'
+                    ? 'Професионална ласерска епилација со Alma Soprano Titanium во Babor Medical Скопје. Безболна и трајна епилација за лице и тело.'
+                    : 'Professional laser hair removal with Alma Soprano Titanium at Babor Medical Skopje. Painless and permanent hair removal for face and body.',
+                'provider': { '@id': 'https://babormedical.com/#organization' },
+                'areaServed': { '@type': 'City', 'name': 'Skopje' },
+                'serviceType': 'Laser Hair Removal',
+                'url': 'https://babormedical.com/services/laser-aesthetic'
+            },
+            {
+                '@type': 'Service',
+                'name': locale.value === 'mk' ? 'Ласерски третмани за лице' : 'Laser Facial Treatments',
+                'description': locale.value === 'mk'
+                    ? 'Ласерски третмани за подмладување, пигментации, розацеа и лузни со Alma Q, Alma Hybrid и Ultraformer во Babor Medical Скопје.'
+                    : 'Laser treatments for rejuvenation, pigmentation, rosacea and scars with Alma Q, Alma Hybrid and Ultraformer at Babor Medical Skopje.',
+                'provider': { '@id': 'https://babormedical.com/#organization' },
+                'areaServed': { '@type': 'City', 'name': 'Skopje' },
+                'serviceType': 'Laser Skin Treatment',
+                'url': 'https://babormedical.com/services/laser-aesthetic'
+            },
+            {
+                '@type': 'WebPage',
+                'name': seoTitle.value,
+                'description': seoDescription.value,
+                'url': 'https://babormedical.com/services/laser-aesthetic',
+                'inLanguage': locale.value === 'mk' ? 'mk-MK' : 'en',
+                'isPartOf': { '@type': 'WebSite', 'url': 'https://babormedical.com' }
+            }
+        ]
+    });
+});
 
 const categoryDescription = computed(() => {
     if (!props.categories || !props.categories.length) return '';
@@ -48,11 +119,25 @@ const assessmentPoints = computed(() => props.extraData?.assessment_points || []
     <Head>
         <title>{{ seoTitle }}</title>
         <meta name="description" :content="seoDescription" />
-        <meta name="robots" content="index, follow" />
+        <meta name="keywords" :content="seoKeywords" />
+        <meta name="author" content="Babor Medical" />
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
         <meta property="og:title" :content="seoTitle" />
         <meta property="og:description" :content="seoDescription" />
         <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://babormedical.com/services/laser-aesthetic" />
         <meta property="og:image" content="/logo.webp" />
+        <meta property="og:site_name" content="Babor Medical" />
+        <meta property="og:locale" :content="locale === 'mk' ? 'mk_MK' : 'en_US'" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" :content="seoTitle" />
+        <meta name="twitter:description" :content="seoDescription" />
+        <meta name="twitter:image" content="/logo.webp" />
+        <link rel="canonical" href="https://babormedical.com/services/laser-aesthetic" />
+        <link rel="alternate" hreflang="en" href="https://babormedical.com/services/laser-aesthetic?lang=en" />
+        <link rel="alternate" hreflang="mk" href="https://babormedical.com/services/laser-aesthetic?lang=mk" />
+        <link rel="alternate" hreflang="x-default" href="https://babormedical.com/services/laser-aesthetic" />
+        <component is="script" type="application/ld+json" v-html="jsonLd" />
     </Head>
 
     <div class="laser-page">
@@ -201,6 +286,27 @@ const assessmentPoints = computed(() => props.extraData?.assessment_points || []
                     </a>
                 </div>
 
+            </div>
+        </section>
+
+        <!-- SEO Content Block -->
+        <section class="seo-content">
+            <div class="container">
+                <h2>{{ t('Ласерска епилација во Скопје – Babor Medical', 'Laser Hair Removal in Skopje – Babor Medical') }}</h2>
+                <p>{{ t('Babor Medical е водечки центар за ласерска епилација во Скопје. Со најнапредната технологија Alma Soprano Titanium нудиме безболна и ефективна ласерска епилација за лице и тело, за жени и мажи. Нашите сертифицирани специјалисти обезбедуваат персонализиран пристап за секој пациент, со јасни резултати од првиот третман.', 'Babor Medical is a leading center for laser hair removal in Skopje. With the most advanced Alma Soprano Titanium technology, we offer painless and effective laser hair removal for face and body, for women and men. Our certified specialists provide a personalized approach for each patient, with clear results from the first treatment.') }}</p>
+
+                <h3>{{ t('Зошто да изберете Babor Medical за ласерска епилација?', 'Why choose Babor Medical for laser hair removal?') }}</h3>
+                <ul>
+                    <li>{{ t('Alma Soprano Titanium – златен стандард за ласерска епилација', 'Alma Soprano Titanium – gold standard for laser hair removal') }}</li>
+                    <li>{{ t('Безболна процедура со систем за ладење', 'Painless procedure with cooling system') }}</li>
+                    <li>{{ t('Ефективна за сите типови кожа и влакна', 'Effective for all skin and hair types') }}</li>
+                    <li>{{ t('Стручен тим со повеќегодишно искуство', 'Expert team with years of experience') }}</li>
+                    <li>{{ t('Третмани за лице, тело, бикини зона и цело тело', 'Treatments for face, body, bikini area and full body') }}</li>
+                    <li>{{ t('Поволни пакет цени за ласерска епилација', 'Affordable package prices for laser hair removal') }}</li>
+                </ul>
+
+                <h3>{{ t('Ласерски третмани за подмладување и регенерација', 'Laser treatments for rejuvenation and regeneration') }}</h3>
+                <p>{{ t('Покрај ласерска епилација, во Babor Medical нудиме широк спектар на ласерски третмани за лице и тело: Alma Q за пигментации и тетоважи, Alma Hybrid за подмладување и ресурфејсинг, Ultraformer за лифтинг без операција, и Accent Prime за обликување на тело и стрии. Сите третмани се изведуваат со најсовремена опрема во Скопје.', 'In addition to laser hair removal, at Babor Medical we offer a wide range of laser treatments for face and body: Alma Q for pigmentation and tattoos, Alma Hybrid for rejuvenation and resurfacing, Ultraformer for non-surgical lifting, and Accent Prime for body contouring and stretch marks. All treatments are performed with state-of-the-art equipment in Skopje.') }}</p>
             </div>
         </section>
 
@@ -786,5 +892,58 @@ const assessmentPoints = computed(() => props.extraData?.assessment_points || []
 .pdf-btn-secondary:hover {
     background: rgba(201, 168, 124, 0.08);
     color: #c9a87c;
+}
+
+/* SEO Content Block */
+.seo-content {
+    padding: 80px 0;
+    background: #0d1117;
+    border-top: 1px solid rgba(201, 168, 124, 0.08);
+}
+
+.seo-content h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.8rem;
+    color: #c9a87c;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.seo-content h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    color: rgba(201, 168, 124, 0.85);
+    margin-top: 32px;
+    margin-bottom: 16px;
+    font-weight: 600;
+}
+
+.seo-content p {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.95rem;
+    line-height: 1.8;
+    max-width: 800px;
+}
+
+.seo-content ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.seo-content ul li {
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 0.9rem;
+    padding: 6px 0 6px 20px;
+    position: relative;
+    line-height: 1.6;
+}
+
+.seo-content ul li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: rgba(201, 168, 124, 0.6);
+    font-size: 0.8rem;
 }
 </style>
