@@ -154,6 +154,12 @@ Route::get('/lasers', function () {
     ]);
 })->name('lasers');
 
+// 301 redirects for old/incorrect laser slugs (fix Google 404s)
+Route::get('/lasers/accentprime', fn() => redirect('/lasers/alma-accent-prime', 301));
+Route::get('/lasers/alma-dermaclear', fn() => redirect('/lasers/alma-derma-clear', 301));
+Route::get('/lasers/alma-titanium', fn() => redirect('/lasers/alma-soprano-titanium', 301));
+Route::get('/lasers/almaq', fn() => redirect('/lasers/alma-q', 301));
+
 Route::get('/lasers/{equipment:slug}', function (\App\Models\Equipment $equipment) {
     $locale = session('locale', 'en');
     
