@@ -307,6 +307,12 @@ const assessmentPoints = computed(() => props.extraData?.assessment_points || []
 
                 <h3>{{ t('Ласерски третмани за подмладување и регенерација', 'Laser treatments for rejuvenation and regeneration') }}</h3>
                 <p>{{ t('Покрај ласерска епилација, во Babor Medical нудиме широк спектар на ласерски третмани за лице и тело: Alma Q за пигментации и тетоважи, Alma Hybrid за подмладување и ресурфејсинг, Ultraformer за лифтинг без операција, и Accent Prime за обликување на тело и стрии. Сите третмани се изведуваат со најсовремена опрема во Скопје.', 'In addition to laser hair removal, at Babor Medical we offer a wide range of laser treatments for face and body: Alma Q for pigmentation and tattoos, Alma Hybrid for rejuvenation and resurfacing, Ultraformer for non-surgical lifting, and Accent Prime for body contouring and stretch marks. All treatments are performed with state-of-the-art equipment in Skopje.') }}</p>
+
+                <h3>{{ t('Повеќе за Alma Soprano Titanium', 'More about Alma Soprano Titanium') }}</h3>
+                <p>
+                    {{ t('Прочитајте детално за нашиот Alma Soprano Titanium ласер – златниот стандард во ласерска епилација со три бранови должини во една сонда за безболно и трајно отстранување на влакна.', 'Read in detail about our Alma Soprano Titanium laser – the gold standard in laser hair removal with three wavelengths in one probe for painless and permanent hair removal.') }}
+                    <a href="/lasers/alma-soprano-titanium" class="seo-link">{{ t('Alma Soprano Titanium – Ласерска Епилација', 'Alma Soprano Titanium – Laser Hair Removal') }}</a>
+                </p>
             </div>
         </section>
 
@@ -945,5 +951,19 @@ const assessmentPoints = computed(() => props.extraData?.assessment_points || []
     left: 0;
     color: rgba(201, 168, 124, 0.6);
     font-size: 0.8rem;
+}
+
+.seo-content .seo-link {
+    display: inline-block;
+    margin-top: 8px;
+    color: #c9a87c;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.seo-content .seo-link:hover {
+    color: #fff;
 }
 </style>

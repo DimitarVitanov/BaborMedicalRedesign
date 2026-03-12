@@ -43,6 +43,17 @@
         <priority>0.9</priority>
     </url>
 
+    <!-- Alma Soprano Titanium / Ласерска Епилација -->
+    <url>
+        <loc>https://babormedical.com/lasers/alma-soprano-titanium</loc>
+        <xhtml:link rel="alternate" hreflang="en" href="https://babormedical.com/lasers/alma-soprano-titanium?lang=en"/>
+        <xhtml:link rel="alternate" hreflang="mk" href="https://babormedical.com/lasers/alma-soprano-titanium?lang=mk"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://babormedical.com/lasers/alma-soprano-titanium"/>
+        <lastmod>2026-03-12</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.9</priority>
+    </url>
+
     <!-- Injectable Methods -->
     <url>
         <loc>https://babormedical.com/services/injectable-methods</loc>

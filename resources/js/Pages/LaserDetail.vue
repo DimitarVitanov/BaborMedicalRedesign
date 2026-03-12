@@ -18,7 +18,73 @@ const page = usePage();
 const locale = computed(() => page.props.locale || 'en');
 
 const seoTitle = computed(() => {
+    if (props.equipment.slug === 'alma-soprano-titanium') {
+        return locale.value === 'mk'
+            ? 'Alma Soprano Titanium – Ласерска Епилација Скопје | Babor Medical'
+            : 'Alma Soprano Titanium – Laser Hair Removal Skopje | Babor Medical';
+    }
     return `${props.equipment.title} - Babor Medical`;
+});
+
+const seoDescription = computed(() => {
+    if (props.equipment.slug === 'alma-soprano-titanium') {
+        return locale.value === 'mk'
+            ? 'Alma Soprano Titanium ласер за безболна ласерска епилација во Скопје. Три бранови должини, сите типови кожа и влакна. Златен стандард во ласерско отстранување на влакна – Babor Medical.'
+            : 'Alma Soprano Titanium laser for painless laser hair removal in Skopje. Three wavelengths, all skin and hair types. Gold standard in laser hair removal – Babor Medical.';
+    }
+    return props.equipment.description;
+});
+
+const seoKeywords = computed(() => {
+    if (props.equipment.slug === 'alma-soprano-titanium') {
+        return locale.value === 'mk'
+            ? 'alma soprano titanium, ласерска епилација, ласерска епилација скопје, безболна ласерска епилација, ласер за епилација, alma laser, soprano titanium, отстранување влакна, babor medical'
+            : 'alma soprano titanium, laser hair removal, laser hair removal skopje, painless laser hair removal, laser epilation, alma laser, soprano titanium, hair removal, babor medical';
+    }
+    return `${props.equipment.title}, laser, ласер, Babor Medical, ${props.equipment.category}`;
+});
+
+const jsonLd = computed(() => {
+    const baseData = {
+        '@context': 'https://schema.org',
+        '@type': 'MedicalWebPage',
+        'name': seoTitle.value,
+        'description': seoDescription.value,
+        'url': `https://babormedical.com/lasers/${props.equipment.slug}`,
+        'publisher': {
+            '@type': 'MedicalBusiness',
+            'name': 'Babor Medical',
+            'image': 'https://babormedical.com/logo.webp',
+            'address': {
+                '@type': 'PostalAddress',
+                'addressLocality': 'Skopje',
+                'addressCountry': 'MK'
+            }
+        }
+    };
+
+    if (props.equipment.slug === 'alma-soprano-titanium') {
+        baseData['@type'] = 'MedicalWebPage';
+        baseData['about'] = {
+            '@type': 'MedicalProcedure',
+            'name': locale.value === 'mk' ? 'Ласерска епилација со Alma Soprano Titanium' : 'Laser Hair Removal with Alma Soprano Titanium',
+            'procedureType': 'https://schema.org/NoninvasiveProcedure',
+            'description': seoDescription.value,
+            'howPerformed': locale.value === 'mk'
+                ? 'Тројна бранова должина (755nm, 808nm, 1064nm) за третман на сите типови кожа и влакна'
+                : 'Triple wavelength (755nm, 808nm, 1064nm) for treatment of all skin and hair types',
+            'bodyLocation': locale.value === 'mk' ? 'Лице и тело' : 'Face and body'
+        };
+        baseData['mainEntity'] = {
+            '@type': 'Product',
+            'name': 'Alma Soprano Titanium',
+            'brand': { '@type': 'Brand', 'name': 'Alma Lasers' },
+            'description': seoDescription.value,
+            'category': locale.value === 'mk' ? 'Ласерска опрема за епилација' : 'Laser hair removal equipment'
+        };
+    }
+
+    return JSON.stringify(baseData);
 });
 
 const content = computed(() => ({
@@ -34,17 +100,21 @@ const content = computed(() => ({
 <template>
     <Head>
         <title>{{ seoTitle }}</title>
-        <meta name="description" :content="equipment.description" />
-        <meta name="keywords" :content="`${equipment.title}, ласер, laser, Babor Medical, ${equipment.category}`" />
-        <meta name="robots" content="index, follow" />
+        <meta name="description" :content="seoDescription" />
+        <meta name="keywords" :content="seoKeywords" />
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
         <meta property="og:title" :content="seoTitle" />
-        <meta property="og:description" :content="equipment.description" />
+        <meta property="og:description" :content="seoDescription" />
         <meta property="og:type" content="article" />
+        <meta property="og:url" :content="`https://babormedical.com/lasers/${equipment.slug}`" />
         <meta property="og:image" :content="equipment.image ? '/storage/' + equipment.image : '/logo.webp'" />
+        <meta property="og:site_name" content="Babor Medical" />
+        <meta property="og:locale" :content="locale === 'mk' ? 'mk_MK' : 'en_US'" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" :content="seoTitle" />
-        <meta name="twitter:description" :content="equipment.description" />
+        <meta name="twitter:description" :content="seoDescription" />
         <meta name="twitter:image" :content="equipment.image ? '/storage/' + equipment.image : '/logo.webp'" />
+        <component is="script" type="application/ld+json" v-html="jsonLd" />
         <link rel="canonical" :href="`https://babormedical.com/lasers/${equipment.slug}`" />
         <link rel="alternate" hreflang="en" :href="`https://babormedical.com/lasers/${equipment.slug}?lang=en`" />
         <link rel="alternate" hreflang="mk" :href="`https://babormedical.com/lasers/${equipment.slug}?lang=mk`" />
@@ -120,6 +190,18 @@ const content = computed(() => ({
                         class="prose-content"
                         v-html="equipment.detailed_description"
                     ></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cross-link to Laser Treatments -->
+        <section v-if="equipment.slug === 'alma-soprano-titanium'" class="cross-link-section">
+            <div class="container">
+                <div class="cross-link-card fade-in-up">
+                    <p class="cross-link-text">{{ locale === 'mk' ? 'Видете ги сите наши ласерски третмани и цени за ласерска епилација во Скопје' : 'See all our laser treatments and laser hair removal prices in Skopje' }}</p>
+                    <Link href="/services/laser-aesthetic" class="cross-link-btn">
+                        {{ locale === 'mk' ? 'Ласерски третмани и ценовник →' : 'Laser Treatments & Pricing →' }}
+                    </Link>
                 </div>
             </div>
         </section>
@@ -357,9 +439,50 @@ const content = computed(() => ({
     font-style: italic;
 }
 
+/* Cross-link Section */
+.cross-link-section {
+    padding: 60px 0 40px;
+}
+
+.cross-link-card {
+    padding: 32px 40px;
+    background: rgba(201, 168, 124, 0.08);
+    border: 1px solid rgba(201, 168, 124, 0.15);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.cross-link-text {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1rem;
+    margin: 0;
+}
+
+.cross-link-btn {
+    white-space: nowrap;
+    color: #c9a87c;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    padding: 10px 24px;
+    border: 1px solid rgba(201, 168, 124, 0.3);
+    border-radius: 24px;
+    transition: all 0.3s ease;
+}
+
+.cross-link-btn:hover {
+    background: rgba(201, 168, 124, 0.15);
+    border-color: rgba(201, 168, 124, 0.5);
+}
+
 /* CTA Section */
 .detail-cta {
-    padding: 80px 0 120px;
+    padding: 40px 0 120px;
 }
 
 .cta-card {
@@ -404,6 +527,15 @@ const content = computed(() => ({
     
     .hero-image img {
         max-height: 350px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .cross-link-card {
+        flex-direction: column;
+        text-align: center;
+        padding: 24px;
+        gap: 16px;
     }
 }
 
