@@ -9,6 +9,7 @@ class ServiceCategory extends Model
     public const TYPE_COSMETOLOGY = 'cosmetology';
     public const TYPE_LASER_AESTHETIC = 'laser_aesthetic';
     public const TYPE_INJECTABLE = 'injectable';
+    public const TYPE_BODY_TREATMENTS = 'body_treatments';
 
     public const PARENT_TYPES = [
         self::TYPE_COSMETOLOGY => [
@@ -22,6 +23,10 @@ class ServiceCategory extends Model
         self::TYPE_INJECTABLE => [
             'en' => 'Injectable Methods',
             'mk' => 'Инјектибилни методи',
+        ],
+        self::TYPE_BODY_TREATMENTS => [
+            'en' => 'Body Treatments',
+            'mk' => 'Третмани на тело',
         ],
     ];
 

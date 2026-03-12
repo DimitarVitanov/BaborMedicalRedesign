@@ -248,7 +248,7 @@ const submit = () => {
                         </div>
                     </div>
 
-                    <div class="card mb-4" v-if="form.parent_type === 'injectable' || form.parent_type === 'laser_aesthetic'">
+                    <div class="card mb-4" v-if="form.parent_type === 'injectable' || form.parent_type === 'laser_aesthetic' || form.parent_type === 'body_treatments'">
                         <div class="card-header">
                             <h5 class="mb-0">Price List Items</h5>
                         </div>

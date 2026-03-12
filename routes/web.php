@@ -123,6 +123,8 @@ Route::get('/services/laser-aesthetic', [\App\Http\Controllers\ServicePageContro
 Route::get('/services/laser-aesthetic/price-list.pdf', [\App\Http\Controllers\ServicePageController::class, 'laserPriceListPdf'])->name('services.laser.price-list-pdf');
 Route::get('/services/injectable-methods', [\App\Http\Controllers\ServicePageController::class, 'injectableMethods'])->name('services.injectable-methods');
 Route::get('/services/injectable-methods/price-list.pdf', [\App\Http\Controllers\ServicePageController::class, 'injectablePriceListPdf'])->name('services.injectable.price-list-pdf');
+Route::get('/services/body-treatments', [\App\Http\Controllers\ServicePageController::class, 'bodyTreatments'])->name('services.body-treatments');
+Route::get('/services/body-treatments/price-list.pdf', [\App\Http\Controllers\ServicePageController::class, 'bodyPriceListPdf'])->name('services.body.price-list-pdf');
 
 Route::get('/services', function () {
     $locale = request()->get('lang', session('locale', 'en'));

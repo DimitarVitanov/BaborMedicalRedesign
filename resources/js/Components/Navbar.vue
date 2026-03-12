@@ -150,6 +150,7 @@ const ctaText = computed(() => currentLocale.value === 'mk' ? 'Контакт' :
                         :style="dropdownStyle"
                         class="services-dropdown-portal"
                     >
+                        <div class="sdd-group-label">{{ currentLocale === 'mk' ? 'Лице, врат, деколте' : 'Face, Neck, Décolleté' }}</div>
                         <a href="/services/cosmetology" class="sdd-item">
                             {{ currentLocale === 'mk' ? 'Козметологија' : 'Cosmetology' }}
                         </a>
@@ -158,6 +159,11 @@ const ctaText = computed(() => currentLocale.value === 'mk' ? 'Контакт' :
                         </a>
                         <a href="/services/injectable-methods" class="sdd-item">
                             {{ currentLocale === 'mk' ? 'Инјектибилни методи' : 'Injectable Methods' }}
+                        </a>
+                        <div class="sdd-divider"></div>
+                        <div class="sdd-group-label">{{ currentLocale === 'mk' ? 'Тело' : 'Body' }}</div>
+                        <a href="/services/body-treatments" class="sdd-item">
+                            {{ currentLocale === 'mk' ? 'Третмани на тело' : 'Body Treatments' }}
                         </a>
                     </div>
                 </Teleport>
@@ -221,6 +227,7 @@ const ctaText = computed(() => currentLocale.value === 'mk' ? 'Контакт' :
                         </svg>
                     </button>
                     <div class="mobile-dropdown-menu" :class="{ open: mobileServicesOpen }">
+                        <span class="mobile-group-label">{{ currentLocale === 'mk' ? 'Лице, врат, деколте' : 'Face, Neck, Décolleté' }}</span>
                         <a href="/services/cosmetology" class="mobile-dropdown-item" @click="mobileMenuOpen = false">
                             {{ currentLocale === 'mk' ? 'Козметологија' : 'Cosmetology' }}
                         </a>
@@ -229,6 +236,10 @@ const ctaText = computed(() => currentLocale.value === 'mk' ? 'Контакт' :
                         </a>
                         <a href="/services/injectable-methods" class="mobile-dropdown-item" @click="mobileMenuOpen = false">
                             {{ currentLocale === 'mk' ? 'Инјектибилни методи' : 'Injectable Methods' }}
+                        </a>
+                        <span class="mobile-group-label mobile-group-body">{{ currentLocale === 'mk' ? 'Тело' : 'Body' }}</span>
+                        <a href="/services/body-treatments" class="mobile-dropdown-item" @click="mobileMenuOpen = false">
+                            {{ currentLocale === 'mk' ? 'Третмани на тело' : 'Body Treatments' }}
                         </a>
                     </div>
                 </div>
@@ -272,6 +283,7 @@ const ctaText = computed(() => currentLocale.value === 'mk' ? 'Контакт' :
     right: 0;
     z-index: 99999;
     padding: 12px 0;
+    padding-top: calc(12px + env(safe-area-inset-top, 0px));
     transition: all 0.3s ease;
 }
 
@@ -279,6 +291,7 @@ const ctaText = computed(() => currentLocale.value === 'mk' ? 'Контакт' :
     background: rgba(30, 45, 61, 0.95);
     backdrop-filter: blur(20px);
     padding: 12px 0;
+    padding-top: calc(12px + env(safe-area-inset-top, 0px));
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
 }
 
@@ -476,6 +489,7 @@ const ctaText = computed(() => currentLocale.value === 'mk' ? 'Контакт' :
     height: 100vh;
     background: #1e2d3d !important;
     padding: 120px 24px 40px;
+    padding-top: calc(120px + env(safe-area-inset-top, 0px));
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -558,7 +572,23 @@ const ctaText = computed(() => currentLocale.value === 'mk' ? 'Контакт' :
 }
 
 .mobile-dropdown-menu.open {
-    max-height: 300px;
+    max-height: 500px;
+}
+
+.mobile-group-label {
+    display: block;
+    padding: 12px 0 4px 12px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(201, 168, 124, 0.5);
+}
+
+.mobile-group-body {
+    margin-top: 8px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .mobile-dropdown-item {
@@ -684,9 +714,24 @@ const ctaText = computed(() => currentLocale.value === 'mk' ? 'Контакт' :
     }
 }
 
+.sdd-group-label {
+    padding: 10px 18px 4px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(201, 168, 124, 0.6);
+}
+
+.sdd-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.08);
+    margin: 6px 12px;
+}
+
 .sdd-item {
     display: block;
-    padding: 14px 18px;
+    padding: 12px 18px 12px 28px;
     color: rgba(255, 255, 255, 0.8);
     text-decoration: none;
     font-size: 0.9rem;

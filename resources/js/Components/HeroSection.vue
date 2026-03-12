@@ -547,7 +547,7 @@ onUnmounted(() => {
 
 @media (max-width: 767.98px) {
     .hero-section {
-        min-height: calc(100vh - 70px);
+        min-height: calc(100vh - 90px);
     }
 
     .hero-slide{
@@ -610,7 +610,7 @@ onUnmounted(() => {
 
 @media (max-width: 575.98px) {
     .hero-section {
-        min-height: calc(100vh - 65px);
+        min-height: calc(100vh - 85px);
     }
     
     .hero-slide {

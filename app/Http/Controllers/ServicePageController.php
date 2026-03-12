@@ -244,4 +244,97 @@ class ServicePageController extends Controller
 
         return $pdf->stream($filename);
     }
+
+    public function bodyTreatments(Request $request)
+    {
+        $locale = $request->get('lang', session('locale', 'en'));
+        session(['locale' => $locale]);
+
+        $category = ServiceCategory::active()
+            ->where('slug', 'body-treatments')
+            ->with(['activeItems'])
+            ->first();
+
+        $categories = collect();
+        if ($category) {
+            $categories = collect([[
+                'id' => $category->id,
+                'name' => $category->getTranslated('name', $locale),
+                'description' => $category->getTranslated('description', $locale),
+                'slug' => $category->slug,
+                'items' => $category->activeItems->map(function ($item) use ($locale) {
+                    return [
+                        'id' => $item->id,
+                        'name' => $item->getTranslated('name', $locale),
+                        'subtitle' => $item->getTranslated('subtitle', $locale),
+                        'description' => $item->getTranslated('description', $locale),
+                        'includes' => $item->getTranslated('includes', $locale),
+                        'indications' => $item->getTranslated('indications', $locale),
+                        'components' => $item->getTranslated('components', $locale),
+                        'effects' => $item->getTranslated('effects', $locale),
+                        'suitable_for' => $item->getTranslated('suitable_for', $locale),
+                        'note' => $item->getTranslated('note', $locale),
+                        'price' => $item->price,
+                        'price_from' => $item->price_from,
+                        'price_to' => $item->price_to,
+                        'url' => $item->url,
+                    ];
+                }),
+            ]]);
+        }
+
+        $pageTitle = $locale === 'mk' ? 'Третмани на тело' : 'Body Treatments';
+        $pageSubtitle = $locale === 'mk'
+            ? 'Апаратурна естетика за обликување и подобрување на квалитетот на кожата'
+            : 'Advanced aesthetics for body contouring and skin quality improvement';
+
+        $extraData = $category ? $category->getTranslated('extra_data', $locale) : [];
+        $priceListItems = $category ? $category->getTranslated('price_list_items', $locale) : [];
+        $hasPriceList = !empty($priceListItems);
+
+        return Inertia::render('Services/BodyTreatmentsPage', [
+            'categories' => $categories,
+            'pageTitle' => $pageTitle,
+            'pageSubtitle' => $pageSubtitle,
+            'extraData' => $extraData ?: [],
+            'priceListPdf' => $hasPriceList ? route('services.body.price-list-pdf', ['lang' => $locale]) : null,
+        ]);
+    }
+
+    public function bodyPriceListPdf(Request $request)
+    {
+        $locale = $request->get('lang', session('locale', 'en'));
+
+        $category = ServiceCategory::active()
+            ->where('slug', 'body-treatments')
+            ->first();
+
+        if (!$category) {
+            abort(404);
+        }
+
+        $items = $category->getTranslated('price_list_items', $locale) ?: [];
+
+        if (empty($items)) {
+            abort(404);
+        }
+
+        $isMk = $locale === 'mk';
+
+        $data = [
+            'items' => $items,
+            'title' => $isMk ? 'Ценовник - Третмани на тело' : 'Price List - Body Treatments',
+            'serviceLabel' => $isMk ? 'Услуга' : 'Service',
+            'priceLabel' => $isMk ? 'Цена' : 'Price',
+            'currency' => 'ден.',
+            'footerNote' => $isMk ? 'Цените се во денари.' : 'Prices are in MKD denars.',
+        ];
+
+        $pdf = Pdf::loadView('pdf.price-list', $data);
+        $pdf->setPaper('a4', 'portrait');
+
+        $filename = $isMk ? 'cenovnik-tretmani-na-telo.pdf' : 'price-list-body-treatments.pdf';
+
+        return $pdf->stream($filename);
+    }
 }

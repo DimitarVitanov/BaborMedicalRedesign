@@ -88,7 +88,9 @@
             @foreach($items as $item)
             <tr>
                 <td>{{ $item['name'] }}</td>
-                <td class="price">{{ number_format($item['price'], 0, '', '.') }} {{ $currency }}</td>
+                <td class="price">
+                    @if(!empty($item['price_prefix'])){{ $item['price_prefix'] }} @endif{{ number_format($item['price'], 0, '', '.') }}@if(!empty($item['price_to']))-{{ number_format($item['price_to'], 0, '', '.') }}@endif {{ $currency }}
+                </td>
             </tr>
             @endforeach
         </tbody>
