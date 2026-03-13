@@ -81,112 +81,9 @@ const treatments = computed(() => {
     return props.categories.flatMap(cat => cat.items || []);
 });
 
-const technologies = computed(() => [
-    {
-        name: 'Ultraformer',
-        desc: t(
-            'Високо‑интензивен фокусиран ултразвук (HIFU) кој се користи за затегнување на кожата и подобрување на контурите на телото. Технологијата делува во подлабоките слоеви на ткивото и стимулира природна продукција на колаген.',
-            'High-intensity focused ultrasound (HIFU) used for skin tightening and improving body contours. The technology works on deeper tissue layers and stimulates natural collagen production.'
-        ),
-        suitable: [
-            t('затегнување на кожа на абдомен', 'abdomen skin tightening'),
-            t('колена', 'knees'),
-            t('надлактици', 'upper arms'),
-            t('подобрување на локална опуштеност', 'improving local skin laxity'),
-        ],
-        icon: 'ultrasound',
-    },
-    {
-        name: 'Accent Prime – RF & ' + t('ултразвук', 'Ultrasound'),
-        desc: t(
-            'Комбинирана технологија која користи радиофреквенција и ултразвучна енергија за редукција на масни наслаги, подобрување на микроциркулацијата и затегнување на кожата.',
-            'Combined technology using radiofrequency and ultrasound energy for fat reduction, improving microcirculation and skin tightening.'
-        ),
-        suitable: [
-            t('подобрување на текстурата на кожа', 'skin texture improvement'),
-            t('намалување на целулит', 'cellulite reduction'),
-            t('обликување на телесни контури', 'body contour shaping'),
-        ],
-        icon: 'rf',
-    },
-    {
-        name: t('Бодипрес терапија (Balanser)', 'Body Press Therapy (Balanser)'),
-        desc: t(
-            'Апаратурна лимфна дренажа која ја стимулира циркулацијата и лимфниот систем.',
-            'Device-assisted lymphatic drainage that stimulates circulation and the lymphatic system.'
-        ),
-        suitable: [
-            t('намалување на задржување течности', 'reducing fluid retention'),
-            t('подобрување на циркулација', 'improving circulation'),
-            t('поддршка на антицелулит програми', 'support for anti-cellulite programs'),
-            t('чувство на леснотија во нозете', 'feeling of lightness in the legs'),
-        ],
-        icon: 'lymph',
-    },
-    {
-        name: t('EM Time – мускулна стимулација', 'EM Time – Muscle Stimulation'),
-        desc: t(
-            'Современа технологија за електромагнетна мускулна стимулација која активира длабоки мускулни контракции.',
-            'Modern electromagnetic muscle stimulation technology that activates deep muscle contractions.'
-        ),
-        suitable: [
-            t('зајакнување на мускулатура', 'muscle strengthening'),
-            t('подобрување на тонус', 'improving tone'),
-            t('поддршка на обликување на телото', 'body shaping support'),
-        ],
-        areas: [
-            t('абдомен', 'abdomen'),
-            t('глутеуси', 'glutes'),
-            t('бутови', 'thighs'),
-        ],
-        icon: 'muscle',
-    },
-    {
-        name: t('LaserShape – ласерска липолиза', 'LaserShape – Laser Lipolysis'),
-        desc: t(
-            'Неинвазивна технологија која користи ласерска енергија за стимулирање на метаболизмот на масните клетки и постепено намалување на локализирани масни наслаги.',
-            'Non-invasive technology using laser energy to stimulate fat cell metabolism and gradually reduce localized fat deposits.'
-        ),
-        suitable: [
-            t('абдомен', 'abdomen'),
-            t('колкови', 'hips'),
-            t('бутови', 'thighs'),
-            t('области со локализирани масни депозити', 'areas with localized fat deposits'),
-        ],
-        icon: 'laser',
-    },
-]);
-
-const programs = computed(() => [
-    {
-        name: 'Body Contour Program',
-        desc: t(
-            'Комбинација од Accent Prime, лимфна дренажа и LaserShape за обликување на телото.',
-            'Combination of Accent Prime, lymphatic drainage and LaserShape for body contouring.'
-        ),
-    },
-    {
-        name: 'Anti‑Cellulite Program',
-        desc: t(
-            'Комбинација од RF технологија и лимфна дренажа за подобрување на текстурата на кожата.',
-            'Combination of RF technology and lymphatic drainage for skin texture improvement.'
-        ),
-    },
-    {
-        name: 'Body Tightening Program',
-        desc: t(
-            'Ultraformer протокол за затегнување на кожа и подобрување на тонус.',
-            'Ultraformer protocol for skin tightening and improving tone.'
-        ),
-    },
-]);
-
-const individualPlanPoints = computed(() => [
-    t('тип на тело', 'body type'),
-    t('распределба на масно ткиво', 'fat tissue distribution'),
-    t('квалитет на кожа', 'skin quality'),
-    t('лични цели', 'personal goals'),
-]);
+const technologies = computed(() => props.extraData?.technologies || []);
+const programs = computed(() => props.extraData?.programs || []);
+const individualPlanPoints = computed(() => props.extraData?.individual_plan_points || []);
 </script>
 
 <template>
@@ -272,54 +169,34 @@ const individualPlanPoints = computed(() => [
             <div class="container">
 
                 <!-- Intro -->
-                <div class="content-block fade-in-up">
-                    <p class="intro-text">{{ t('Во нашиот естетски центар, третманите на тело се базираат на современи медицинско‑естетски технологии кои овозможуваат подобрување на контурата на телото, намалување на масни наслаги, затегнување на кожата и подобрување на циркулацијата.', 'In our aesthetic center, body treatments are based on modern medical-aesthetic technologies that enable body contour improvement, fat reduction, skin tightening and circulation improvement.') }}</p>
-                    <p class="intro-sub">{{ t('Секој третман започнува со кратка консултација, со цел да се избере најсоодветната технологија или комбинација на процедури.', 'Every treatment begins with a brief consultation to select the most appropriate technology or combination of procedures.') }}</p>
-                    <p class="intro-highlight">{{ t('Нашиот пристап е постепен и програмски – наместо еднократни третмани, препорачуваме серија процедури за стабилен и долгорочен резултат.', 'Our approach is gradual and program-based – instead of one-time treatments, we recommend a series of procedures for stable and long-term results.') }}</p>
+                <div class="content-block fade-in-up" v-if="categoryDescription">
+                    <p class="intro-text">{{ categoryDescription }}</p>
                 </div>
 
                 <!-- Technologies -->
-                <div class="content-block fade-in-up">
+                <div class="content-block fade-in-up" v-if="technologies.length">
                     <h2 class="block-title">{{ t('Технологии кои ги користиме', 'Technologies We Use') }}</h2>
                     <div class="tech-showcase">
-                        <div v-for="(tech, index) in technologies" :key="tech.name" class="tech-item fade-in-up">
+                        <div v-for="(tech, index) in technologies" :key="index" class="tech-item fade-in-up">
                             <div class="tech-header">
                                 <div class="tech-number">{{ String(index + 1).padStart(2, '0') }}</div>
-                                <h3 class="tech-name">{{ tech.name }}</h3>
-                            </div>
-                            <p class="tech-desc">{{ tech.desc }}</p>
-                            <div class="tech-details">
-                                <div class="detail-group">
-                                    <span class="detail-label">{{ tech.areas ? t('Зони:', 'Areas:') : t('Погодно за:', 'Suitable for:') }}</span>
-                                    <ul class="detail-list">
-                                        <li v-for="item in (tech.areas || tech.suitable)" :key="item">{{ item }}</li>
-                                    </ul>
-                                </div>
-                                <div v-if="tech.areas" class="detail-group">
-                                    <span class="detail-label">{{ t('Ефекти:', 'Effects:') }}</span>
-                                    <ul class="detail-list">
-                                        <li v-for="item in tech.suitable" :key="item">{{ item }}</li>
-                                    </ul>
-                                </div>
+                                <h3 class="tech-name">{{ tech }}</h3>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Programs -->
-                <div class="content-block fade-in-up">
+                <div class="content-block fade-in-up" v-if="programs.length">
                     <h2 class="block-title">{{ t('Програмски пристап', 'Program Approach') }}</h2>
                     <p class="block-text">{{ t('Најдобри резултати се постигнуваат кога третманите се комбинираат во структуриран план.', 'Best results are achieved when treatments are combined in a structured plan.') }}</p>
-                    <div class="programs-grid">
-                        <div v-for="program in programs" :key="program.name" class="program-card fade-in-up">
-                            <h3 class="program-name">{{ program.name }}</h3>
-                            <p class="program-desc">{{ program.desc }}</p>
-                        </div>
-                    </div>
+                    <ul class="styled-list">
+                        <li v-for="(program, index) in programs" :key="index">{{ program }}</li>
+                    </ul>
                 </div>
 
                 <!-- Individual Plan -->
-                <div class="content-block fade-in-up">
+                <div class="content-block fade-in-up" v-if="individualPlanPoints.length">
                     <h2 class="block-title">{{ t('Индивидуален план', 'Individual Plan') }}</h2>
                     <p class="block-text">{{ t('Секој клиент добива индивидуална препорака според:', 'Every client receives an individual recommendation based on:') }}</p>
                     <ul class="styled-list">
