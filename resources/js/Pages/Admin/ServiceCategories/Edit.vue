@@ -192,7 +192,7 @@ const submit = () => {
                         </div>
                     </div>
 
-                    <div class="card mb-4" v-if="extraDataKeys.length > 0 || form.parent_type === 'laser_aesthetic' || form.parent_type === 'injectable'">
+                    <div class="card mb-4" v-if="extraDataKeys.length > 0 || form.parent_type === 'laser_aesthetic' || form.parent_type === 'injectable' || form.parent_type === 'body_treatments'">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h5 class="mb-0">Page Content Lists</h5>
                             <button type="button" class="btn btn-sm btn-outline-primary" @click="addNewListKey">
