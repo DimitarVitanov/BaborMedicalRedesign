@@ -32,10 +32,42 @@ const keyLabel = (key) => {
     return key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 };
 
+const isObjectList = (key) => {
+    const enItems = form.extra_data_en?.[key] || [];
+    const mkItems = form.extra_data_mk?.[key] || [];
+    const allItems = [...enItems, ...mkItems];
+    return allItems.length > 0 && typeof allItems[0] === 'object' && allItems[0] !== null;
+};
+
+const getObjectKeys = (key) => {
+    const enItems = form.extra_data_en?.[key] || [];
+    const mkItems = form.extra_data_mk?.[key] || [];
+    const allItems = [...enItems, ...mkItems];
+    const keys = new Set();
+    allItems.forEach(item => {
+        if (typeof item === 'object' && item !== null) {
+            Object.keys(item).forEach(k => keys.add(k));
+        }
+    });
+    return [...keys];
+};
+
+const fieldLabel = (field) => {
+    return field.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+};
+
 const addItem = (key, lang) => {
     const data = lang === 'en' ? form.extra_data_en : form.extra_data_mk;
     if (!data[key]) data[key] = [];
-    data[key].push('');
+    if (isObjectList(key)) {
+        const template = {};
+        getObjectKeys(key).forEach(k => {
+            template[k] = Array.isArray((data[key][0] || {})[k]) ? [] : '';
+        });
+        data[key].push(template);
+    } else {
+        data[key].push('');
+    }
 };
 
 const removeItem = (key, lang, index) => {
@@ -207,7 +239,7 @@ const submit = () => {
                                         Remove List
                                     </button>
                                 </div>
-                                <div class="row">
+                                <div class="row" v-if="!isObjectList(key)">
                                     <div class="col-md-6">
                                         <label class="form-label fw-bold">English</label>
                                         <div v-for="(item, index) in (form.extra_data_en[key] || [])" :key="'en-'+index" class="input-group mb-2">
@@ -239,6 +271,80 @@ const submit = () => {
                                         <button type="button" class="btn btn-sm btn-outline-secondary" @click="addItem(key, 'mk')">
                                             + Add Item (MK)
                                         </button>
+                                    </div>
+                                </div>
+
+                                <!-- Rich object list editor -->
+                                <div v-else>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-bold">English</label>
+                                            <div v-for="(item, index) in (form.extra_data_en[key] || [])" :key="'en-obj-'+index" class="border rounded p-2 mb-2 bg-light">
+                                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                                    <small class="text-muted fw-bold">#{{ index + 1 }}</small>
+                                                    <button type="button" class="btn btn-sm btn-outline-danger py-0 px-1" @click="removeItem(key, 'en', index)">&times;</button>
+                                                </div>
+                                                <div v-for="field in getObjectKeys(key)" :key="'en-'+index+'-'+field" class="mb-1">
+                                                    <label class="form-label mb-0" style="font-size: 0.75rem;">{{ fieldLabel(field) }}</label>
+                                                    <textarea
+                                                        v-if="field === 'desc'"
+                                                        v-model="form.extra_data_en[key][index][field]"
+                                                        class="form-control form-control-sm"
+                                                        rows="2"
+                                                    ></textarea>
+                                                    <input
+                                                        v-else-if="!Array.isArray(item[field])"
+                                                        v-model="form.extra_data_en[key][index][field]"
+                                                        type="text"
+                                                        class="form-control form-control-sm"
+                                                    />
+                                                    <div v-else>
+                                                        <div v-for="(subItem, si) in item[field]" :key="'en-sub-'+si" class="input-group input-group-sm mb-1">
+                                                            <input v-model="form.extra_data_en[key][index][field][si]" type="text" class="form-control form-control-sm" />
+                                                            <button type="button" class="btn btn-sm btn-outline-danger py-0 px-1" @click="item[field].splice(si, 1)">&times;</button>
+                                                        </div>
+                                                        <button type="button" class="btn btn-sm btn-outline-secondary py-0" @click="item[field].push('')">+ Add</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary" @click="addItem(key, 'en')">
+                                                + Add Item (EN)
+                                            </button>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-bold">Macedonian</label>
+                                            <div v-for="(item, index) in (form.extra_data_mk[key] || [])" :key="'mk-obj-'+index" class="border rounded p-2 mb-2 bg-light">
+                                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                                    <small class="text-muted fw-bold">#{{ index + 1 }}</small>
+                                                    <button type="button" class="btn btn-sm btn-outline-danger py-0 px-1" @click="removeItem(key, 'mk', index)">&times;</button>
+                                                </div>
+                                                <div v-for="field in getObjectKeys(key)" :key="'mk-'+index+'-'+field" class="mb-1">
+                                                    <label class="form-label mb-0" style="font-size: 0.75rem;">{{ fieldLabel(field) }}</label>
+                                                    <textarea
+                                                        v-if="field === 'desc'"
+                                                        v-model="form.extra_data_mk[key][index][field]"
+                                                        class="form-control form-control-sm"
+                                                        rows="2"
+                                                    ></textarea>
+                                                    <input
+                                                        v-else-if="!Array.isArray(item[field])"
+                                                        v-model="form.extra_data_mk[key][index][field]"
+                                                        type="text"
+                                                        class="form-control form-control-sm"
+                                                    />
+                                                    <div v-else>
+                                                        <div v-for="(subItem, si) in item[field]" :key="'mk-sub-'+si" class="input-group input-group-sm mb-1">
+                                                            <input v-model="form.extra_data_mk[key][index][field][si]" type="text" class="form-control form-control-sm" />
+                                                            <button type="button" class="btn btn-sm btn-outline-danger py-0 px-1" @click="item[field].splice(si, 1)">&times;</button>
+                                                        </div>
+                                                        <button type="button" class="btn btn-sm btn-outline-secondary py-0" @click="item[field].push('')">+ Add</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary" @click="addItem(key, 'mk')">
+                                                + Add Item (MK)
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
