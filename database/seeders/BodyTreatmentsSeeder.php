@@ -33,16 +33,37 @@ class BodyTreatmentsSeeder extends Seeder
 
         $extraDataMk = [
             'technologies' => [
-                'Ultraformer – Високо‑интензивен фокусиран ултразвук (HIFU) кој се користи за затегнување на кожата и подобрување на контурите на телото.',
-                'Accent Prime – RF & ултразвук – Комбинирана технологија која користи радиофреквенција и ултразвучна енергија за редукција на масни наслаги и затегнување на кожата.',
-                'Бодипрес терапија (Balanser) – Апаратурна лимфна дренажа која ја стимулира циркулацијата и лимфниот систем.',
-                'EM Time – мускулна стимулација – Современа технологија за електромагнетна мускулна стимулација која активира длабоки мускулни контракции.',
-                'LaserShape – ласерска липолиза – Неинвазивна технологија која користи ласерска енергија за стимулирање на метаболизмот на масните клетки.',
+                [
+                    'name' => 'Ultraformer',
+                    'desc' => 'Високо‑интензивен фокусиран ултразвук (HIFU) кој се користи за затегнување на кожата и подобрување на контурите на телото. Технологијата делува во подлабоките слоеви на ткивото и стимулира природна продукција на колаген.',
+                    'suitable_for' => ['затегнување на кожа на абдомен', 'колена', 'надлактици', 'подобрување на локална опуштеност'],
+                ],
+                [
+                    'name' => 'Accent Prime – RF & ултразвук',
+                    'desc' => 'Комбинирана технологија која користи радиофреквенција и ултразвучна енергија за редукција на масни наслаги, подобрување на микроциркулацијата и затегнување на кожата.',
+                    'suitable_for' => ['подобрување на текстурата на кожа', 'намалување на целулит', 'обликување на телесни контури'],
+                ],
+                [
+                    'name' => 'Бодипрес терапија (Balanser)',
+                    'desc' => 'Апаратурна лимфна дренажа која ја стимулира циркулацијата и лимфниот систем.',
+                    'suitable_for' => ['намалување на задржување течности', 'подобрување на циркулација', 'поддршка на антицелулит програми', 'чувство на леснотија во нозете'],
+                ],
+                [
+                    'name' => 'EM Time – мускулна стимулација',
+                    'desc' => 'Современа технологија за електромагнетна мускулна стимулација која активира длабоки мускулни контракции.',
+                    'suitable_for' => ['зајакнување на мускулатура', 'подобрување на тонус', 'поддршка на обликување на телото'],
+                    'areas' => ['абдомен', 'глутеуси', 'бутови'],
+                ],
+                [
+                    'name' => 'LaserShape – ласерска липолиза',
+                    'desc' => 'Неинвазивна технологија која користи ласерска енергија за стимулирање на метаболизмот на масните клетки и постепено намалување на локализирани масни наслаги.',
+                    'suitable_for' => ['абдомен', 'колкови', 'бутови', 'области со локализирани масни депозити'],
+                ],
             ],
             'programs' => [
-                'Body Contour Program – Комбинација од Accent Prime, лимфна дренажа и LaserShape за обликување на телото.',
-                'Anti‑Cellulite Program – Комбинација од RF технологија и лимфна дренажа за подобрување на текстурата на кожата.',
-                'Body Tightening Program – Ultraformer протокол за затегнување на кожа и подобрување на тонус.',
+                ['name' => 'Body Contour Program', 'desc' => 'Комбинација од Accent Prime, лимфна дренажа и LaserShape за обликување на телото.'],
+                ['name' => 'Anti‑Cellulite Program', 'desc' => 'Комбинација од RF технологија и лимфна дренажа за подобрување на текстурата на кожата.'],
+                ['name' => 'Body Tightening Program', 'desc' => 'Ultraformer протокол за затегнување на кожа и подобрување на тонус.'],
             ],
             'individual_plan_points' => [
                 'тип на тело',
@@ -54,16 +75,37 @@ class BodyTreatmentsSeeder extends Seeder
 
         $extraDataEn = [
             'technologies' => [
-                'Ultraformer – High-intensity focused ultrasound (HIFU) used for skin tightening and improving body contours.',
-                'Accent Prime – RF & Ultrasound – Combined technology using radiofrequency and ultrasound energy for fat reduction and skin tightening.',
-                'Body Press Therapy (Balanser) – Device-assisted lymphatic drainage that stimulates circulation and the lymphatic system.',
-                'EM Time – Muscle Stimulation – Modern electromagnetic muscle stimulation technology that activates deep muscle contractions.',
-                'LaserShape – Laser Lipolysis – Non-invasive technology using laser energy to stimulate fat cell metabolism.',
+                [
+                    'name' => 'Ultraformer',
+                    'desc' => 'High-intensity focused ultrasound (HIFU) used for skin tightening and improving body contours. The technology works on deeper tissue layers and stimulates natural collagen production.',
+                    'suitable_for' => ['abdomen skin tightening', 'knees', 'upper arms', 'improving local skin laxity'],
+                ],
+                [
+                    'name' => 'Accent Prime – RF & Ultrasound',
+                    'desc' => 'Combined technology using radiofrequency and ultrasound energy for fat reduction, improving microcirculation and skin tightening.',
+                    'suitable_for' => ['skin texture improvement', 'cellulite reduction', 'body contour shaping'],
+                ],
+                [
+                    'name' => 'Body Press Therapy (Balanser)',
+                    'desc' => 'Device-assisted lymphatic drainage that stimulates circulation and the lymphatic system.',
+                    'suitable_for' => ['reducing fluid retention', 'improving circulation', 'support for anti-cellulite programs', 'feeling of lightness in the legs'],
+                ],
+                [
+                    'name' => 'EM Time – Muscle Stimulation',
+                    'desc' => 'Modern electromagnetic muscle stimulation technology that activates deep muscle contractions.',
+                    'suitable_for' => ['muscle strengthening', 'improving tone', 'body shaping support'],
+                    'areas' => ['abdomen', 'glutes', 'thighs'],
+                ],
+                [
+                    'name' => 'LaserShape – Laser Lipolysis',
+                    'desc' => 'Non-invasive technology using laser energy to stimulate fat cell metabolism and gradually reduce localized fat deposits.',
+                    'suitable_for' => ['abdomen', 'hips', 'thighs', 'areas with localized fat deposits'],
+                ],
             ],
             'programs' => [
-                'Body Contour Program – Combination of Accent Prime, lymphatic drainage and LaserShape for body contouring.',
-                'Anti‑Cellulite Program – Combination of RF technology and lymphatic drainage for skin texture improvement.',
-                'Body Tightening Program – Ultraformer protocol for skin tightening and improving tone.',
+                ['name' => 'Body Contour Program', 'desc' => 'Combination of Accent Prime, lymphatic drainage and LaserShape for body contouring.'],
+                ['name' => 'Anti‑Cellulite Program', 'desc' => 'Combination of RF technology and lymphatic drainage for skin texture improvement.'],
+                ['name' => 'Body Tightening Program', 'desc' => 'Ultraformer protocol for skin tightening and improving tone.'],
             ],
             'individual_plan_points' => [
                 'body type',

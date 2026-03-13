@@ -180,7 +180,22 @@ const individualPlanPoints = computed(() => props.extraData?.individual_plan_poi
                         <div v-for="(tech, index) in technologies" :key="index" class="tech-item fade-in-up">
                             <div class="tech-header">
                                 <div class="tech-number">{{ String(index + 1).padStart(2, '0') }}</div>
-                                <h3 class="tech-name">{{ tech }}</h3>
+                                <h3 class="tech-name">{{ tech.name || tech }}</h3>
+                            </div>
+                            <p v-if="tech.desc" class="tech-desc">{{ tech.desc }}</p>
+                            <div v-if="tech.suitable_for || tech.areas" class="tech-details">
+                                <div class="detail-group">
+                                    <span class="detail-label">{{ tech.areas ? t('Зони:', 'Areas:') : t('Погодно за:', 'Suitable for:') }}</span>
+                                    <ul class="detail-list">
+                                        <li v-for="item in (tech.areas || tech.suitable_for)" :key="item">{{ item }}</li>
+                                    </ul>
+                                </div>
+                                <div v-if="tech.areas && tech.suitable_for" class="detail-group">
+                                    <span class="detail-label">{{ t('Ефекти:', 'Effects:') }}</span>
+                                    <ul class="detail-list">
+                                        <li v-for="item in tech.suitable_for" :key="item">{{ item }}</li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -190,9 +205,12 @@ const individualPlanPoints = computed(() => props.extraData?.individual_plan_poi
                 <div class="content-block fade-in-up" v-if="programs.length">
                     <h2 class="block-title">{{ t('Програмски пристап', 'Program Approach') }}</h2>
                     <p class="block-text">{{ t('Најдобри резултати се постигнуваат кога третманите се комбинираат во структуриран план.', 'Best results are achieved when treatments are combined in a structured plan.') }}</p>
-                    <ul class="styled-list">
-                        <li v-for="(program, index) in programs" :key="index">{{ program }}</li>
-                    </ul>
+                    <div class="programs-grid">
+                        <div v-for="(program, index) in programs" :key="index" class="program-card fade-in-up">
+                            <h3 class="program-name">{{ program.name || program }}</h3>
+                            <p v-if="program.desc" class="program-desc">{{ program.desc }}</p>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Individual Plan -->
