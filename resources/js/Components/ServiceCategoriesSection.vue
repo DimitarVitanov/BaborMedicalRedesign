@@ -25,7 +25,7 @@ const categories = computed(() => [
         id: 'laser',
         name: locale.value === 'mk' ? 'Ласерско Естетски Третмани' : 'Laser Aesthetic Treatments',
         description: locale.value === 'mk' 
-            ? 'Напредни ласерски третмани за подмладување, депилација и корекција на кожата'
+            ? 'Напредни ласерски третмани за подмладување, ласерска епилација и корекција на кожата'
             : 'Advanced laser treatments for rejuvenation, hair removal and skin correction',
         href: '/services/laser-aesthetic',
         icon: 'laser',
@@ -38,6 +38,15 @@ const categories = computed(() => [
             : 'Precise application, biological regeneration and controlled aesthetics',
         href: '/services/injectable-methods',
         icon: 'injectable',
+    },
+    {
+        id: 'body',
+        name: locale.value === 'mk' ? 'Третмани на тело' : 'Body Treatments',
+        description: locale.value === 'mk' 
+            ? 'Апаратурна естетика за обликување на телото и подобрување на квалитетот на кожата'
+            : 'Advanced aesthetics for body contouring and skin quality improvement',
+        href: '/services/body-treatments',
+        icon: 'body',
     },
 ]);
 
@@ -71,10 +80,15 @@ const ctaLabel = computed(() => locale.value === 'mk' ? 'Погледни Тре
                             <path d="M4 12H20"/>
                             <circle cx="12" cy="12" r="10"/>
                         </svg>
-                        <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <svg v-else-if="category.icon === 'injectable'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                             <path d="M12 2v6M12 16v6"/>
                             <path d="M9 8h6l-1 8H10L9 8z"/>
                             <circle cx="12" cy="5" r="1"/>
+                        </svg>
+                        <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M12 2a4 4 0 0 1 4 4c0 2-1.5 3.5-4 5-2.5-1.5-4-3-4-5a4 4 0 0 1 4-4z"/>
+                            <path d="M8 11c-2 1-4 3-4 6 0 2.5 3 5 8 5s8-2.5 8-5c0-3-2-5-4-6"/>
+                            <path d="M9 16h6"/>
                         </svg>
                     </div>
                     <h3 class="box-title">{{ category.name }}</h3>
@@ -131,12 +145,9 @@ const ctaLabel = computed(() => locale.value === 'mk' ? 'Погледни Тре
 }
 
 .categories-grid {
-    display: flex;
-    gap: 32px;
-}
-
-.categories-grid .category-box {
-    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
 }
 
 .category-box {
@@ -262,14 +273,9 @@ const ctaLabel = computed(() => locale.value === 'mk' ? 'Погледни Тре
     }
     
     .categories-grid {
-        flex-direction: column;
-        align-items: center;
-    }
-    
-    .categories-grid .category-box {
-        width: 100%;
+        grid-template-columns: 1fr;
         max-width: 400px;
-        flex: none;
+        margin: 0 auto;
     }
     
     .category-box {

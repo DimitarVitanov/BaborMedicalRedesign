@@ -46,6 +46,15 @@ const categories = computed(() => [
         href: '/services/injectable-methods',
         icon: 'injectable',
     },
+    {
+        id: 'body',
+        name: locale.value === 'mk' ? 'Третмани на тело' : 'Body Treatments',
+        description: locale.value === 'mk' 
+            ? 'Апаратурна естетика за обликување на телото и подобрување на квалитетот на кожата'
+            : 'Advanced aesthetics for body contouring and skin quality improvement',
+        href: '/services/body-treatments',
+        icon: 'body',
+    },
 ]);
 </script>
 
@@ -100,10 +109,15 @@ const categories = computed(() => [
                                 <path d="M4 12H20"/>
                                 <circle cx="12" cy="12" r="10"/>
                             </svg>
-                            <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <svg v-else-if="category.icon === 'injectable'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                                 <path d="M12 2v6M12 16v6"/>
                                 <path d="M9 8h6l-1 8H10L9 8z"/>
                                 <circle cx="12" cy="5" r="1"/>
+                            </svg>
+                            <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M12 2a4 4 0 0 1 4 4c0 2-1.5 3.5-4 5-2.5-1.5-4-3-4-5a4 4 0 0 1 4-4z"/>
+                                <path d="M8 11c-2 1-4 3-4 6 0 2.5 3 5 8 5s8-2.5 8-5c0-3-2-5-4-6"/>
+                                <path d="M9 16h6"/>
                             </svg>
                         </div>
                         <h2 class="box-title">{{ category.name }}</h2>
@@ -251,12 +265,9 @@ const categories = computed(() => [
 }
 
 .categories-grid {
-    display: flex;
-    gap: 32px;
-}
-
-.categories-grid .category-box {
-    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
 }
 
 .category-box {
@@ -265,10 +276,10 @@ const categories = computed(() => [
     flex-direction: column;
     align-items: center;
     text-align: center;
-    padding: 60px 40px;
+    padding: 50px 36px;
     background: rgba(255, 255, 255, 0.02);
     border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 32px;
+    border-radius: 28px;
     text-decoration: none;
     transition: all 0.4s ease;
     overflow: hidden;
@@ -285,8 +296,8 @@ const categories = computed(() => [
 
 .category-box:hover {
     border-color: rgba(201, 168, 124, 0.3);
-    transform: translateY(-8px);
-    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+    transform: translateY(-6px);
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.25);
 }
 
 .category-box:hover::before {
@@ -296,36 +307,36 @@ const categories = computed(() => [
 .box-icon {
     position: relative;
     z-index: 1;
-    width: 100px;
-    height: 100px;
+    width: 88px;
+    height: 88px;
     display: flex;
     align-items: center;
     justify-content: center;
     background: linear-gradient(135deg, rgba(201, 168, 124, 0.15), rgba(201, 168, 124, 0.05));
     border: 1px solid rgba(201, 168, 124, 0.2);
     border-radius: 50%;
-    margin-bottom: 32px;
+    margin-bottom: 28px;
     transition: all 0.4s ease;
 }
 
 .category-box:hover .box-icon {
-    transform: scale(1.1);
+    transform: scale(1.08);
     background: linear-gradient(135deg, rgba(201, 168, 124, 0.25), rgba(201, 168, 124, 0.1));
 }
 
 .box-icon svg {
-    width: 44px;
-    height: 44px;
+    width: 40px;
+    height: 40px;
     color: #c9a87c;
 }
 
 .box-title {
     position: relative;
     z-index: 1;
-    font-size: 1.75rem;
+    font-size: 1.5rem;
     font-weight: 700;
     color: #fff;
-    margin: 0 0 16px;
+    margin: 0 0 14px;
     transition: color 0.3s ease;
 }
 
@@ -336,11 +347,11 @@ const categories = computed(() => [
 .box-description {
     position: relative;
     z-index: 1;
-    font-size: 1rem;
+    font-size: 0.95rem;
     color: rgba(255, 255, 255, 0.5);
     line-height: 1.7;
-    margin: 0 0 32px;
-    max-width: 300px;
+    margin: 0 0 28px;
+    max-width: 280px;
 }
 
 .box-cta {
@@ -349,14 +360,15 @@ const categories = computed(() => [
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 14px 28px;
+    padding: 12px 24px;
     background: rgba(201, 168, 124, 0.1);
     border: 1px solid rgba(201, 168, 124, 0.2);
     border-radius: 100px;
     color: #c9a87c;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 600;
     transition: all 0.3s ease;
+    margin-top: auto;
 }
 
 .category-box:hover .box-cta {
@@ -456,16 +468,6 @@ const categories = computed(() => [
 
 /* Responsive */
 @media (max-width: 991.98px) {
-    .categories-grid {
-        flex-direction: column;
-        align-items: center;
-    }
-    
-    .categories-grid .category-box {
-        width: 100%;
-        max-width: 400px;
-        flex: none;
-    }
     
     .cta-card {
         flex-direction: column;
@@ -475,6 +477,12 @@ const categories = computed(() => [
 }
 
 @media (max-width: 575.98px) {
+    .categories-grid {
+        grid-template-columns: 1fr;
+        max-width: 400px;
+        margin: 0 auto;
+    }
+    
     .services-hero {
         padding: 140px 0 60px;
     }

@@ -60,7 +60,27 @@
         <xhtml:link rel="alternate" hreflang="en" href="https://babormedical.com/services/body-treatments?lang=en"/>
         <xhtml:link rel="alternate" hreflang="mk" href="https://babormedical.com/services/body-treatments?lang=mk"/>
         <xhtml:link rel="alternate" hreflang="x-default" href="https://babormedical.com/services/body-treatments"/>
-        <lastmod>2026-03-12</lastmod>
+        <lastmod>2026-03-14</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <url>
+        <loc>https://babormedical.com/services/body-treatments?lang=mk</loc>
+        <xhtml:link rel="alternate" hreflang="en" href="https://babormedical.com/services/body-treatments?lang=en"/>
+        <xhtml:link rel="alternate" hreflang="mk" href="https://babormedical.com/services/body-treatments?lang=mk"/>
+        <lastmod>2026-03-14</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <!-- Cosmetology / Козметологија -->
+    <url>
+        <loc>https://babormedical.com/services/cosmetology</loc>
+        <xhtml:link rel="alternate" hreflang="en" href="https://babormedical.com/services/cosmetology?lang=en"/>
+        <xhtml:link rel="alternate" hreflang="mk" href="https://babormedical.com/services/cosmetology?lang=mk"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://babormedical.com/services/cosmetology"/>
+        <lastmod>2026-03-14</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
