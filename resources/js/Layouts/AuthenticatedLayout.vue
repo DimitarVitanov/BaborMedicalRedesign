@@ -34,6 +34,7 @@ const navigation = [
     { name: 'Locations', href: 'admin.locations.index', icon: 'locations' },
     { name: 'Newsletter', href: 'admin.newsletter.index', icon: 'newsletter' },
     { name: 'Messages', href: 'admin.contact-messages.index', icon: 'messages' },
+    { name: 'Search Console', href: 'admin.search-console.index', icon: 'analytics' },
     { name: 'Settings', href: 'admin.settings.index', icon: 'settings' },
 ];
 

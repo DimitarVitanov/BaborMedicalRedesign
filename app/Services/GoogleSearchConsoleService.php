@@ -89,4 +89,65 @@ class GoogleSearchConsoleService
             'position' => round($row->getPosition(), 1),
         ];
     }
+
+    /**
+     * Get daily time-series data (clicks, impressions per day)
+     */
+    public function getDailyTimeSeries($startDate, $endDate)
+    {
+        $request = new SearchAnalyticsQueryRequest();
+        $request->setStartDate($startDate);
+        $request->setEndDate($endDate);
+        $request->setDimensions(['date']);
+        $request->setRowLimit(500);
+
+        $response = $this->service->searchanalytics->query($this->siteUrl, $request);
+        $rows = $response->getRows() ?? [];
+
+        return collect($rows)->map(function ($row) {
+            return [
+                'date' => $row->getKeys()[0],
+                'clicks' => $row->getClicks(),
+                'impressions' => $row->getImpressions(),
+                'ctr' => round($row->getCtr() * 100, 2),
+                'position' => round($row->getPosition(), 1),
+            ];
+        })->sortBy('date')->values()->toArray();
+    }
+
+    /**
+     * Get daily time-series data for a specific page
+     */
+    public function getPageDailyTimeSeries($startDate, $endDate, $pageUrl)
+    {
+        $request = new SearchAnalyticsQueryRequest();
+        $request->setStartDate($startDate);
+        $request->setEndDate($endDate);
+        $request->setDimensions(['date']);
+        $request->setRowLimit(500);
+        $request->setDimensionFilterGroups([
+            [
+                'filters' => [
+                    [
+                        'dimension' => 'page',
+                        'operator' => 'contains',
+                        'expression' => $pageUrl,
+                    ],
+                ],
+            ],
+        ]);
+
+        $response = $this->service->searchanalytics->query($this->siteUrl, $request);
+        $rows = $response->getRows() ?? [];
+
+        return collect($rows)->map(function ($row) {
+            return [
+                'date' => $row->getKeys()[0],
+                'clicks' => $row->getClicks(),
+                'impressions' => $row->getImpressions(),
+                'ctr' => round($row->getCtr() * 100, 2),
+                'position' => round($row->getPosition(), 1),
+            ];
+        })->sortBy('date')->values()->toArray();
+    }
 }

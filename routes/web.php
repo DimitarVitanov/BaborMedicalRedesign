@@ -310,6 +310,8 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('locations/{location}/edit', [\App\Http\Controllers\Admin\LocationController::class, 'edit'])->name('locations.edit');
     Route::post('locations/{location}', [\App\Http\Controllers\Admin\LocationController::class, 'update'])->name('locations.update');
     Route::delete('locations/{location}', [\App\Http\Controllers\Admin\LocationController::class, 'destroy'])->name('locations.destroy');
+    
+    Route::get('search-console', [\App\Http\Controllers\Admin\SearchConsoleController::class, 'index'])->name('search-console.index');
 });
 
 require __DIR__.'/auth.php';
