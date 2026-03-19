@@ -6,7 +6,7 @@ Disallow: /login
 Disallow: /register
 
 # Sitemaps
-Sitemap: https://babormedical.mk/sitemap.xml
+Sitemap: https://babormedical.com/sitemap.xml
 
 # Crawl-delay
 Crawl-delay: 1
