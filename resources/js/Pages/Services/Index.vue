@@ -60,8 +60,26 @@ const categories = computed(() => [
 
 <template>
     <Head>
-        <title>{{ locale === 'mk' ? 'Услуги - Babor Medical' : 'Services - Babor Medical' }}</title>
-        <meta name="description" :content="content.subtitle" />
+        <title>{{ locale === 'mk' ? 'Услуги – Ласерски третмани, Козметологија, Инјектибилни методи | Babor Medical' : 'Services – Laser Treatments, Cosmetology, Injectable Methods | Babor Medical' }}</title>
+        <meta name="description" :content="locale === 'mk' ? 'Професионални естетски услуги во Babor Medical Скопје: ласерски третмани, козметологија, инјектибилни методи и третмани на тело.' : 'Professional aesthetic services at Babor Medical Skopje: laser treatments, cosmetology, injectable methods and body treatments.'" />
+        <meta name="keywords" :content="locale === 'mk' ? 'услуги скопје, естетски третмани, ласерски третмани скопје, козметологија, инјектибилни методи, третмани на тело, Babor Medical' : 'services skopje, aesthetic treatments, laser treatments skopje, cosmetology, injectable methods, body treatments, Babor Medical'" />
+        <meta name="author" content="Babor Medical" />
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+        <meta property="og:title" :content="locale === 'mk' ? 'Услуги – Babor Medical Скопје' : 'Services – Babor Medical Skopje'" />
+        <meta property="og:description" :content="locale === 'mk' ? 'Професионални естетски услуги во Babor Medical Скопје.' : 'Professional aesthetic services at Babor Medical Skopje.'" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://babormedical.com/services" />
+        <meta property="og:image" content="https://babormedical.com/logo.webp" />
+        <meta property="og:site_name" content="Babor Medical" />
+        <meta property="og:locale" :content="locale === 'mk' ? 'mk_MK' : 'en_US'" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" :content="locale === 'mk' ? 'Услуги – Babor Medical' : 'Services – Babor Medical'" />
+        <meta name="twitter:description" :content="locale === 'mk' ? 'Професионални естетски услуги во Babor Medical Скопје.' : 'Professional aesthetic services at Babor Medical Skopje.'" />
+        <meta name="twitter:image" content="https://babormedical.com/logo.webp" />
+        <link rel="canonical" href="https://babormedical.com/services" />
+        <link rel="alternate" hreflang="en" href="https://babormedical.com/services?lang=en" />
+        <link rel="alternate" hreflang="mk" href="https://babormedical.com/services?lang=mk" />
+        <link rel="alternate" hreflang="x-default" href="https://babormedical.com/services" />
     </Head>
 
     <div class="services-page">

@@ -26,8 +26,65 @@ const locale = computed(() => page.props.locale || 'en');
 
 const t = (mk, en) => locale.value === 'mk' ? mk : en;
 
-const seoTitle = computed(() => `${props.pageTitle} - Babor Medical`);
-const seoDescription = computed(() => props.pageSubtitle);
+const seoTitle = computed(() => {
+    if (locale.value === 'mk') {
+        return 'Инјектибилни методи Скопје – Филери, Ботокс, Биостимулација | Babor Medical';
+    }
+    return 'Injectable Methods Skopje – Fillers, Botox, Biostimulation | Babor Medical';
+});
+
+const seoDescription = computed(() => {
+    if (locale.value === 'mk') {
+        return 'Инјектибилни третмани во Babor Medical Скопје: филери, ботокс, биостимулација, мезотерапија. Прецизна апликација и персонализирани протоколи.';
+    }
+    return 'Injectable treatments at Babor Medical Skopje: fillers, botox, biostimulation, mesotherapy. Precise application and personalized protocols.';
+});
+
+const seoKeywords = computed(() => {
+    if (locale.value === 'mk') {
+        return 'инјектибилни методи скопје, филери скопје, ботокс скопје, биостимулација, мезотерапија, хијалуронски филери, Babor Medical, естетска медицина скопје';
+    }
+    return 'injectable methods skopje, fillers skopje, botox skopje, biostimulation, mesotherapy, hyaluronic fillers, Babor Medical, aesthetic medicine skopje';
+});
+
+const jsonLd = computed(() => {
+    return JSON.stringify({
+        '@context': 'https://schema.org',
+        '@graph': [
+            {
+                '@type': 'MedicalBusiness',
+                '@id': 'https://babormedical.com/#organization',
+                'name': 'Babor Medical',
+                'url': 'https://babormedical.com',
+                'logo': 'https://babormedical.com/logo.webp',
+                'address': {
+                    '@type': 'PostalAddress',
+                    'addressLocality': 'Skopje',
+                    'addressCountry': 'MK'
+                },
+                'priceRange': '$$',
+                'medicalSpecialty': 'Dermatology'
+            },
+            {
+                '@type': 'Service',
+                'name': locale.value === 'mk' ? 'Инјектибилни методи' : 'Injectable Methods',
+                'description': seoDescription.value,
+                'provider': { '@id': 'https://babormedical.com/#organization' },
+                'areaServed': { '@type': 'City', 'name': 'Skopje' },
+                'serviceType': 'Injectable Aesthetics',
+                'url': 'https://babormedical.com/services/injectable-methods'
+            },
+            {
+                '@type': 'WebPage',
+                'name': seoTitle.value,
+                'description': seoDescription.value,
+                'url': 'https://babormedical.com/services/injectable-methods',
+                'inLanguage': locale.value === 'mk' ? 'mk-MK' : 'en',
+                'isPartOf': { '@type': 'WebSite', 'url': 'https://babormedical.com' }
+            }
+        ]
+    });
+});
 
 const categoryDescription = computed(() => {
     if (!props.categories || !props.categories.length) return '';
@@ -48,11 +105,25 @@ const assessmentPoints = computed(() => props.extraData?.assessment_points || []
     <Head>
         <title>{{ seoTitle }}</title>
         <meta name="description" :content="seoDescription" />
-        <meta name="robots" content="index, follow" />
+        <meta name="keywords" :content="seoKeywords" />
+        <meta name="author" content="Babor Medical" />
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
         <meta property="og:title" :content="seoTitle" />
         <meta property="og:description" :content="seoDescription" />
         <meta property="og:type" content="website" />
-        <meta property="og:image" content="/logo.webp" />
+        <meta property="og:url" content="https://babormedical.com/services/injectable-methods" />
+        <meta property="og:image" content="https://babormedical.com/logo.webp" />
+        <meta property="og:site_name" content="Babor Medical" />
+        <meta property="og:locale" :content="locale === 'mk' ? 'mk_MK' : 'en_US'" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" :content="seoTitle" />
+        <meta name="twitter:description" :content="seoDescription" />
+        <meta name="twitter:image" content="https://babormedical.com/logo.webp" />
+        <link rel="canonical" href="https://babormedical.com/services/injectable-methods" />
+        <link rel="alternate" hreflang="en" href="https://babormedical.com/services/injectable-methods?lang=en" />
+        <link rel="alternate" hreflang="mk" href="https://babormedical.com/services/injectable-methods?lang=mk" />
+        <link rel="alternate" hreflang="x-default" href="https://babormedical.com/services/injectable-methods" />
+        <component is="script" type="application/ld+json" v-html="jsonLd" />
     </Head>
 
     <div class="injectable-page">

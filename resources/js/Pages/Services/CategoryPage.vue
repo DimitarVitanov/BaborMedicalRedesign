@@ -17,8 +17,65 @@ const props = defineProps({
 const page = usePage();
 const locale = computed(() => page.props.locale || 'en');
 
-const seoTitle = computed(() => `${props.pageTitle} - Babor Medical`);
-const seoDescription = computed(() => props.pageSubtitle);
+const seoTitle = computed(() => {
+    if (locale.value === 'mk') {
+        return 'Козметологија и BABOR третмани Скопје | Babor Medical';
+    }
+    return 'Cosmetology & BABOR Treatments Skopje | Babor Medical';
+});
+
+const seoDescription = computed(() => {
+    if (locale.value === 'mk') {
+        return 'Професионални козметолошки третмани и BABOR протоколи во Babor Medical Скопје. Структуриран пристап кон здравјето и квалитетот на кожата.';
+    }
+    return 'Professional cosmetology treatments and BABOR protocols at Babor Medical Skopje. A structured approach to skin health and quality.';
+});
+
+const seoKeywords = computed(() => {
+    if (locale.value === 'mk') {
+        return 'козметологија скопје, BABOR третмани, третмани за лице скопје, нега на кожа, Babor Medical, естетска козметика скопје, професионални третмани за лице, козметички третмани';
+    }
+    return 'cosmetology skopje, BABOR treatments, facial treatments skopje, skin care, Babor Medical, aesthetic cosmetology skopje, professional facial treatments, cosmetic treatments';
+});
+
+const jsonLd = computed(() => {
+    return JSON.stringify({
+        '@context': 'https://schema.org',
+        '@graph': [
+            {
+                '@type': 'MedicalBusiness',
+                '@id': 'https://babormedical.com/#organization',
+                'name': 'Babor Medical',
+                'url': 'https://babormedical.com',
+                'logo': 'https://babormedical.com/logo.webp',
+                'address': {
+                    '@type': 'PostalAddress',
+                    'addressLocality': 'Skopje',
+                    'addressCountry': 'MK'
+                },
+                'priceRange': '$$',
+                'medicalSpecialty': 'Dermatology'
+            },
+            {
+                '@type': 'Service',
+                'name': locale.value === 'mk' ? 'Козметолошки третмани' : 'Cosmetology Treatments',
+                'description': seoDescription.value,
+                'provider': { '@id': 'https://babormedical.com/#organization' },
+                'areaServed': { '@type': 'City', 'name': 'Skopje' },
+                'serviceType': 'Cosmetology',
+                'url': 'https://babormedical.com/services/cosmetology'
+            },
+            {
+                '@type': 'WebPage',
+                'name': seoTitle.value,
+                'description': seoDescription.value,
+                'url': 'https://babormedical.com/services/cosmetology',
+                'inLanguage': locale.value === 'mk' ? 'mk-MK' : 'en',
+                'isPartOf': { '@type': 'WebSite', 'url': 'https://babormedical.com' }
+            }
+        ]
+    });
+});
 
 const content = computed(() => ({
     badge: locale.value === 'mk' ? 'ПРЕМИУМ ТРЕТМАНИ' : 'PREMIUM TREATMENTS',
@@ -64,11 +121,25 @@ const formatPrice = (item) => {
     <Head>
         <title>{{ seoTitle }}</title>
         <meta name="description" :content="seoDescription" />
-        <meta name="robots" content="index, follow" />
+        <meta name="keywords" :content="seoKeywords" />
+        <meta name="author" content="Babor Medical" />
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
         <meta property="og:title" :content="seoTitle" />
         <meta property="og:description" :content="seoDescription" />
         <meta property="og:type" content="website" />
-        <meta property="og:image" content="/logo.webp" />
+        <meta property="og:url" content="https://babormedical.com/services/cosmetology" />
+        <meta property="og:image" content="https://babormedical.com/logo.webp" />
+        <meta property="og:site_name" content="Babor Medical" />
+        <meta property="og:locale" :content="locale === 'mk' ? 'mk_MK' : 'en_US'" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" :content="seoTitle" />
+        <meta name="twitter:description" :content="seoDescription" />
+        <meta name="twitter:image" content="https://babormedical.com/logo.webp" />
+        <link rel="canonical" href="https://babormedical.com/services/cosmetology" />
+        <link rel="alternate" hreflang="en" href="https://babormedical.com/services/cosmetology?lang=en" />
+        <link rel="alternate" hreflang="mk" href="https://babormedical.com/services/cosmetology?lang=mk" />
+        <link rel="alternate" hreflang="x-default" href="https://babormedical.com/services/cosmetology" />
+        <component is="script" type="application/ld+json" v-html="jsonLd" />
     </Head>
 
     <div class="services-page">
