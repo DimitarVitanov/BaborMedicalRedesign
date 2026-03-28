@@ -87,6 +87,17 @@
                 0%, 100% { opacity: 1; transform: scale(1); }
                 50% { opacity: 0.7; transform: scale(0.95); }
             }
+            /* Hide SSR-rendered mobile menu/dropdown before Vue styles load */
+            .mobile-menu {
+                opacity: 0;
+                visibility: hidden;
+                pointer-events: none;
+            }
+            .services-dropdown-portal {
+                opacity: 0;
+                visibility: hidden;
+                pointer-events: none;
+            }
         </style>
 
         <!-- Scripts -->
