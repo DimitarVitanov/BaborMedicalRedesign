@@ -6,6 +6,7 @@ use App\Models\Location;
 use App\Models\Setting;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
+use Tighten\Ziggy\Ziggy;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -58,6 +59,10 @@ class HandleInertiaRequests extends Middleware
                 ];
             }),
             'sharedSocialLinks' => fn () => Setting::byGroup('social')->get()->pluck('value_en', 'key'),
+            'ziggy' => fn () => [
+                ...(new Ziggy)->toArray(),
+                'location' => $request->url(),
+            ],
         ];
     }
 }

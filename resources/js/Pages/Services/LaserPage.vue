@@ -290,29 +290,37 @@ const assessmentPoints = computed(() => props.extraData?.assessment_points || []
         </section>
 
         <!-- SEO Content Block -->
-        <section class="seo-content">
+        <section class="laser-content seo-section">
             <div class="container">
-                <h2>{{ t('Ласерска епилација во Скопје – Babor Medical', 'Laser Hair Removal in Skopje – Babor Medical') }}</h2>
-                <p>{{ t('Babor Medical е водечки центар за ласерска епилација во Скопје. Со најнапредната технологија Alma Soprano Titanium нудиме безболна и ефективна ласерска епилација за лице и тело, за жени и мажи. Нашите сертифицирани специјалисти обезбедуваат персонализиран пристап за секој пациент, со јасни резултати од првиот третман.', 'Babor Medical is a leading center for laser hair removal in Skopje. With the most advanced Alma Soprano Titanium technology, we offer painless and effective laser hair removal for face and body, for women and men. Our certified specialists provide a personalized approach for each patient, with clear results from the first treatment.') }}</p>
+                <div class="content-block fade-in-up">
+                    <h2 class="block-title">{{ t('Ласерска епилација во Скопје – Babor Medical', 'Laser Hair Removal in Skopje – Babor Medical') }}</h2>
+                    <p class="block-text">{{ t('Babor Medical е водечки центар за ласерска епилација во Скопје. Со најнапредната технологија Alma Soprano Titanium нудиме безболна и ефективна ласерска епилација за лице и тело, за жени и мажи. Нашите сертифицирани специјалисти обезбедуваат персонализиран пристап за секој пациент, со јасни резултати од првиот третман.', 'Babor Medical is a leading center for laser hair removal in Skopje. With the most advanced Alma Soprano Titanium technology, we offer painless and effective laser hair removal for face and body, for women and men. Our certified specialists provide a personalized approach for each patient, with clear results from the first treatment.') }}</p>
+                </div>
 
-                <h3>{{ t('Зошто да изберете Babor Medical за ласерска епилација?', 'Why choose Babor Medical for laser hair removal?') }}</h3>
-                <ul>
-                    <li>{{ t('Alma Soprano Titanium – златен стандард за ласерска епилација', 'Alma Soprano Titanium – gold standard for laser hair removal') }}</li>
-                    <li>{{ t('Безболна процедура со систем за ладење', 'Painless procedure with cooling system') }}</li>
-                    <li>{{ t('Ефективна за сите типови кожа и влакна', 'Effective for all skin and hair types') }}</li>
-                    <li>{{ t('Стручен тим со повеќегодишно искуство', 'Expert team with years of experience') }}</li>
-                    <li>{{ t('Третмани за лице, тело, бикини зона и цело тело', 'Treatments for face, body, bikini area and full body') }}</li>
-                    <li>{{ t('Поволни пакет цени за ласерска епилација', 'Affordable package prices for laser hair removal') }}</li>
-                </ul>
+                <div class="content-block fade-in-up">
+                    <h2 class="block-title">{{ t('Зошто да изберете Babor Medical за ласерска епилација?', 'Why choose Babor Medical for laser hair removal?') }}</h2>
+                    <ul class="styled-list">
+                        <li>{{ t('Alma Soprano Titanium – златен стандард за ласерска епилација', 'Alma Soprano Titanium – gold standard for laser hair removal') }}</li>
+                        <li>{{ t('Безболна процедура со систем за ладење', 'Painless procedure with cooling system') }}</li>
+                        <li>{{ t('Ефективна за сите типови кожа и влакна', 'Effective for all skin and hair types') }}</li>
+                        <li>{{ t('Стручен тим со повеќегодишно искуство', 'Expert team with years of experience') }}</li>
+                        <li>{{ t('Третмани за лице, тело, бикини зона и цело тело', 'Treatments for face, body, bikini area and full body') }}</li>
+                        <li>{{ t('Поволни пакет цени за ласерска епилација', 'Affordable package prices for laser hair removal') }}</li>
+                    </ul>
+                </div>
 
-                <h3>{{ t('Ласерски третмани за подмладување и регенерација', 'Laser treatments for rejuvenation and regeneration') }}</h3>
-                <p>{{ t('Покрај ласерска епилација, во Babor Medical нудиме широк спектар на ласерски третмани за лице и тело: Alma Q за пигментации и тетоважи, Alma Hybrid за подмладување и ресурфејсинг, Ultraformer за лифтинг без операција, и Accent Prime за обликување на тело и стрии. Сите третмани се изведуваат со најсовремена опрема во Скопје.', 'In addition to laser hair removal, at Babor Medical we offer a wide range of laser treatments for face and body: Alma Q for pigmentation and tattoos, Alma Hybrid for rejuvenation and resurfacing, Ultraformer for non-surgical lifting, and Accent Prime for body contouring and stretch marks. All treatments are performed with state-of-the-art equipment in Skopje.') }}</p>
+                <div class="content-block fade-in-up">
+                    <h2 class="block-title">{{ t('Ласерски третмани за подмладување и регенерација', 'Laser treatments for rejuvenation and regeneration') }}</h2>
+                    <p class="block-text">{{ t('Покрај ласерска епилација, во Babor Medical нудиме широк спектар на ласерски третмани за лице и тело: Alma Q за пигментации и тетоважи, Alma Hybrid за подмладување и ресурфејсинг, Ultraformer за лифтинг без операција, и Accent Prime за обликување на тело и стрии. Сите третмани се изведуваат со најсовремена опрема во Скопје.', 'In addition to laser hair removal, at Babor Medical we offer a wide range of laser treatments for face and body: Alma Q for pigmentation and tattoos, Alma Hybrid for rejuvenation and resurfacing, Ultraformer for non-surgical lifting, and Accent Prime for body contouring and stretch marks. All treatments are performed with state-of-the-art equipment in Skopje.') }}</p>
+                </div>
 
-                <h3>{{ t('Повеќе за Alma Soprano Titanium', 'More about Alma Soprano Titanium') }}</h3>
-                <p>
-                    {{ t('Прочитајте детално за нашиот Alma Soprano Titanium ласер – златниот стандард во ласерска епилација со три бранови должини во една сонда за безболно и трајно отстранување на влакна.', 'Read in detail about our Alma Soprano Titanium laser – the gold standard in laser hair removal with three wavelengths in one probe for painless and permanent hair removal.') }}
+                <div class="content-block fade-in-up">
+                    <h2 class="block-title">{{ t('Повеќе за Alma Soprano Titanium', 'More about Alma Soprano Titanium') }}</h2>
+                    <p class="block-text">
+                        {{ t('Прочитајте детално за нашиот Alma Soprano Titanium ласер – златниот стандард во ласерска епилација со три бранови должини во една сонда за безболно и трајно отстранување на влакна.', 'Read in detail about our Alma Soprano Titanium laser – the gold standard in laser hair removal with three wavelengths in one probe for painless and permanent hair removal.') }}
+                    </p>
                     <a href="/lasers/alma-soprano-titanium" class="seo-link">{{ t('Alma Soprano Titanium – Ласерска Епилација', 'Alma Soprano Titanium – Laser Hair Removal') }}</a>
-                </p>
+                </div>
             </div>
         </section>
 
@@ -900,70 +908,24 @@ const assessmentPoints = computed(() => props.extraData?.assessment_points || []
     color: #c9a87c;
 }
 
-/* SEO Content Block */
-.seo-content {
-    padding: 80px 0;
-    background: #0d1117;
-    border-top: 1px solid rgba(201, 168, 124, 0.08);
+/* SEO Content Section */
+.seo-section {
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-.seo-content h2 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.8rem;
+.seo-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 12px;
     color: #c9a87c;
-    margin-bottom: 20px;
-    font-weight: 600;
-}
-
-.seo-content h3 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.3rem;
-    color: rgba(201, 168, 124, 0.85);
-    margin-top: 32px;
-    margin-bottom: 16px;
-    font-weight: 600;
-}
-
-.seo-content p {
-    color: rgba(255, 255, 255, 0.6);
+    text-decoration: none;
     font-size: 0.95rem;
-    line-height: 1.8;
-    max-width: 800px;
-}
-
-.seo-content ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.seo-content ul li {
-    color: rgba(255, 255, 255, 0.55);
-    font-size: 0.9rem;
-    padding: 6px 0 6px 20px;
-    position: relative;
-    line-height: 1.6;
-}
-
-.seo-content ul li::before {
-    content: '✓';
-    position: absolute;
-    left: 0;
-    color: rgba(201, 168, 124, 0.6);
-    font-size: 0.8rem;
-}
-
-.seo-content .seo-link {
-    display: inline-block;
-    margin-top: 8px;
-    color: #c9a87c;
-    text-decoration: underline;
-    text-underline-offset: 3px;
     font-weight: 500;
     transition: color 0.3s ease;
 }
 
-.seo-content .seo-link:hover {
+.seo-link:hover {
     color: #fff;
 }
 </style>

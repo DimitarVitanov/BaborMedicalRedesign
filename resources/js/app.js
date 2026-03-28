@@ -9,20 +9,22 @@ import Lenis from 'lenis';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
-// Initialize Lenis smooth scroll
-const lenis = new Lenis({
-    duration: 1.2,
-    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-    orientation: 'vertical',
-    smoothWheel: true,
-});
+// Initialize Lenis smooth scroll (client-side only)
+if (typeof window !== 'undefined') {
+    const lenis = new Lenis({
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        orientation: 'vertical',
+        smoothWheel: true,
+    });
 
-function raf(time) {
-    lenis.raf(time);
+    function raf(time) {
+        lenis.raf(time);
+        requestAnimationFrame(raf);
+    }
+
     requestAnimationFrame(raf);
 }
-
-requestAnimationFrame(raf);
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
