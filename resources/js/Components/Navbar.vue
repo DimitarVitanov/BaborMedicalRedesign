@@ -39,6 +39,7 @@ watch(isScrolled, () => {
 });
 
 const closeDropdownOutside = (e) => {
+    if (typeof document === 'undefined') return;
     if (triggerRef.value && triggerRef.value.contains(e.target)) return;
     const dd = document.getElementById('services-dropdown');
     if (dd && dd.contains(e.target)) return;
@@ -46,12 +47,16 @@ const closeDropdownOutside = (e) => {
 };
 
 const switchLanguage = (lang) => {
-    window.location.href = `${window.location.pathname}?lang=${lang}`;
+    if (typeof window !== 'undefined') {
+        window.location.href = `${window.location.pathname}?lang=${lang}`;
+    }
 };
 
 const toggleMobileMenu = () => {
     mobileMenuOpen.value = !mobileMenuOpen.value;
-    document.body.style.overflow = mobileMenuOpen.value ? 'hidden' : '';
+    if (typeof document !== 'undefined') {
+        document.body.style.overflow = mobileMenuOpen.value ? 'hidden' : '';
+    }
 };
 
 const toggleMobileServices = () => {
@@ -59,18 +64,28 @@ const toggleMobileServices = () => {
 };
 
 const handleScroll = () => {
-    isScrolled.value = window.scrollY > 50;
+    if (typeof window !== 'undefined') {
+        isScrolled.value = window.scrollY > 50;
+    }
 };
 
 onMounted(() => {
-    window.addEventListener('scroll', handleScroll);
-    document.addEventListener('click', closeDropdownOutside);
-    handleScroll();
+    if (typeof window !== 'undefined') {
+        window.addEventListener('scroll', handleScroll);
+        handleScroll();
+    }
+    if (typeof document !== 'undefined') {
+        document.addEventListener('click', closeDropdownOutside);
+    }
 });
 
 onUnmounted(() => {
-    window.removeEventListener('scroll', handleScroll);
-    document.removeEventListener('click', closeDropdownOutside);
+    if (typeof window !== 'undefined') {
+        window.removeEventListener('scroll', handleScroll);
+    }
+    if (typeof document !== 'undefined') {
+        document.removeEventListener('click', closeDropdownOutside);
+    }
 });
 
 const navLinks = computed(() => [

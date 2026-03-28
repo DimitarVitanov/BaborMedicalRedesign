@@ -24,12 +24,12 @@ watch(
     () => props.show,
     () => {
         if (props.show) {
-            document.body.style.overflow = 'hidden';
+            if (typeof document !== 'undefined') document.body.style.overflow = 'hidden';
             showSlot.value = true;
 
             dialog.value?.showModal();
         } else {
-            document.body.style.overflow = '';
+            if (typeof document !== 'undefined') document.body.style.overflow = '';
 
             setTimeout(() => {
                 dialog.value?.close();
@@ -55,12 +55,15 @@ const closeOnEscape = (e) => {
     }
 };
 
-onMounted(() => document.addEventListener('keydown', closeOnEscape));
+onMounted(() => {
+    if (typeof document !== 'undefined') document.addEventListener('keydown', closeOnEscape);
+});
 
 onUnmounted(() => {
-    document.removeEventListener('keydown', closeOnEscape);
-
-    document.body.style.overflow = '';
+    if (typeof document !== 'undefined') {
+        document.removeEventListener('keydown', closeOnEscape);
+        document.body.style.overflow = '';
+    }
 });
 
 const maxWidthClass = computed(() => {
