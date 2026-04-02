@@ -70,15 +70,18 @@ watch(isScrolled, () => {
 
 const closeDropdownOutside = (e) => {
     if (typeof document === 'undefined') return;
-    if (triggerRef.value && triggerRef.value.contains(e.target)) return;
-    const dd = document.getElementById('services-dropdown');
-    if (dd && dd.contains(e.target)) return;
-    servicesDropdownOpen.value = false;
 
-    if (priceListTriggerRef.value && priceListTriggerRef.value.contains(e.target)) return;
-    const pldd = document.getElementById('pricelist-dropdown');
-    if (pldd && pldd.contains(e.target)) return;
-    priceListDropdownOpen.value = false;
+    const clickedServicesTrigger = triggerRef.value && triggerRef.value.contains(e.target);
+    const clickedServicesDropdown = document.getElementById('services-dropdown')?.contains(e.target);
+    if (!clickedServicesTrigger && !clickedServicesDropdown) {
+        servicesDropdownOpen.value = false;
+    }
+
+    const clickedPriceListTrigger = priceListTriggerRef.value && priceListTriggerRef.value.contains(e.target);
+    const clickedPriceListDropdown = document.getElementById('pricelist-dropdown')?.contains(e.target);
+    if (!clickedPriceListTrigger && !clickedPriceListDropdown) {
+        priceListDropdownOpen.value = false;
+    }
 };
 
 const switchLanguage = (lang) => {
