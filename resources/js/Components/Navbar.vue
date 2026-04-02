@@ -7,9 +7,13 @@ const currentLocale = computed(() => page.props.locale || 'en');
 const mobileMenuOpen = ref(false);
 const isScrolled = ref(false);
 const servicesDropdownOpen = ref(false);
+const priceListDropdownOpen = ref(false);
 const mobileServicesOpen = ref(false);
+const mobilePriceListOpen = ref(false);
 const triggerRef = ref(null);
+const priceListTriggerRef = ref(null);
 const dropdownStyle = ref({});
+const priceListDropdownStyle = ref({});
 
 const positionDropdown = () => {
     if (triggerRef.value) {
@@ -24,17 +28,43 @@ const positionDropdown = () => {
     }
 };
 
+const positionPriceListDropdown = () => {
+    if (priceListTriggerRef.value) {
+        const rect = priceListTriggerRef.value.getBoundingClientRect();
+        priceListDropdownStyle.value = {
+            position: 'fixed',
+            top: `${rect.bottom + 8}px`,
+            left: `${rect.left + rect.width / 2}px`,
+            transform: 'translateX(-50%)',
+            zIndex: '999999',
+        };
+    }
+};
+
 const toggleServicesDropdown = (e) => {
     e.preventDefault();
     servicesDropdownOpen.value = !servicesDropdownOpen.value;
+    priceListDropdownOpen.value = false;
     if (servicesDropdownOpen.value) {
         nextTick(positionDropdown);
+    }
+};
+
+const togglePriceListDropdown = (e) => {
+    e.preventDefault();
+    priceListDropdownOpen.value = !priceListDropdownOpen.value;
+    servicesDropdownOpen.value = false;
+    if (priceListDropdownOpen.value) {
+        nextTick(positionPriceListDropdown);
     }
 };
 
 watch(isScrolled, () => {
     if (servicesDropdownOpen.value) {
         positionDropdown();
+    }
+    if (priceListDropdownOpen.value) {
+        positionPriceListDropdown();
     }
 });
 
@@ -44,6 +74,11 @@ const closeDropdownOutside = (e) => {
     const dd = document.getElementById('services-dropdown');
     if (dd && dd.contains(e.target)) return;
     servicesDropdownOpen.value = false;
+
+    if (priceListTriggerRef.value && priceListTriggerRef.value.contains(e.target)) return;
+    const pldd = document.getElementById('pricelist-dropdown');
+    if (pldd && pldd.contains(e.target)) return;
+    priceListDropdownOpen.value = false;
 };
 
 const switchLanguage = (lang) => {
@@ -61,6 +96,10 @@ const toggleMobileMenu = () => {
 
 const toggleMobileServices = () => {
     mobileServicesOpen.value = !mobileServicesOpen.value;
+};
+
+const toggleMobilePriceList = () => {
+    mobilePriceListOpen.value = !mobilePriceListOpen.value;
 };
 
 const handleScroll = () => {
@@ -109,6 +148,7 @@ const servicesDropdownItems = computed(() => [
 ]);
 
 const ctaText = computed(() => currentLocale.value === 'mk' ? 'Контакт' : 'Contact');
+const priceListLabel = computed(() => currentLocale.value === 'mk' ? 'Ценовник' : 'Price List');
 </script>
 
 <template>
@@ -143,6 +183,18 @@ const ctaText = computed(() => currentLocale.value === 'mk' ? 'Контакт' :
                     </a>
                     
                     <a 
+                        ref="priceListTriggerRef"
+                        href="#" 
+                        class="nav-link dropdown-trigger"
+                        @click="togglePriceListDropdown"
+                    >
+                        {{ priceListLabel }}
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" :class="{ rotated: priceListDropdownOpen }">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </a>
+
+                    <a 
                         v-for="link in navLinks.slice(3)" 
                         :key="link.name" 
                         :href="link.href"
@@ -157,7 +209,7 @@ const ctaText = computed(() => currentLocale.value === 'mk' ? 'Контакт' :
                     <img src="/logo.webp" alt="Babor Medical" />
                 </a>
 
-                <!-- Teleported dropdown -->
+                <!-- Teleported dropdowns -->
                 <Teleport to="body">
                     <div 
                         v-show="servicesDropdownOpen"
@@ -179,6 +231,29 @@ const ctaText = computed(() => currentLocale.value === 'mk' ? 'Контакт' :
                         <div class="sdd-group-label">{{ currentLocale === 'mk' ? 'Тело' : 'Body' }}</div>
                         <a href="/services/body-treatments" class="sdd-item">
                             {{ currentLocale === 'mk' ? 'Третмани на тело' : 'Body Treatments' }}
+                        </a>
+                    </div>
+                </Teleport>
+
+                <Teleport to="body">
+                    <div 
+                        v-show="priceListDropdownOpen"
+                        id="pricelist-dropdown"
+                        :style="priceListDropdownStyle"
+                        class="services-dropdown-portal"
+                    >
+                        <div class="sdd-group-label">{{ currentLocale === 'mk' ? 'Ценовници по категорија' : 'Price Lists by Category' }}</div>
+                        <a href="/services/laser-aesthetic/price-list.pdf" target="_blank" class="sdd-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="sdd-item-icon"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                            {{ currentLocale === 'mk' ? 'Ласерска Естетика' : 'Laser Aesthetic' }}
+                        </a>
+                        <a href="/services/injectable-methods/price-list.pdf" target="_blank" class="sdd-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="sdd-item-icon"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                            {{ currentLocale === 'mk' ? 'Инјектибилни Методи' : 'Injectable Methods' }}
+                        </a>
+                        <a href="/services/body-treatments/price-list.pdf" target="_blank" class="sdd-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="sdd-item-icon"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                            {{ currentLocale === 'mk' ? 'Третмани на Тело' : 'Body Treatments' }}
                         </a>
                     </div>
                 </Teleport>
@@ -255,6 +330,30 @@ const ctaText = computed(() => currentLocale.value === 'mk' ? 'Контакт' :
                         <span class="mobile-group-label mobile-group-body">{{ currentLocale === 'mk' ? 'Тело' : 'Body' }}</span>
                         <a href="/services/body-treatments" class="mobile-dropdown-item" @click="mobileMenuOpen = false">
                             {{ currentLocale === 'mk' ? 'Третмани на тело' : 'Body Treatments' }}
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Mobile Price List Dropdown -->
+                <div class="mobile-dropdown">
+                    <button 
+                        class="mobile-link mobile-dropdown-trigger"
+                        @click="toggleMobilePriceList"
+                    >
+                        {{ priceListLabel }}
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" :class="{ rotated: mobilePriceListOpen }">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </button>
+                    <div class="mobile-dropdown-menu" :class="{ open: mobilePriceListOpen }">
+                        <a href="/services/laser-aesthetic/price-list.pdf" target="_blank" class="mobile-dropdown-item" @click="mobileMenuOpen = false">
+                            {{ currentLocale === 'mk' ? 'Ласерска Естетика' : 'Laser Aesthetic' }}
+                        </a>
+                        <a href="/services/injectable-methods/price-list.pdf" target="_blank" class="mobile-dropdown-item" @click="mobileMenuOpen = false">
+                            {{ currentLocale === 'mk' ? 'Инјектибилни Методи' : 'Injectable Methods' }}
+                        </a>
+                        <a href="/services/body-treatments/price-list.pdf" target="_blank" class="mobile-dropdown-item" @click="mobileMenuOpen = false">
+                            {{ currentLocale === 'mk' ? 'Третмани на Тело' : 'Body Treatments' }}
                         </a>
                     </div>
                 </div>
@@ -758,5 +857,18 @@ const ctaText = computed(() => currentLocale.value === 'mk' ? 'Контакт' :
 .sdd-item:hover {
     color: #fff;
     background: rgba(201, 168, 124, 0.15);
+}
+
+.sdd-item-icon {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 8px;
+    opacity: 0.6;
+}
+
+.sdd-item:hover .sdd-item-icon {
+    opacity: 1;
 }
 </style>
