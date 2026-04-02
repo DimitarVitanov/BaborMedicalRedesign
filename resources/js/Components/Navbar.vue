@@ -14,6 +14,7 @@ const triggerRef = ref(null);
 const priceListTriggerRef = ref(null);
 const dropdownStyle = ref({});
 const priceListDropdownStyle = ref({});
+const isMounted = ref(false);
 
 const positionDropdown = () => {
     if (triggerRef.value) {
@@ -112,6 +113,7 @@ const handleScroll = () => {
 };
 
 onMounted(() => {
+    isMounted.value = true;
     if (typeof window !== 'undefined') {
         window.addEventListener('scroll', handleScroll);
         handleScroll();
@@ -174,6 +176,7 @@ const priceListLabel = computed(() => currentLocale.value === 'mk' ? 'Ценов
                     </a>
                     
                     <a 
+                        id="services-trigger"
                         ref="triggerRef"
                         href="/services" 
                         class="nav-link dropdown-trigger"
@@ -186,6 +189,7 @@ const priceListLabel = computed(() => currentLocale.value === 'mk' ? 'Ценов
                     </a>
                     
                     <a 
+                        id="pricelist-trigger"
                         ref="priceListTriggerRef"
                         href="#" 
                         class="nav-link dropdown-trigger"
@@ -213,7 +217,7 @@ const priceListLabel = computed(() => currentLocale.value === 'mk' ? 'Ценов
                 </a>
 
                 <!-- Teleported dropdowns -->
-                <Teleport to="body">
+                <Teleport v-if="isMounted" to="body">
                     <div 
                         v-show="servicesDropdownOpen"
                         id="services-dropdown"
@@ -238,7 +242,7 @@ const priceListLabel = computed(() => currentLocale.value === 'mk' ? 'Ценов
                     </div>
                 </Teleport>
 
-                <Teleport to="body">
+                <Teleport v-if="isMounted" to="body">
                     <div 
                         v-show="priceListDropdownOpen"
                         id="pricelist-dropdown"
