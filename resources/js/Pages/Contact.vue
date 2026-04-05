@@ -125,11 +125,11 @@ const submitForm = async () => {
         <meta property="og:title" :content="seoTitle" />
         <meta property="og:description" :content="seoDescription" />
         <meta property="og:type" content="website" />
-        <meta property="og:image" content="/logo.webp" />
+        <meta property="og:image" content="https://babormedical.com/logo.webp" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" :content="seoTitle" />
         <meta name="twitter:description" :content="seoDescription" />
-        <meta name="twitter:image" content="/logo.webp" />
+        <meta name="twitter:image" content="https://babormedical.com/logo.webp" />
         <link rel="canonical" href="https://babormedical.com/contact" />
         <link rel="alternate" hreflang="en" href="https://babormedical.com/contact?lang=en" />
         <link rel="alternate" hreflang="mk" href="https://babormedical.com/contact?lang=mk" />

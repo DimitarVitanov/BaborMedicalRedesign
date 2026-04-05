@@ -32,7 +32,7 @@
                 width: 100%;
                 height: 100%;
                 background: linear-gradient(160deg, #1e2d3d, #3D4F5F);
-                display: flex;
+                display: none;
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
@@ -101,7 +101,7 @@
         @inertiaHead
     </head>
     <body class="font-sans antialiased">
-        <!-- Page Loader -->
+        <!-- Page Loader (hidden by default, shown via JS to avoid blocking crawlers) -->
         <div id="page-loader" class="page-loader">
             <img src="/logo.webp" alt="Babor Medical" class="loader-logo" />
             <div class="loader-spinner"></div>
@@ -111,6 +111,11 @@
         @inertia
 
         <script>
+            // Show loader immediately via JS (crawlers without JS won't see it)
+            (function() {
+                var loader = document.getElementById('page-loader');
+                if (loader) loader.style.display = 'flex';
+            })();
             window.addEventListener('load', function() {
                 setTimeout(function() {
                     var loader = document.getElementById('page-loader');

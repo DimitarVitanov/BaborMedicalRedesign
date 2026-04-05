@@ -126,13 +126,13 @@ const assessmentPoints = computed(() => props.extraData?.assessment_points || []
         <meta property="og:description" :content="seoDescription" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://babormedical.com/services/laser-aesthetic" />
-        <meta property="og:image" content="/logo.webp" />
+        <meta property="og:image" content="https://babormedical.com/logo.webp" />
         <meta property="og:site_name" content="Babor Medical" />
         <meta property="og:locale" :content="locale === 'mk' ? 'mk_MK' : 'en_US'" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" :content="seoTitle" />
         <meta name="twitter:description" :content="seoDescription" />
-        <meta name="twitter:image" content="/logo.webp" />
+        <meta name="twitter:image" content="https://babormedical.com/logo.webp" />
         <link rel="canonical" href="https://babormedical.com/services/laser-aesthetic" />
         <link rel="alternate" hreflang="en" href="https://babormedical.com/services/laser-aesthetic?lang=en" />
         <link rel="alternate" hreflang="mk" href="https://babormedical.com/services/laser-aesthetic?lang=mk" />

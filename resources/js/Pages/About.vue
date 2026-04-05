@@ -62,12 +62,12 @@ const formatContent = (content) => {
         <meta name="robots" content="index, follow" />
         <meta property="og:title" :content="seoTitle" />
         <meta property="og:description" :content="about.subtitle" />
-        <meta property="og:image" content="/logo.webp" />
+        <meta property="og:image" content="https://babormedical.com/logo.webp" />
         <meta property="og:type" content="website" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" :content="seoTitle" />
         <meta name="twitter:description" :content="about.subtitle" />
-        <meta name="twitter:image" content="/logo.webp" />
+        <meta name="twitter:image" content="https://babormedical.com/logo.webp" />
         <link rel="canonical" href="https://babormedical.com/about" />
         <link rel="alternate" hreflang="en" href="https://babormedical.com/about?lang=en" />
         <link rel="alternate" hreflang="mk" href="https://babormedical.com/about?lang=mk" />

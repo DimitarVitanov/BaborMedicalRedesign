@@ -107,13 +107,13 @@ const content = computed(() => ({
         <meta property="og:description" :content="seoDescription" />
         <meta property="og:type" content="article" />
         <meta property="og:url" :content="`https://babormedical.com/lasers/${equipment.slug}`" />
-        <meta property="og:image" :content="equipment.image ? '/storage/' + equipment.image : '/logo.webp'" />
+        <meta property="og:image" :content="equipment.image ? 'https://babormedical.com/storage/' + equipment.image : 'https://babormedical.com/logo.webp'" />
         <meta property="og:site_name" content="Babor Medical" />
         <meta property="og:locale" :content="locale === 'mk' ? 'mk_MK' : 'en_US'" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" :content="seoTitle" />
         <meta name="twitter:description" :content="seoDescription" />
-        <meta name="twitter:image" :content="equipment.image ? '/storage/' + equipment.image : '/logo.webp'" />
+        <meta name="twitter:image" :content="equipment.image ? 'https://babormedical.com/storage/' + equipment.image : 'https://babormedical.com/logo.webp'" />
         <component is="script" type="application/ld+json" v-html="jsonLd" />
         <link rel="canonical" :href="`https://babormedical.com/lasers/${equipment.slug}`" />
         <link rel="alternate" hreflang="en" :href="`https://babormedical.com/lasers/${equipment.slug}?lang=en`" />

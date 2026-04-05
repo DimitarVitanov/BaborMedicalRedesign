@@ -64,14 +64,14 @@ const ogLocale = computed(() => locale.value === 'mk' ? 'mk_MK' : 'en_US');
         <meta property="og:type" content="website" />
         <meta property="og:title" :content="seoTitle" />
         <meta property="og:description" :content="seoDescription" />
-        <meta property="og:image" content="/logo.webp" />
+        <meta property="og:image" content="https://babormedical.com/logo.webp" />
         <meta property="og:locale" :content="ogLocale" />
         <meta property="og:site_name" content="Babor Medical" />
         
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" :content="seoTitle" />
         <meta name="twitter:description" :content="seoDescription" />
-        <meta name="twitter:image" content="/logo.webp" />
+        <meta name="twitter:image" content="https://babormedical.com/logo.webp" />
         
         <link rel="alternate" hreflang="en" href="https://babormedical.com/?lang=en" />
         <link rel="alternate" hreflang="mk" href="https://babormedical.com/?lang=mk" />

@@ -219,7 +219,7 @@ const content = computed(() => locale.value === 'mk' ? contentMk : contentEn);
         <meta name="robots" content="index, follow" />
         <meta property="og:title" :content="seoTitle" />
         <meta property="og:description" :content="content.subtitle" />
-        <meta property="og:image" content="/logo.webp" />
+        <meta property="og:image" content="https://babormedical.com/logo.webp" />
         <meta property="og:type" content="website" />
         <link rel="canonical" href="https://babormedical.com/privacy-policy" />
         <link rel="alternate" hreflang="en" href="https://babormedical.com/privacy-policy?lang=en" />
