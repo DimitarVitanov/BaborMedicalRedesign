@@ -125,7 +125,7 @@ const submit = () => {
                                         v-model="form.email"
                                         type="email"
                                         class="form-control"
-                                        placeholder="info@babormedical.mk"
+                                        placeholder="info@babormedical.com"
                                     />
                                 </div>
                             </div>

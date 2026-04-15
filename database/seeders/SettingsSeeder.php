@@ -51,7 +51,7 @@ class SettingsSeeder extends Seeder
                 'address_en' => 'Skopje, Macedonia',
                 'address_mk' => 'Скопје, Македонија',
                 'phone' => '+389 XX XXX XXX',
-                'email' => 'info@babormedical.mk',
+                'email' => 'info@babormedical.com',
                 'working_hours_weekdays_en' => '09:00 - 20:00',
                 'working_hours_weekdays_mk' => '09:00 - 20:00',
                 'working_hours_saturday_en' => '10:00 - 18:00',
