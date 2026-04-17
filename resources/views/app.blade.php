@@ -6,8 +6,6 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="csrf-token" content="{{ csrf_token() }}">
         
-        <title inertia>{{ config('app.name', 'Babor Medical') }}</title>
-        
         <!-- Favicon -->
         <link rel="icon" type="image/webp" href="{{ asset('favicon.webp') }}">
         <link rel="apple-touch-icon" href="{{ asset('logo.webp') }}">
