@@ -37,6 +37,50 @@ const content = computed(() => ({
         : 'State-of-the-art technology for exceptional results',
     viewDetails: locale.value === 'mk' ? 'Погледни детали' : 'View Details',
 }));
+
+const jsonLd = computed(() => {
+    return JSON.stringify({
+        '@context': 'https://schema.org',
+        '@graph': [
+            {
+                '@type': 'MedicalBusiness',
+                '@id': 'https://babormedical.com/#organization',
+                'name': 'Babor Medical',
+                'url': 'https://babormedical.com',
+                'logo': 'https://babormedical.com/logo.webp'
+            },
+            {
+                '@type': 'FAQPage',
+                'mainEntity': [
+                    {
+                        '@type': 'Question',
+                        'name': locale.value === 'mk' ? 'Кои ласери ги користи Babor Medical?' : 'What lasers does Babor Medical use?',
+                        'acceptedAnswer': {
+                            '@type': 'Answer',
+                            'text': locale.value === 'mk' ? 'Babor Medical користи Alma Soprano Titanium за ласерска епилација, Alma Hybrid за подмладување и ресурфејсинг, Accent Prime за обликување на тело, Alma Q за пигментации, Ultraformer за HIFU лифтинг, Derma Clear за акни и Hydrafacial Syndeo за длабоко чистење.' : 'Babor Medical uses Alma Soprano Titanium for laser hair removal, Alma Hybrid for rejuvenation and resurfacing, Accent Prime for body contouring, Alma Q for pigmentation, Ultraformer for HIFU lifting, Derma Clear for acne and Hydrafacial Syndeo for deep cleansing.'
+                        }
+                    },
+                    {
+                        '@type': 'Question',
+                        'name': locale.value === 'mk' ? 'Што е Alma Soprano Titanium?' : 'What is Alma Soprano Titanium?',
+                        'acceptedAnswer': {
+                            '@type': 'Answer',
+                            'text': locale.value === 'mk' ? 'Alma Soprano Titanium е најнапредниот ласер за епилација кој комбинира три бранови должини (755nm, 810nm, 1064nm) во една сонда. Обезбедува безболна и ефективна ласерска епилација за сите типови кожа со ICE Plus систем за ладење.' : 'Alma Soprano Titanium is the most advanced laser for hair removal combining three wavelengths (755nm, 810nm, 1064nm) in one probe. It provides painless and effective laser hair removal for all skin types with ICE Plus cooling system.'
+                        }
+                    },
+                    {
+                        '@type': 'Question',
+                        'name': locale.value === 'mk' ? 'Што е Ultraformer лифтинг?' : 'What is Ultraformer lifting?',
+                        'acceptedAnswer': {
+                            '@type': 'Answer',
+                            'text': locale.value === 'mk' ? 'Ultraformer е HIFU (High Intensity Focused Ultrasound) технологија за неинвазивен лифтинг на лице и тело. Стимулира продукција на колаген и обезбедува затегнување на кожата без хируршка интервенција.' : 'Ultraformer is HIFU (High Intensity Focused Ultrasound) technology for non-invasive face and body lifting. It stimulates collagen production and provides skin tightening without surgical intervention.'
+                        }
+                    }
+                ]
+            }
+        ]
+    });
+});
 </script>
 
 <template>
@@ -56,6 +100,7 @@ const content = computed(() => ({
         <link rel="alternate" hreflang="en" href="https://babormedical.com/lasers?lang=en" />
         <link rel="alternate" hreflang="mk" href="https://babormedical.com/lasers?lang=mk" />
         <link rel="alternate" hreflang="x-default" href="https://babormedical.com/lasers" />
+        <component is="script" type="application/ld+json" v-html="jsonLd" />
     </Head>
 
     <Navbar />
@@ -126,6 +171,29 @@ const content = computed(() => ({
             </div>
         </section>
     </main>
+
+    <!-- FAQ Section -->
+    <section class="faq-section">
+        <div class="container">
+            <div class="faq-header fade-in-up">
+                <h2 class="faq-title">{{ locale === 'mk' ? 'Најчесто поставувани прашања' : 'Frequently Asked Questions' }}</h2>
+            </div>
+            <div class="faq-grid">
+                <div class="faq-item fade-in-up">
+                    <h3 class="faq-question">{{ locale === 'mk' ? 'Кои ласери ги користи Babor Medical?' : 'What lasers does Babor Medical use?' }}</h3>
+                    <p class="faq-answer">{{ locale === 'mk' ? 'Babor Medical користи Alma Soprano Titanium за ласерска епилација, Alma Hybrid за подмладување, Accent Prime за обликување на тело, Alma Q за пигментации, Ultraformer за HIFU лифтинг, Derma Clear за акни и Hydrafacial Syndeo за длабоко чистење.' : 'Babor Medical uses Alma Soprano Titanium for laser hair removal, Alma Hybrid for rejuvenation, Accent Prime for body contouring, Alma Q for pigmentation, Ultraformer for HIFU lifting, Derma Clear for acne and Hydrafacial Syndeo for deep cleansing.' }}</p>
+                </div>
+                <div class="faq-item fade-in-up">
+                    <h3 class="faq-question">{{ locale === 'mk' ? 'Што е Alma Soprano Titanium?' : 'What is Alma Soprano Titanium?' }}</h3>
+                    <p class="faq-answer">{{ locale === 'mk' ? 'Alma Soprano Titanium е најнапредниот ласер за епилација кој комбинира три бранови должини (755nm, 810nm, 1064nm) во една сонда. Обезбедува безболна и ефективна ласерска епилација за сите типови кожа со ICE Plus систем за ладење.' : 'Alma Soprano Titanium is the most advanced laser for hair removal combining three wavelengths (755nm, 810nm, 1064nm) in one probe. It provides painless and effective laser hair removal for all skin types with ICE Plus cooling system.' }}</p>
+                </div>
+                <div class="faq-item fade-in-up">
+                    <h3 class="faq-question">{{ locale === 'mk' ? 'Што е Ultraformer лифтинг?' : 'What is Ultraformer lifting?' }}</h3>
+                    <p class="faq-answer">{{ locale === 'mk' ? 'Ultraformer е HIFU технологија за неинвазивен лифтинг на лице и тело. Стимулира продукција на колаген и обезбедува затегнување на кожата без хируршка интервенција.' : 'Ultraformer is HIFU technology for non-invasive face and body lifting. It stimulates collagen production and provides skin tightening without surgical intervention.' }}</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <Footer />
 </template>
@@ -366,4 +434,14 @@ const content = computed(() => ({
     
 }
 
+/* FAQ Section */
+.faq-section { padding: 100px 0; border-top: 1px solid rgba(255,255,255,0.06); }
+.faq-header { text-align: center; margin-bottom: 60px; }
+.faq-title { font-size: clamp(1.75rem,4vw,2.5rem); font-weight: 700; color: #fff; }
+.faq-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 24px; max-width: 1000px; margin: 0 auto; }
+.faq-item { padding: 32px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; transition: all 0.3s ease; }
+.faq-item:hover { border-color: rgba(201,168,124,0.2); background: rgba(201,168,124,0.03); }
+.faq-question { font-size: 1.05rem; font-weight: 600; color: #c9a87c; margin: 0 0 12px; line-height: 1.4; }
+.faq-answer { font-size: 0.95rem; color: rgba(255,255,255,0.6); line-height: 1.7; margin: 0; }
+@media (max-width: 767.98px) { .faq-section { padding: 60px 0; } .faq-grid { grid-template-columns: 1fr; } .faq-item { padding: 24px; } }
 </style>

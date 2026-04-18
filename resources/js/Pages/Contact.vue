@@ -31,6 +31,56 @@ const seoDescription = computed(() => {
         : 'Contact us to book an appointment or for more information about our treatments.';
 });
 
+const jsonLd = computed(() => {
+    return JSON.stringify({
+        '@context': 'https://schema.org',
+        '@graph': [
+            {
+                '@type': 'MedicalBusiness',
+                '@id': 'https://babormedical.com/#organization',
+                'name': 'Babor Medical',
+                'url': 'https://babormedical.com',
+                'logo': 'https://babormedical.com/logo.webp',
+                'telephone': '+389 75 340 933',
+                'address': {
+                    '@type': 'PostalAddress',
+                    'addressLocality': 'Skopje',
+                    'addressCountry': 'MK'
+                },
+                'priceRange': '$$',
+                'medicalSpecialty': 'Dermatology',
+                'openingHoursSpecification': {
+                    '@type': 'OpeningHoursSpecification',
+                    'dayOfWeek': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+                    'opens': '09:00',
+                    'closes': '20:00'
+                }
+            },
+            {
+                '@type': 'FAQPage',
+                'mainEntity': [
+                    {
+                        '@type': 'Question',
+                        'name': locale.value === 'mk' ? 'Како да закажам термин во Babor Medical?' : 'How to book an appointment at Babor Medical?',
+                        'acceptedAnswer': {
+                            '@type': 'Answer',
+                            'text': locale.value === 'mk' ? 'Можете да закажете термин преку нашата контакт форма на веб страницата, преку телефон на +389 75 340 933 или преку нашите социјални мрежи.' : 'You can book an appointment through our contact form on the website, by phone at +389 75 340 933 or through our social media channels.'
+                        }
+                    },
+                    {
+                        '@type': 'Question',
+                        'name': locale.value === 'mk' ? 'Кое е работното време на Babor Medical?' : 'What are the working hours of Babor Medical?',
+                        'acceptedAnswer': {
+                            '@type': 'Answer',
+                            'text': locale.value === 'mk' ? 'Babor Medical работи од понеделник до сабота. За точно работно време и достапни термини, контактирајте нè на +389 75 340 933.' : 'Babor Medical is open Monday to Saturday. For exact working hours and available appointments, contact us at +389 75 340 933.'
+                        }
+                    }
+                ]
+            }
+        ]
+    });
+});
+
 const form = useForm({
     name: '',
     email: '',
@@ -134,6 +184,7 @@ const submitForm = async () => {
         <link rel="alternate" hreflang="en" href="https://babormedical.com/contact?lang=en" />
         <link rel="alternate" hreflang="mk" href="https://babormedical.com/contact?lang=mk" />
         <link rel="alternate" hreflang="x-default" href="https://babormedical.com/contact" />
+        <component is="script" type="application/ld+json" v-html="jsonLd" />
     </Head>
 
     <div class="main-wrapper">

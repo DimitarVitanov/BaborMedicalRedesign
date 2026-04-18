@@ -72,6 +72,43 @@ const jsonLd = computed(() => {
                 'url': 'https://babormedical.com/services/cosmetology',
                 'inLanguage': locale.value === 'mk' ? 'mk-MK' : 'en',
                 'isPartOf': { '@type': 'WebSite', 'url': 'https://babormedical.com' }
+            },
+            {
+                '@type': 'FAQPage',
+                'mainEntity': [
+                    {
+                        '@type': 'Question',
+                        'name': locale.value === 'mk' ? 'Што е козметологија и кои третмани ги нудите?' : 'What is cosmetology and what treatments do you offer?',
+                        'acceptedAnswer': {
+                            '@type': 'Answer',
+                            'text': locale.value === 'mk' ? 'Козметологијата опфаќа професионални третмани за нега на кожата. Во Babor Medical нудиме BABOR протоколи за лице вклучувајќи Welcome Experience, Classic, Lift & Firm, Bright & Glow и Calm & Repair третмани прилагодени за секој тип на кожа.' : 'Cosmetology encompasses professional skin care treatments. At Babor Medical we offer BABOR facial protocols including Welcome Experience, Classic, Lift & Firm, Bright & Glow and Calm & Repair treatments tailored for every skin type.'
+                        }
+                    },
+                    {
+                        '@type': 'Question',
+                        'name': locale.value === 'mk' ? 'Колку чинат козметичките третмани во Babor Medical?' : 'How much do cosmetic treatments cost at Babor Medical?',
+                        'acceptedAnswer': {
+                            '@type': 'Answer',
+                            'text': locale.value === 'mk' ? 'Цените варираат зависно од типот на третман. За детален ценовник контактирајте нè на +389 75 340 933 или посетете го нашиот центар во Скопје.' : 'Prices vary depending on the treatment type. For a detailed price list, contact us at +389 75 340 933 or visit our center in Skopje.'
+                        }
+                    },
+                    {
+                        '@type': 'Question',
+                        'name': locale.value === 'mk' ? 'За кого се наменети BABOR третманите?' : 'Who are BABOR treatments suitable for?',
+                        'acceptedAnswer': {
+                            '@type': 'Answer',
+                            'text': locale.value === 'mk' ? 'BABOR третманите се погодни за сите типови кожа – суva, масна, чувствителна, зрела кожа и кожа со пигментации. Нашите специјалисти прават индивидуална анализа и препорачуваат протокол прилагоден за вашите потреби.' : 'BABOR treatments are suitable for all skin types – dry, oily, sensitive, mature skin and skin with pigmentation. Our specialists perform individual analysis and recommend a protocol tailored to your needs.'
+                        }
+                    },
+                    {
+                        '@type': 'Question',
+                        'name': locale.value === 'mk' ? 'Колку често треба да се прават козметички третмани?' : 'How often should cosmetic treatments be done?',
+                        'acceptedAnswer': {
+                            '@type': 'Answer',
+                            'text': locale.value === 'mk' ? 'Препорачуваме третмани на секои 2-4 недели за оптимални резултати. Фреквенцијата зависи од типот на третман и состојбата на кожата. Нашиот тим ќе ви помогне да креирате план за нега.' : 'We recommend treatments every 2-4 weeks for optimal results. Frequency depends on the treatment type and skin condition. Our team will help you create a care plan.'
+                        }
+                    }
+                ]
             }
         ]
     });
@@ -262,6 +299,33 @@ const formatPrice = (item) => {
                             {{ locale === 'mk' ? 'Цена' : 'Price' }}: {{ formatPrice(item) }}
                         </p>
                     </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="faq-section">
+            <div class="container">
+                <div class="faq-header fade-in-up">
+                    <h2 class="faq-title">{{ locale === 'mk' ? 'Најчесто поставувани прашања' : 'Frequently Asked Questions' }}</h2>
+                </div>
+                <div class="faq-grid">
+                    <div class="faq-item fade-in-up">
+                        <h3 class="faq-question">{{ locale === 'mk' ? 'Што е козметологија и кои третмани ги нудите?' : 'What is cosmetology and what treatments do you offer?' }}</h3>
+                        <p class="faq-answer">{{ locale === 'mk' ? 'Козметологијата опфаќа професионални третмани за нега на кожата. Во Babor Medical нудиме BABOR протоколи за лице вклучувајќи Welcome Experience, Classic, Lift & Firm, Bright & Glow и Calm & Repair третмани прилагодени за секој тип на кожа.' : 'Cosmetology encompasses professional skin care treatments. At Babor Medical we offer BABOR facial protocols including Welcome Experience, Classic, Lift & Firm, Bright & Glow and Calm & Repair treatments tailored for every skin type.' }}</p>
+                    </div>
+                    <div class="faq-item fade-in-up">
+                        <h3 class="faq-question">{{ locale === 'mk' ? 'Колку чинат козметичките третмани во Babor Medical?' : 'How much do cosmetic treatments cost at Babor Medical?' }}</h3>
+                        <p class="faq-answer">{{ locale === 'mk' ? 'Цените варираат зависно од типот на третман. За детален ценовник контактирајте нè на +389 75 340 933 или посетете го нашиот центар во Скопје.' : 'Prices vary depending on the treatment type. For a detailed price list, contact us at +389 75 340 933 or visit our center in Skopje.' }}</p>
+                    </div>
+                    <div class="faq-item fade-in-up">
+                        <h3 class="faq-question">{{ locale === 'mk' ? 'За кого се наменети BABOR третманите?' : 'Who are BABOR treatments suitable for?' }}</h3>
+                        <p class="faq-answer">{{ locale === 'mk' ? 'BABOR третманите се погодни за сите типови кожа – сува, масна, чувствителна, зрела кожа и кожа со пигментации. Нашите специјалисти прават индивидуална анализа и препорачуваат протокол прилагоден за вашите потреби.' : 'BABOR treatments are suitable for all skin types – dry, oily, sensitive, mature skin and skin with pigmentation. Our specialists perform individual analysis and recommend a protocol tailored to your needs.' }}</p>
+                    </div>
+                    <div class="faq-item fade-in-up">
+                        <h3 class="faq-question">{{ locale === 'mk' ? 'Колку често треба да се прават козметички третмани?' : 'How often should cosmetic treatments be done?' }}</h3>
+                        <p class="faq-answer">{{ locale === 'mk' ? 'Препорачуваме третмани на секои 2-4 недели за оптимални резултати. Фреквенцијата зависи од типот на третман и состојбата на кожата. Нашиот тим ќе ви помогне да креирате план за нега.' : 'We recommend treatments every 2-4 weeks for optimal results. Frequency depends on the treatment type and skin condition. Our team will help you create a care plan.' }}</p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -760,4 +824,15 @@ const formatPrice = (item) => {
         padding-bottom: 40px;
     }
 }
+
+/* FAQ Section */
+.faq-section { padding: 100px 0; border-top: 1px solid rgba(255,255,255,0.06); }
+.faq-header { text-align: center; margin-bottom: 60px; }
+.faq-title { font-size: clamp(1.75rem,4vw,2.5rem); font-weight: 700; color: #fff; }
+.faq-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 24px; max-width: 1000px; margin: 0 auto; }
+.faq-item { padding: 32px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; transition: all 0.3s ease; }
+.faq-item:hover { border-color: rgba(201,168,124,0.2); background: rgba(201,168,124,0.03); }
+.faq-question { font-size: 1.05rem; font-weight: 600; color: #c9a87c; margin: 0 0 12px; line-height: 1.4; }
+.faq-answer { font-size: 0.95rem; color: rgba(255,255,255,0.6); line-height: 1.7; margin: 0; }
+@media (max-width: 767.98px) { .faq-section { padding: 60px 0; } .faq-grid { grid-template-columns: 1fr; } .faq-item { padding: 24px; } }
 </style>

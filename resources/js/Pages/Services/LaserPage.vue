@@ -95,6 +95,51 @@ const jsonLd = computed(() => {
                 'url': 'https://babormedical.com/services/laser-aesthetic',
                 'inLanguage': locale.value === 'mk' ? 'mk-MK' : 'en',
                 'isPartOf': { '@type': 'WebSite', 'url': 'https://babormedical.com' }
+            },
+            {
+                '@type': 'FAQPage',
+                'mainEntity': [
+                    {
+                        '@type': 'Question',
+                        'name': locale.value === 'mk' ? 'Колку чини ласерска епилација во Скопје?' : 'How much does laser hair removal cost in Skopje?',
+                        'acceptedAnswer': {
+                            '@type': 'Answer',
+                            'text': locale.value === 'mk' ? 'Цените за ласерска епилација во Babor Medical Скопје зависат од зоната на третман. Нудиме поволни пакет цени за повеќе третмани. За детален ценовник посетете ја нашата страница или контактирајте нè на +389 75 340 933.' : 'Laser hair removal prices at Babor Medical Skopje depend on the treatment area. We offer affordable package prices for multiple treatments. For a detailed price list, visit our page or contact us at +389 75 340 933.'
+                        }
+                    },
+                    {
+                        '@type': 'Question',
+                        'name': locale.value === 'mk' ? 'Дали ласерската епилација е болна?' : 'Is laser hair removal painful?',
+                        'acceptedAnswer': {
+                            '@type': 'Answer',
+                            'text': locale.value === 'mk' ? 'Не, ласерската епилација со Alma Soprano Titanium е практично безболна. Апаратот користи ICE Plus систем за ладење кој ја заштитува кожата и обезбедува комфорт за време на третманот.' : 'No, laser hair removal with Alma Soprano Titanium is virtually painless. The device uses an ICE Plus cooling system that protects the skin and ensures comfort during treatment.'
+                        }
+                    },
+                    {
+                        '@type': 'Question',
+                        'name': locale.value === 'mk' ? 'Колку третмани се потребни за трајно отстранување на влакна?' : 'How many treatments are needed for permanent hair removal?',
+                        'acceptedAnswer': {
+                            '@type': 'Answer',
+                            'text': locale.value === 'mk' ? 'Обично се потребни 6-8 третмани на растојание од 4-6 недели за оптимални резултати. Бројот на третмани зависи од зоната, типот на влакна и кожата. По завршување на циклусот, одржувачки третмани се препорачуваат 1-2 пати годишно.' : 'Usually 6-8 treatments at 4-6 week intervals are needed for optimal results. The number of treatments depends on the area, hair type and skin. After completing the cycle, maintenance treatments are recommended 1-2 times a year.'
+                        }
+                    },
+                    {
+                        '@type': 'Question',
+                        'name': locale.value === 'mk' ? 'Кој ласер го користите за ласерска епилација?' : 'Which laser do you use for hair removal?',
+                        'acceptedAnswer': {
+                            '@type': 'Answer',
+                            'text': locale.value === 'mk' ? 'Во Babor Medical користиме Alma Soprano Titanium – златен стандард во ласерска епилација. Тој комбинира три бранови должини (755nm, 810nm, 1064nm) во една сонда за ефективен третман на сите типови кожа и влакна.' : 'At Babor Medical we use Alma Soprano Titanium – the gold standard in laser hair removal. It combines three wavelengths (755nm, 810nm, 1064nm) in one probe for effective treatment of all skin and hair types.'
+                        }
+                    },
+                    {
+                        '@type': 'Question',
+                        'name': locale.value === 'mk' ? 'Каде се наоѓа Babor Medical во Скопје?' : 'Where is Babor Medical located in Skopje?',
+                        'acceptedAnswer': {
+                            '@type': 'Answer',
+                            'text': locale.value === 'mk' ? 'Babor Medical се наоѓа во Скопје. За точна адреса и закажување на консултација, контактирајте нè на +389 75 340 933 или посетете ја нашата контакт страница на babormedical.com/contact.' : 'Babor Medical is located in Skopje. For the exact address and to schedule a consultation, contact us at +389 75 340 933 or visit our contact page at babormedical.com/contact.'
+                        }
+                    }
+                ]
             }
         ]
     });
@@ -320,6 +365,43 @@ const assessmentPoints = computed(() => props.extraData?.assessment_points || []
                         {{ t('Прочитајте детално за нашиот Alma Soprano Titanium ласер – златниот стандард во ласерска епилација со три бранови должини во една сонда за безболно и трајно отстранување на влакна.', 'Read in detail about our Alma Soprano Titanium laser – the gold standard in laser hair removal with three wavelengths in one probe for painless and permanent hair removal.') }}
                     </p>
                     <a href="/lasers/alma-soprano-titanium" class="seo-link">{{ t('Alma Soprano Titanium – Ласерска Епилација', 'Alma Soprano Titanium – Laser Hair Removal') }}</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="faq-section">
+            <div class="container">
+                <div class="section-header fade-in-up">
+                    <h2 class="section-title">{{ t('Најчесто поставувани прашања', 'Frequently Asked Questions') }}</h2>
+                    <p class="section-subtitle">{{ t('Одговори на најчестите прашања за ласерска епилација и ласерски третмани', 'Answers to the most common questions about laser hair removal and laser treatments') }}</p>
+                </div>
+
+                <div class="faq-grid">
+                    <div class="faq-item fade-in-up">
+                        <h3 class="faq-question">{{ t('Колку чини ласерска епилација во Скопје?', 'How much does laser hair removal cost in Skopje?') }}</h3>
+                        <p class="faq-answer">{{ t('Цените за ласерска епилација во Babor Medical Скопје зависат од зоната на третман. Нудиме поволни пакет цени за повеќе третмани. За детален ценовник посетете ја нашата страница или контактирајте нè на +389 75 340 933.', 'Laser hair removal prices at Babor Medical Skopje depend on the treatment area. We offer affordable package prices for multiple treatments. For a detailed price list, visit our page or contact us at +389 75 340 933.') }}</p>
+                    </div>
+                    <div class="faq-item fade-in-up">
+                        <h3 class="faq-question">{{ t('Дали ласерската епилација е болна?', 'Is laser hair removal painful?') }}</h3>
+                        <p class="faq-answer">{{ t('Не, ласерската епилација со Alma Soprano Titanium е практично безболна. Апаратот користи ICE Plus систем за ладење кој ја заштитува кожата и обезбедува комфорт за време на третманот.', 'No, laser hair removal with Alma Soprano Titanium is virtually painless. The device uses an ICE Plus cooling system that protects the skin and ensures comfort during treatment.') }}</p>
+                    </div>
+                    <div class="faq-item fade-in-up">
+                        <h3 class="faq-question">{{ t('Колку третмани се потребни за трајно отстранување на влакна?', 'How many treatments are needed for permanent hair removal?') }}</h3>
+                        <p class="faq-answer">{{ t('Обично се потребни 6-8 третмани на растојание од 4-6 недели за оптимални резултати. Бројот на третмани зависи од зоната, типот на влакна и кожата. По завршување на циклусот, одржувачки третмани се препорачуваат 1-2 пати годишно.', 'Usually 6-8 treatments at 4-6 week intervals are needed for optimal results. The number of treatments depends on the area, hair type and skin. After completing the cycle, maintenance treatments are recommended 1-2 times a year.') }}</p>
+                    </div>
+                    <div class="faq-item fade-in-up">
+                        <h3 class="faq-question">{{ t('Кој ласер го користите за ласерска епилација?', 'Which laser do you use for hair removal?') }}</h3>
+                        <p class="faq-answer">{{ t('Во Babor Medical користиме Alma Soprano Titanium – златен стандард во ласерска епилација. Тој комбинира три бранови должини (755nm, 810nm, 1064nm) во една сонда за ефективен третман на сите типови кожа и влакна.', 'At Babor Medical we use Alma Soprano Titanium – the gold standard in laser hair removal. It combines three wavelengths (755nm, 810nm, 1064nm) in one probe for effective treatment of all skin and hair types.') }}</p>
+                    </div>
+                    <div class="faq-item fade-in-up">
+                        <h3 class="faq-question">{{ t('Каде се наоѓа Babor Medical во Скопје?', 'Where is Babor Medical located in Skopje?') }}</h3>
+                        <p class="faq-answer">{{ t('Babor Medical се наоѓа во Скопје. За точна адреса и закажување на консултација, контактирајте нè на +389 75 340 933 или посетете ја нашата контакт страница.', 'Babor Medical is located in Skopje. For the exact address and to schedule a consultation, contact us at +389 75 340 933 or visit our contact page.') }}</p>
+                    </div>
+                    <div class="faq-item fade-in-up">
+                        <h3 class="faq-question">{{ t('Дали ласерската епилација е ефективна за сите типови кожа?', 'Is laser hair removal effective for all skin types?') }}</h3>
+                        <p class="faq-answer">{{ t('Да, Alma Soprano Titanium е ефективен за сите типови кожа (I-VI по Фицпатрик скала), вклучувајќи потемна кожа. Тројната бранова должина овозможува прилагодување на третманот за секој пациент.', 'Yes, Alma Soprano Titanium is effective for all skin types (I-VI on the Fitzpatrick scale), including darker skin. The triple wavelength allows treatment customization for each patient.') }}</p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -927,5 +1009,80 @@ const assessmentPoints = computed(() => props.extraData?.assessment_points || []
 
 .seo-link:hover {
     color: #fff;
+}
+
+/* FAQ Section */
+.faq-section {
+    padding: 100px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.faq-section .section-header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.faq-section .section-title {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 16px;
+}
+
+.faq-section .section-subtitle {
+    font-size: 1.05rem;
+    color: rgba(255, 255, 255, 0.5);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.faq-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.faq-item {
+    padding: 32px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    transition: all 0.3s ease;
+}
+
+.faq-item:hover {
+    border-color: rgba(201, 168, 124, 0.2);
+    background: rgba(201, 168, 124, 0.03);
+}
+
+.faq-question {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #c9a87c;
+    margin: 0 0 12px;
+    line-height: 1.4;
+}
+
+.faq-answer {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.6);
+    line-height: 1.7;
+    margin: 0;
+}
+
+@media (max-width: 767.98px) {
+    .faq-section {
+        padding: 60px 0;
+    }
+
+    .faq-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .faq-item {
+        padding: 24px;
+    }
 }
 </style>

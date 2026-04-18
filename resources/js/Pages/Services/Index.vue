@@ -18,6 +18,60 @@ const content = computed(() => ({
         : 'Discover our professional beauty and rejuvenation treatments',
 }));
 
+const jsonLd = computed(() => {
+    return JSON.stringify({
+        '@context': 'https://schema.org',
+        '@graph': [
+            {
+                '@type': 'MedicalBusiness',
+                '@id': 'https://babormedical.com/#organization',
+                'name': 'Babor Medical',
+                'url': 'https://babormedical.com',
+                'logo': 'https://babormedical.com/logo.webp',
+                'telephone': '+389 75 340 933',
+                'address': {
+                    '@type': 'PostalAddress',
+                    'addressLocality': 'Skopje',
+                    'addressCountry': 'MK'
+                },
+                'priceRange': '$$',
+                'medicalSpecialty': 'Dermatology'
+            },
+            {
+                '@type': 'ItemList',
+                'name': locale.value === 'mk' ? 'Естетски услуги на Babor Medical' : 'Babor Medical Aesthetic Services',
+                'itemListElement': [
+                    { '@type': 'ListItem', 'position': 1, 'name': locale.value === 'mk' ? 'Козметологија' : 'Cosmetology', 'url': 'https://babormedical.com/services/cosmetology' },
+                    { '@type': 'ListItem', 'position': 2, 'name': locale.value === 'mk' ? 'Ласерско естетски третмани' : 'Laser Aesthetic Treatments', 'url': 'https://babormedical.com/services/laser-aesthetic' },
+                    { '@type': 'ListItem', 'position': 3, 'name': locale.value === 'mk' ? 'Инјектибилни методи' : 'Injectable Methods', 'url': 'https://babormedical.com/services/injectable-methods' },
+                    { '@type': 'ListItem', 'position': 4, 'name': locale.value === 'mk' ? 'Третмани на тело' : 'Body Treatments', 'url': 'https://babormedical.com/services/body-treatments' }
+                ]
+            },
+            {
+                '@type': 'FAQPage',
+                'mainEntity': [
+                    {
+                        '@type': 'Question',
+                        'name': locale.value === 'mk' ? 'Кои естетски услуги ги нуди Babor Medical?' : 'What aesthetic services does Babor Medical offer?',
+                        'acceptedAnswer': {
+                            '@type': 'Answer',
+                            'text': locale.value === 'mk' ? 'Babor Medical нуди четири категории на услуги: козметологија со BABOR протоколи, ласерско естетски третмани (ласерска епилација, подмладување, пигментации), инјектибилни методи (филери, ботокс, биостимулација, мезотерапија) и апаратурни третмани на тело (обликување, затегнување, антицелулит).' : 'Babor Medical offers four service categories: cosmetology with BABOR protocols, laser aesthetic treatments (hair removal, rejuvenation, pigmentation), injectable methods (fillers, botox, biostimulation, mesotherapy) and body treatments (contouring, tightening, anti-cellulite).'
+                        }
+                    },
+                    {
+                        '@type': 'Question',
+                        'name': locale.value === 'mk' ? 'Како да изберам вистински третман?' : 'How do I choose the right treatment?',
+                        'acceptedAnswer': {
+                            '@type': 'Answer',
+                            'text': locale.value === 'mk' ? 'Закажете бесплатна консултација во Babor Medical каде нашите специјалисти ќе ги проценат вашите потреби и ќе ви препорачаат најсоодветен третман. Контактирајте нè на +389 75 340 933.' : 'Book a free consultation at Babor Medical where our specialists will assess your needs and recommend the most suitable treatment. Contact us at +389 75 340 933.'
+                        }
+                    }
+                ]
+            }
+        ]
+    });
+});
+
 const categories = computed(() => [
     {
         id: 'cosmetology',
@@ -80,6 +134,7 @@ const categories = computed(() => [
         <link rel="alternate" hreflang="en" href="https://babormedical.com/services?lang=en" />
         <link rel="alternate" hreflang="mk" href="https://babormedical.com/services?lang=mk" />
         <link rel="alternate" hreflang="x-default" href="https://babormedical.com/services" />
+        <component is="script" type="application/ld+json" v-html="jsonLd" />
     </Head>
 
     <div class="services-page">

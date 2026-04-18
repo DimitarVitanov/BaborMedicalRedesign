@@ -47,27 +47,68 @@ const seoKeywords = computed(() => {
 const jsonLd = computed(() => {
     return JSON.stringify({
         '@context': 'https://schema.org',
-        '@type': 'MedicalWebPage',
-        'name': seoTitle.value,
-        'description': seoDescription.value,
-        'url': 'https://babormedical.com/services/body-treatments',
-        'publisher': {
-            '@type': 'MedicalBusiness',
-            'name': 'Babor Medical',
-            'image': 'https://babormedical.com/logo.webp',
-            'address': {
-                '@type': 'PostalAddress',
-                'addressLocality': 'Skopje',
-                'addressCountry': 'MK'
+        '@graph': [
+            {
+                '@type': 'MedicalWebPage',
+                'name': seoTitle.value,
+                'description': seoDescription.value,
+                'url': 'https://babormedical.com/services/body-treatments',
+                'publisher': {
+                    '@type': 'MedicalBusiness',
+                    'name': 'Babor Medical',
+                    'image': 'https://babormedical.com/logo.webp',
+                    'address': {
+                        '@type': 'PostalAddress',
+                        'addressLocality': 'Skopje',
+                        'addressCountry': 'MK'
+                    }
+                },
+                'mainEntity': {
+                    '@type': 'MedicalProcedure',
+                    'name': locale.value === 'mk' ? 'Третмани на тело' : 'Body Treatments',
+                    'procedureType': 'https://schema.org/NoninvasiveProcedure',
+                    'description': seoDescription.value,
+                    'bodyLocation': locale.value === 'mk' ? 'Тело' : 'Body'
+                }
+            },
+            {
+                '@type': 'FAQPage',
+                'mainEntity': [
+                    {
+                        '@type': 'Question',
+                        'name': locale.value === 'mk' ? 'Кои третмани за тело ги нудите во Babor Medical?' : 'What body treatments do you offer at Babor Medical?',
+                        'acceptedAnswer': {
+                            '@type': 'Answer',
+                            'text': locale.value === 'mk' ? 'Нудиме широк спектар на апаратурни третмани за тело: Accent Prime за обликување и затегнување, EM Time за мускулна стимулација, LaserShape за намалување на масни наслаги, лимфна дренажа и третмани за стрии и целулит.' : 'We offer a wide range of body treatments: Accent Prime for contouring and tightening, EM Time for muscle stimulation, LaserShape for fat reduction, lymphatic drainage and treatments for stretch marks and cellulite.'
+                        }
+                    },
+                    {
+                        '@type': 'Question',
+                        'name': locale.value === 'mk' ? 'Дали третманите за обликување на тело се болни?' : 'Are body contouring treatments painful?',
+                        'acceptedAnswer': {
+                            '@type': 'Answer',
+                            'text': locale.value === 'mk' ? 'Не, нашите апаратурни третмани за тело се неинвазивни и безболни. Accent Prime и EM Time користат напредна технологија која обезбедува комфортен третман без период на закрепнување.' : 'No, our body treatments are non-invasive and painless. Accent Prime and EM Time use advanced technology that ensures a comfortable treatment with no downtime.'
+                        }
+                    },
+                    {
+                        '@type': 'Question',
+                        'name': locale.value === 'mk' ? 'Колку третмани се потребни за видливи резултати?' : 'How many treatments are needed for visible results?',
+                        'acceptedAnswer': {
+                            '@type': 'Answer',
+                            'text': locale.value === 'mk' ? 'Обично се препорачуваат 4-8 третмани за оптимални резултати, во зависност од третманот и индивидуалната состојба. Првите резултати може да се видат по 2-3 третмани.' : 'Usually 4-8 treatments are recommended for optimal results, depending on the treatment and individual condition. First results can be seen after 2-3 treatments.'
+                        }
+                    },
+                    {
+                        '@type': 'Question',
+                        'name': locale.value === 'mk' ? 'Колку чинат третманите за тело во Скопје?' : 'How much do body treatments cost in Skopje?',
+                        'acceptedAnswer': {
+                            '@type': 'Answer',
+                            'text': locale.value === 'mk' ? 'Цените за третмани на тело варираат зависно од процедурата и бројот на зони. За детален ценовник контактирајте нè на +389 75 340 933 или посетете го нашиот центар во Скопје.' : 'Body treatment prices vary depending on the procedure and number of zones. For a detailed price list, contact us at +389 75 340 933 or visit our center in Skopje.'
+                        }
+                    }
+                ]
             }
-        },
-        'mainEntity': {
-            '@type': 'MedicalProcedure',
-            'name': locale.value === 'mk' ? 'Третмани на тело' : 'Body Treatments',
-            'procedureType': 'https://schema.org/NoninvasiveProcedure',
-            'description': seoDescription.value,
-            'bodyLocation': locale.value === 'mk' ? 'Тело' : 'Body'
-        }
+        ]
     });
 });
 
@@ -286,6 +327,33 @@ const individualPlanPoints = computed(() => props.extraData?.individual_plan_poi
             <div class="container">
                 <h2>{{ t('Третмани на тело во Скопје – Babor Medical', 'Body Treatments in Skopje – Babor Medical') }}</h2>
                 <p>{{ t('Babor Medical нуди напредни третмани на тело во Скопје со најсовремена апаратурна естетика. Нашите неинвазивни технологии – Ultraformer, Accent Prime, LaserShape, EM Time и Бодипрес терапија – овозможуваат обликување на тело, намалување на целулит, затегнување на кожа и подобрување на циркулацијата. Индивидуален пристап и програмски третмани за долгорочни резултати.', 'Babor Medical offers advanced body treatments in Skopje with state-of-the-art aesthetic technology. Our non-invasive technologies – Ultraformer, Accent Prime, LaserShape, EM Time and Body Press therapy – enable body contouring, cellulite reduction, skin tightening and circulation improvement. Individual approach and program treatments for long-term results.') }}</p>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="faq-section">
+            <div class="container">
+                <div class="faq-header fade-in-up">
+                    <h2 class="faq-title">{{ t('Најчесто поставувани прашања', 'Frequently Asked Questions') }}</h2>
+                </div>
+                <div class="faq-grid">
+                    <div class="faq-item fade-in-up">
+                        <h3 class="faq-question">{{ t('Кои третмани за тело ги нудите во Babor Medical?', 'What body treatments do you offer at Babor Medical?') }}</h3>
+                        <p class="faq-answer">{{ t('Нудиме широк спектар на апаратурни третмани за тело: Accent Prime за обликување и затегнување, EM Time за мускулна стимулација, LaserShape за намалување на масни наслаги, лимфна дренажа и третмани за стрии и целулит.', 'We offer a wide range of body treatments: Accent Prime for contouring and tightening, EM Time for muscle stimulation, LaserShape for fat reduction, lymphatic drainage and treatments for stretch marks and cellulite.') }}</p>
+                    </div>
+                    <div class="faq-item fade-in-up">
+                        <h3 class="faq-question">{{ t('Дали третманите за обликување на тело се болни?', 'Are body contouring treatments painful?') }}</h3>
+                        <p class="faq-answer">{{ t('Не, нашите апаратурни третмани за тело се неинвазивни и безболни. Accent Prime и EM Time користат напредна технологија која обезбедува комфортен третман без период на закрепнување.', 'No, our body treatments are non-invasive and painless. Accent Prime and EM Time use advanced technology that ensures a comfortable treatment with no downtime.') }}</p>
+                    </div>
+                    <div class="faq-item fade-in-up">
+                        <h3 class="faq-question">{{ t('Колку третмани се потребни за видливи резултати?', 'How many treatments are needed for visible results?') }}</h3>
+                        <p class="faq-answer">{{ t('Обично се препорачуваат 4-8 третмани за оптимални резултати, во зависност од третманот и индивидуалната состојба. Првите резултати може да се видат по 2-3 третмани.', 'Usually 4-8 treatments are recommended for optimal results, depending on the treatment and individual condition. First results can be seen after 2-3 treatments.') }}</p>
+                    </div>
+                    <div class="faq-item fade-in-up">
+                        <h3 class="faq-question">{{ t('Колку чинат третманите за тело во Скопје?', 'How much do body treatments cost in Skopje?') }}</h3>
+                        <p class="faq-answer">{{ t('Цените за третмани на тело варираат зависно од процедурата и бројот на зони. За детален ценовник контактирајте нè на +389 75 340 933 или посетете го нашиот центар во Скопје.', 'Body treatment prices vary depending on the procedure and number of zones. For a detailed price list, contact us at +389 75 340 933 or visit our center in Skopje.') }}</p>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -1008,4 +1076,15 @@ const individualPlanPoints = computed(() => props.extraData?.individual_plan_poi
         justify-content: center;
     }
 }
+
+/* FAQ Section */
+.faq-section { padding: 100px 0; border-top: 1px solid rgba(255,255,255,0.06); }
+.faq-header { text-align: center; margin-bottom: 60px; }
+.faq-title { font-size: clamp(1.75rem,4vw,2.5rem); font-weight: 700; color: #fff; }
+.faq-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 24px; max-width: 1000px; margin: 0 auto; }
+.faq-item { padding: 32px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; transition: all 0.3s ease; }
+.faq-item:hover { border-color: rgba(201,168,124,0.2); background: rgba(201,168,124,0.03); }
+.faq-question { font-size: 1.05rem; font-weight: 600; color: #c9a87c; margin: 0 0 12px; line-height: 1.4; }
+.faq-answer { font-size: 0.95rem; color: rgba(255,255,255,0.6); line-height: 1.7; margin: 0; }
+@media (max-width: 767.98px) { .faq-section { padding: 60px 0; } .faq-grid { grid-template-columns: 1fr; } .faq-item { padding: 24px; } }
 </style>

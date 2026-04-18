@@ -52,6 +52,60 @@ const formatContent = (content) => {
     if (!content) return [];
     return content.split('\n\n').filter(p => p.trim());
 };
+
+const jsonLd = computed(() => {
+    return JSON.stringify({
+        '@context': 'https://schema.org',
+        '@graph': [
+            {
+                '@type': 'MedicalBusiness',
+                '@id': 'https://babormedical.com/#organization',
+                'name': 'Babor Medical',
+                'url': 'https://babormedical.com',
+                'logo': 'https://babormedical.com/logo.webp',
+                'image': 'https://babormedical.com/logo.webp',
+                'telephone': '+389 75 340 933',
+                'address': {
+                    '@type': 'PostalAddress',
+                    'addressLocality': 'Skopje',
+                    'addressCountry': 'MK'
+                },
+                'priceRange': '$$',
+                'medicalSpecialty': 'Dermatology',
+                'description': locale.value === 'mk' ? 'Babor Medical е водечки ласерски и естетски центар во Скопје, Македонија. Нудиме ласерска епилација, козметолошки третмани, инјектибилни методи и третмани на тело.' : 'Babor Medical is a leading laser and aesthetic center in Skopje, Macedonia. We offer laser hair removal, cosmetology treatments, injectable methods and body treatments.'
+            },
+            {
+                '@type': 'FAQPage',
+                'mainEntity': [
+                    {
+                        '@type': 'Question',
+                        'name': locale.value === 'mk' ? 'Што е Babor Medical?' : 'What is Babor Medical?',
+                        'acceptedAnswer': {
+                            '@type': 'Answer',
+                            'text': locale.value === 'mk' ? 'Babor Medical е водечки ласерски и естетски центар во Скопје, Македонија. Специјализирани сме за ласерска епилација, козметологија, инјектибилни методи и третмани на тело со најсовремена технологија и стручен медицински тим.' : 'Babor Medical is a leading laser and aesthetic center in Skopje, Macedonia. We specialize in laser hair removal, cosmetology, injectable methods and body treatments with state-of-the-art technology and expert medical team.'
+                        }
+                    },
+                    {
+                        '@type': 'Question',
+                        'name': locale.value === 'mk' ? 'Кои технологии ги користите?' : 'What technologies do you use?',
+                        'acceptedAnswer': {
+                            '@type': 'Answer',
+                            'text': locale.value === 'mk' ? 'Користиме најсовремена опрема од Alma Lasers: Soprano Titanium за ласерска епилација, Alma Hybrid за подмладување, Accent Prime за обликување на тело, Ultraformer за лифтинг, и премиум BABOR козметички протоколи.' : 'We use state-of-the-art equipment from Alma Lasers: Soprano Titanium for laser hair removal, Alma Hybrid for rejuvenation, Accent Prime for body contouring, Ultraformer for lifting, and premium BABOR cosmetic protocols.'
+                        }
+                    },
+                    {
+                        '@type': 'Question',
+                        'name': locale.value === 'mk' ? 'Каде се наоѓа Babor Medical?' : 'Where is Babor Medical located?',
+                        'acceptedAnswer': {
+                            '@type': 'Answer',
+                            'text': locale.value === 'mk' ? 'Babor Medical се наоѓа во Скопје, Македонија. За точна адреса, работно време и закажување, контактирајте нè на +389 75 340 933 или посетете babormedical.com/contact.' : 'Babor Medical is located in Skopje, Macedonia. For exact address, working hours and appointments, contact us at +389 75 340 933 or visit babormedical.com/contact.'
+                        }
+                    }
+                ]
+            }
+        ]
+    });
+});
 </script>
 
 <template>
@@ -72,6 +126,7 @@ const formatContent = (content) => {
         <link rel="alternate" hreflang="en" href="https://babormedical.com/about?lang=en" />
         <link rel="alternate" hreflang="mk" href="https://babormedical.com/about?lang=mk" />
         <link rel="alternate" hreflang="x-default" href="https://babormedical.com/about" />
+        <component is="script" type="application/ld+json" v-html="jsonLd" />
     </Head>
 
     <div class="main-wrapper">
@@ -178,6 +233,29 @@ const formatContent = (content) => {
                             <path d="M5 12h14M12 5l7 7-7 7"/>
                         </svg>
                     </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="faq-section">
+            <div class="container">
+                <div class="faq-header fade-in-up">
+                    <h2 class="faq-title">{{ locale === 'mk' ? 'Најчесто поставувани прашања' : 'Frequently Asked Questions' }}</h2>
+                </div>
+                <div class="faq-grid">
+                    <div class="faq-item fade-in-up">
+                        <h3 class="faq-question">{{ locale === 'mk' ? 'Што е Babor Medical?' : 'What is Babor Medical?' }}</h3>
+                        <p class="faq-answer">{{ locale === 'mk' ? 'Babor Medical е водечки ласерски и естетски центар во Скопје, Македонија. Специјализирани сме за ласерска епилација, козметологија, инјектибилни методи и третмани на тело со најсовремена технологија и стручен медицински тим.' : 'Babor Medical is a leading laser and aesthetic center in Skopje, Macedonia. We specialize in laser hair removal, cosmetology, injectable methods and body treatments with state-of-the-art technology and expert medical team.' }}</p>
+                    </div>
+                    <div class="faq-item fade-in-up">
+                        <h3 class="faq-question">{{ locale === 'mk' ? 'Кои технологии ги користите?' : 'What technologies do you use?' }}</h3>
+                        <p class="faq-answer">{{ locale === 'mk' ? 'Користиме најсовремена опрема од Alma Lasers: Soprano Titanium за ласерска епилација, Alma Hybrid за подмладување, Accent Prime за обликување на тело, Ultraformer за лифтинг, и премиум BABOR козметички протоколи.' : 'We use state-of-the-art equipment from Alma Lasers: Soprano Titanium for laser hair removal, Alma Hybrid for rejuvenation, Accent Prime for body contouring, Ultraformer for lifting, and premium BABOR cosmetic protocols.' }}</p>
+                    </div>
+                    <div class="faq-item fade-in-up">
+                        <h3 class="faq-question">{{ locale === 'mk' ? 'Каде се наоѓа Babor Medical?' : 'Where is Babor Medical located?' }}</h3>
+                        <p class="faq-answer">{{ locale === 'mk' ? 'Babor Medical се наоѓа во Скопје, Македонија. За точна адреса, работно време и закажување, контактирајте нè на +389 75 340 933 или посетете babormedical.com/contact.' : 'Babor Medical is located in Skopje, Macedonia. For exact address, working hours and appointments, contact us at +389 75 340 933 or visit babormedical.com/contact.' }}</p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -482,4 +560,15 @@ const formatContent = (content) => {
         text-align: left;
     }
 }
+
+/* FAQ Section */
+.faq-section { padding: 100px 0; border-top: 1px solid rgba(255,255,255,0.06); }
+.faq-header { text-align: center; margin-bottom: 60px; }
+.faq-title { font-size: clamp(1.75rem,4vw,2.5rem); font-weight: 700; color: #fff; }
+.faq-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 24px; max-width: 1000px; margin: 0 auto; }
+.faq-item { padding: 32px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; transition: all 0.3s ease; }
+.faq-item:hover { border-color: rgba(201,168,124,0.2); background: rgba(201,168,124,0.03); }
+.faq-question { font-size: 1.05rem; font-weight: 600; color: #c9a87c; margin: 0 0 12px; line-height: 1.4; }
+.faq-answer { font-size: 0.95rem; color: rgba(255,255,255,0.6); line-height: 1.7; margin: 0; }
+@media (max-width: 767.98px) { .faq-section { padding: 60px 0; } .faq-grid { grid-template-columns: 1fr; } .faq-item { padding: 24px; } }
 </style>

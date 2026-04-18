@@ -45,27 +45,28 @@ const seoKeywords = computed(() => {
 });
 
 const jsonLd = computed(() => {
-    const baseData = {
-        '@context': 'https://schema.org',
-        '@type': 'MedicalWebPage',
-        'name': seoTitle.value,
-        'description': seoDescription.value,
-        'url': `https://babormedical.com/lasers/${props.equipment.slug}`,
-        'publisher': {
-            '@type': 'MedicalBusiness',
-            'name': 'Babor Medical',
-            'image': 'https://babormedical.com/logo.webp',
-            'address': {
-                '@type': 'PostalAddress',
-                'addressLocality': 'Skopje',
-                'addressCountry': 'MK'
+    const graph = [
+        {
+            '@type': 'MedicalWebPage',
+            'name': seoTitle.value,
+            'description': seoDescription.value,
+            'url': `https://babormedical.com/lasers/${props.equipment.slug}`,
+            'publisher': {
+                '@type': 'MedicalBusiness',
+                '@id': 'https://babormedical.com/#organization',
+                'name': 'Babor Medical',
+                'image': 'https://babormedical.com/logo.webp',
+                'address': {
+                    '@type': 'PostalAddress',
+                    'addressLocality': 'Skopje',
+                    'addressCountry': 'MK'
+                }
             }
         }
-    };
+    ];
 
     if (props.equipment.slug === 'alma-soprano-titanium') {
-        baseData['@type'] = 'MedicalWebPage';
-        baseData['about'] = {
+        graph[0]['about'] = {
             '@type': 'MedicalProcedure',
             'name': locale.value === 'mk' ? 'Ласерска епилација со Alma Soprano Titanium' : 'Laser Hair Removal with Alma Soprano Titanium',
             'procedureType': 'https://schema.org/NoninvasiveProcedure',
@@ -75,16 +76,45 @@ const jsonLd = computed(() => {
                 : 'Triple wavelength (755nm, 808nm, 1064nm) for treatment of all skin and hair types',
             'bodyLocation': locale.value === 'mk' ? 'Лице и тело' : 'Face and body'
         };
-        baseData['mainEntity'] = {
+        graph[0]['mainEntity'] = {
             '@type': 'Product',
             'name': 'Alma Soprano Titanium',
             'brand': { '@type': 'Brand', 'name': 'Alma Lasers' },
             'description': seoDescription.value,
             'category': locale.value === 'mk' ? 'Ласерска опрема за епилација' : 'Laser hair removal equipment'
         };
+        graph.push({
+            '@type': 'FAQPage',
+            'mainEntity': [
+                {
+                    '@type': 'Question',
+                    'name': locale.value === 'mk' ? 'Што е Alma Soprano Titanium?' : 'What is Alma Soprano Titanium?',
+                    'acceptedAnswer': {
+                        '@type': 'Answer',
+                        'text': locale.value === 'mk' ? 'Alma Soprano Titanium е најнапредниот ласер за епилација кој комбинира три бранови должини (755nm, 810nm, 1064nm) во една сонда. Обезбедува безболна и ефективна ласерска епилација за сите типови кожа со ICE Plus систем за ладење.' : 'Alma Soprano Titanium is the most advanced laser for hair removal combining three wavelengths (755nm, 810nm, 1064nm) in one probe. It provides painless and effective laser hair removal for all skin types with ICE Plus cooling system.'
+                    }
+                },
+                {
+                    '@type': 'Question',
+                    'name': locale.value === 'mk' ? 'Дали Alma Soprano Titanium е безболен?' : 'Is Alma Soprano Titanium painless?',
+                    'acceptedAnswer': {
+                        '@type': 'Answer',
+                        'text': locale.value === 'mk' ? 'Да, Alma Soprano Titanium користи ICE Plus технологија за ладење која ја заштитува кожата и обезбедува практично безболен третман. Пациентите чувствуваат само благо топло чувство за време на процедурата.' : 'Yes, Alma Soprano Titanium uses ICE Plus cooling technology that protects the skin and provides a virtually painless treatment. Patients only feel a mild warming sensation during the procedure.'
+                    }
+                },
+                {
+                    '@type': 'Question',
+                    'name': locale.value === 'mk' ? 'За кои делови од телото е ефективен Soprano Titanium?' : 'For which body areas is Soprano Titanium effective?',
+                    'acceptedAnswer': {
+                        '@type': 'Answer',
+                        'text': locale.value === 'mk' ? 'Soprano Titanium е ефективен за сите делови од телото: лице, пазуви, раце, нозе, бикини зона, грб, стомак и цело тело. Тројната бранова должина овозможува третман на сите типови влакна и кожа.' : 'Soprano Titanium is effective for all body areas: face, underarms, arms, legs, bikini area, back, abdomen and full body. The triple wavelength enables treatment of all hair and skin types.'
+                    }
+                }
+            ]
+        });
     }
 
-    return JSON.stringify(baseData);
+    return JSON.stringify({ '@context': 'https://schema.org', '@graph': graph });
 });
 
 const content = computed(() => ({
