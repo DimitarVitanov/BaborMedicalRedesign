@@ -7,8 +7,22 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
-createServer((page) =>
-    createInertiaApp({
+function fixJsonLdTags(head) {
+    if (!Array.isArray(head)) return head;
+    return head.map(tag => {
+        if (typeof tag === 'string' && tag.includes('application/ld+json') && tag.includes('innerHTML="')) {
+            const match = tag.match(/innerHTML="([^"]*)"/);
+            if (match) {
+                const decoded = match[1].replace(/&quot;/g, '"').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+                return `<script type="application/ld+json">${decoded}</script>`;
+            }
+        }
+        return tag;
+    });
+}
+
+createServer(async (page) => {
+    const result = await createInertiaApp({
         page,
         render: renderToString,
         title: (title) => title || appName,
@@ -26,5 +40,9 @@ createServer((page) =>
                     location: ziggyData.location ? new URL(ziggyData.location) : undefined,
                 });
         },
-    }),
-);
+    });
+    if (result && result.head) {
+        result.head = fixJsonLdTags(result.head);
+    }
+    return result;
+});
