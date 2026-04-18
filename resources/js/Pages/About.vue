@@ -71,7 +71,6 @@ const jsonLd = computed(() => {
                     'addressCountry': 'MK'
                 },
                 'priceRange': '$$',
-                'medicalSpecialty': 'Dermatology',
                 'description': locale.value === 'mk' ? 'Babor Medical е водечки ласерски и естетски центар во Скопје, Македонија. Нудиме ласерска епилација, козметолошки третмани, инјектибилни методи и третмани на тело.' : 'Babor Medical is a leading laser and aesthetic center in Skopje, Macedonia. We offer laser hair removal, cosmetology treatments, injectable methods and body treatments.'
             },
             {

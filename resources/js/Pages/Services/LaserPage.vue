@@ -63,8 +63,7 @@ const jsonLd = computed(() => {
                     'addressLocality': 'Skopje',
                     'addressCountry': 'MK'
                 },
-                'priceRange': '$$',
-                'medicalSpecialty': 'Dermatology'
+                'priceRange': '$$'
             },
             {
                 '@type': 'Service',

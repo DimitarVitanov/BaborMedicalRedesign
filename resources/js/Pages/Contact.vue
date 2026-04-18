@@ -48,7 +48,6 @@ const jsonLd = computed(() => {
                     'addressCountry': 'MK'
                 },
                 'priceRange': '$$',
-                'medicalSpecialty': 'Dermatology',
                 'openingHoursSpecification': {
                     '@type': 'OpeningHoursSpecification',
                     'dayOfWeek': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],

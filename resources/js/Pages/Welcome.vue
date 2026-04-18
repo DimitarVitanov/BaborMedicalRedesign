@@ -80,7 +80,6 @@ const jsonLd = computed(() => {
                     'addressCountry': 'MK'
                 },
                 'priceRange': '$$',
-                'medicalSpecialty': 'Dermatology',
                 'description': locale.value === 'mk' ? 'Ласерски центар, естетски центар и ласерско естетски центар во Скопје. Ласерска епилација, козметологија, инјектибилни методи, третмани на тело.' : 'Laser center, aesthetic center and laser aesthetic center in Skopje. Laser hair removal, cosmetology, injectable methods, body treatments.',
                 'hasOfferCatalog': {
                     '@type': 'OfferCatalog',
