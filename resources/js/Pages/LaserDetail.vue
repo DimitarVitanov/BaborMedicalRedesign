@@ -79,9 +79,8 @@ const jsonLd = computed(() => {
         graph[0]['mainEntity'] = {
             '@type': 'MedicalDevice',
             'name': 'Alma Soprano Titanium',
-            'manufacturer': { '@type': 'Organization', 'name': 'Alma Lasers' },
             'description': seoDescription.value,
-            'category': locale.value === 'mk' ? 'Ласерска опрема за епилација' : 'Laser hair removal equipment'
+            'sameAs': 'https://www.almalasers.com/alma-soprano-titanium/'
         };
         graph.push({
             '@type': 'FAQPage',
