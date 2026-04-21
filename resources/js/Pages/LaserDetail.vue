@@ -77,9 +77,9 @@ const jsonLd = computed(() => {
             'bodyLocation': locale.value === 'mk' ? 'Лице и тело' : 'Face and body'
         };
         graph[0]['mainEntity'] = {
-            '@type': 'Product',
+            '@type': 'MedicalDevice',
             'name': 'Alma Soprano Titanium',
-            'brand': { '@type': 'Brand', 'name': 'Alma Lasers' },
+            'manufacturer': { '@type': 'Organization', 'name': 'Alma Lasers' },
             'description': seoDescription.value,
             'category': locale.value === 'mk' ? 'Ласерска опрема за епилација' : 'Laser hair removal equipment'
         };
