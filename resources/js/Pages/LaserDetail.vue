@@ -23,6 +23,11 @@ const seoTitle = computed(() => {
             ? 'Alma Soprano Titanium – Ласерска Епилација Скопје | Babor Medical'
             : 'Alma Soprano Titanium – Laser Hair Removal Skopje | Babor Medical';
     }
+    if (props.equipment.slug === 'vonewmer-rf') {
+        return locale.value === 'mk'
+            ? 'Vonewmer RF Скопје | Затегнување на кожа без игли | Babor Medical'
+            : 'Vonewmer RF Skopje | Skin Tightening Without Needles | Babor Medical';
+    }
     return `${props.equipment.title} - Babor Medical`;
 });
 
@@ -32,6 +37,11 @@ const seoDescription = computed(() => {
             ? 'Alma Soprano Titanium ласер за безболна ласерска епилација во Скопје. Три бранови должини, сите типови кожа и влакна. Златен стандард во ласерско отстранување на влакна – Babor Medical.'
             : 'Alma Soprano Titanium laser for painless laser hair removal in Skopje. Three wavelengths, all skin and hair types. Gold standard in laser hair removal – Babor Medical.';
     }
+    if (props.equipment.slug === 'vonewmer-rf') {
+        return locale.value === 'mk'
+            ? 'Vonewmer RF – наградувана радиофреквентна технологија за затегнување на кожа без игли во Скопје. Добитник на ELLE Beauty Awards 2025 и K-Brand Awards 2026. Неинвазивен лифтинг и биостимулација – Babor Medical.'
+            : 'Vonewmer RF – award-winning radiofrequency technology for skin tightening without needles in Skopje. Winner of ELLE Beauty Awards 2025 and K-Brand Awards 2026. Non-invasive lifting and biostimulation – Babor Medical.';
+    }
     return props.equipment.description;
 });
 
@@ -40,6 +50,11 @@ const seoKeywords = computed(() => {
         return locale.value === 'mk'
             ? 'alma soprano titanium, ласерска епилација, ласерска епилација скопје, безболна ласерска епилација, ласер за епилација, alma laser, soprano titanium, отстранување влакна, babor medical'
             : 'alma soprano titanium, laser hair removal, laser hair removal skopje, painless laser hair removal, laser epilation, alma laser, soprano titanium, hair removal, babor medical';
+    }
+    if (props.equipment.slug === 'vonewmer-rf') {
+        return locale.value === 'mk'
+            ? 'vonewmer rf, vonewmer rf скопје, затегнување кожа без игли, rf лифтинг скопје, радиофреквенција лице, skin tightening скопје, anti-aging третман скопје, неинвазивен лифтинг, babor medical'
+            : 'vonewmer rf, vonewmer rf skopje, skin tightening without needles, rf lifting skopje, radiofrequency face, skin tightening skopje, anti-aging treatment skopje, non-invasive lifting, babor medical';
     }
     return `${props.equipment.title}, laser, ласер, Babor Medical, ${props.equipment.category}`;
 });
@@ -107,6 +122,63 @@ const jsonLd = computed(() => {
                     'acceptedAnswer': {
                         '@type': 'Answer',
                         'text': locale.value === 'mk' ? 'Soprano Titanium е ефективен за сите делови од телото: лице, пазуви, раце, нозе, бикини зона, грб, стомак и цело тело. Тројната бранова должина овозможува третман на сите типови влакна и кожа.' : 'Soprano Titanium is effective for all body areas: face, underarms, arms, legs, bikini area, back, abdomen and full body. The triple wavelength enables treatment of all hair and skin types.'
+                    }
+                }
+            ]
+        });
+    }
+
+    if (props.equipment.slug === 'vonewmer-rf') {
+        graph[0]['about'] = {
+            '@type': 'MedicalProcedure',
+            'name': locale.value === 'mk' ? 'RF затегнување на кожа со Vonewmer RF' : 'RF Skin Tightening with Vonewmer RF',
+            'procedureType': 'https://schema.org/NoninvasiveProcedure',
+            'description': seoDescription.value,
+            'howPerformed': locale.value === 'mk'
+                ? 'Контролирана радиофреквентна енергија за дермална биостимулација и неоколагенеза'
+                : 'Controlled radiofrequency energy for dermal biostimulation and neocollagenesis',
+            'bodyLocation': locale.value === 'mk' ? 'Лице и врат' : 'Face and neck'
+        };
+        graph[0]['mainEntity'] = {
+            '@type': 'MedicalDevice',
+            'name': 'Vonewmer RF',
+            'description': locale.value === 'mk'
+                ? 'Наградуван радиофреквентен систем за неинвазивно затегнување на кожа'
+                : 'Award-winning radiofrequency system for non-invasive skin tightening'
+        };
+        graph.push({
+            '@type': 'FAQPage',
+            'mainEntity': [
+                {
+                    '@type': 'Question',
+                    'name': locale.value === 'mk' ? 'Што е Vonewmer RF?' : 'What is Vonewmer RF?',
+                    'acceptedAnswer': {
+                        '@type': 'Answer',
+                        'text': locale.value === 'mk' ? 'Vonewmer RF е наградувана радиофреквентна технологија за неинвазивно затегнување на кожа и биостимулација. Добитник на ELLE International Beauty Awards 2025 и K-Brand Awards 2026, користи контролирана RF енергија за стимулација на колаген и еластин без игли и без downtime.' : 'Vonewmer RF is an award-winning radiofrequency technology for non-invasive skin tightening and biostimulation. Winner of ELLE International Beauty Awards 2025 and K-Brand Awards 2026, it uses controlled RF energy to stimulate collagen and elastin without needles and without downtime.'
+                    }
+                },
+                {
+                    '@type': 'Question',
+                    'name': locale.value === 'mk' ? 'Дали Vonewmer RF третманот е болен?' : 'Is the Vonewmer RF treatment painful?',
+                    'acceptedAnswer': {
+                        '@type': 'Answer',
+                        'text': locale.value === 'mk' ? 'Не, Vonewmer RF третманот е комфорен и безболен. Пациентите чувствуваат само пријатна топлина за време на процедурата. Не е потребна анестезија и нема период на закрепнување.' : 'No, the Vonewmer RF treatment is comfortable and painless. Patients only feel pleasant warmth during the procedure. No anesthesia is needed and there is no recovery period.'
+                    }
+                },
+                {
+                    '@type': 'Question',
+                    'name': locale.value === 'mk' ? 'Колку третмани се потребни за видливи резултати?' : 'How many treatments are needed for visible results?',
+                    'acceptedAnswer': {
+                        '@type': 'Answer',
+                        'text': locale.value === 'mk' ? 'Обично се препорачуваат 3-4 третмани на интервал од 2-4 недели. Резултатите се подобруваат постепено благодарение на колагенската биостимулација, со максимален ефект по неколку месеци.' : 'Usually 3-4 treatments are recommended at 2-4 week intervals. Results improve gradually thanks to collagen biostimulation, with maximum effect after several months.'
+                    }
+                },
+                {
+                    '@type': 'Question',
+                    'name': locale.value === 'mk' ? 'За кого е наменет Vonewmer RF?' : 'Who is Vonewmer RF suitable for?',
+                    'acceptedAnswer': {
+                        '@type': 'Answer',
+                        'text': locale.value === 'mk' ? 'Vonewmer RF е идеален за пациенти над 30 години со почетна до умерена опуштеност на кожата, фини линии, нарушена текстура и намален тонус. Особено е погоден за пациенти кои сакаат природен anti-aging пристап без игли и без агресивни процедури.' : 'Vonewmer RF is ideal for patients over 30 with mild to moderate skin laxity, fine lines, impaired texture and reduced tone. It is especially suitable for patients who want a natural anti-aging approach without needles and without aggressive procedures.'
                     }
                 }
             ]

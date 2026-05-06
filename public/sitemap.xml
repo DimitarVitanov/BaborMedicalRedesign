@@ -156,4 +156,15 @@
         <priority>0.8</priority>
     </url>
 
+    <!-- Vonewmer RF -->
+    <url>
+        <loc>https://babormedical.com/lasers/vonewmer-rf</loc>
+        <xhtml:link rel="alternate" hreflang="en" href="https://babormedical.com/lasers/vonewmer-rf?lang=en"/>
+        <xhtml:link rel="alternate" hreflang="mk" href="https://babormedical.com/lasers/vonewmer-rf?lang=mk"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://babormedical.com/lasers/vonewmer-rf"/>
+        <lastmod>2026-05-07</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.9</priority>
+    </url>
+
 </urlset>
