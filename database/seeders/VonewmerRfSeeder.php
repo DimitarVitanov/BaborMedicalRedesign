@@ -142,6 +142,9 @@ class VonewmerRfSeeder extends Seeder
 <h2>Природен anti-aging пристап</h2>
 <p>Нашата филозофија во Babor Medical не е да го промениме лицето – туку да ја подобриме структурата, квалитетот и биолошката функција на кожата. Vonewmer RF претставува важен дел од оваа стратегија: интелигентен, безбеден и клинички прецизен пристап кон современото подмладување.</p>',
 
+                'image' => 'equipment/548a3d2e-8534-4ad9-bbdb-3009095b116a.png',
+                'image_desktop_webp' => 'equipment/vonewmer-rf-desktop.webp',
+                'image_mobile_webp' => 'equipment/vonewmer-rf-mobile.webp',
                 'link' => null,
                 'category' => 'rf',
                 'is_active' => true,
