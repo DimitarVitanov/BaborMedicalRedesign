@@ -15,7 +15,7 @@ class HeroSlideController extends Controller
      */
     private function optimizeImage($file, string $directory = 'hero-slides'): string
     {
-        $maxDimension = 900;
+        $maxDimension = 550;
         $quality = 85;
 
         $path = $file->store($directory, 'public');
