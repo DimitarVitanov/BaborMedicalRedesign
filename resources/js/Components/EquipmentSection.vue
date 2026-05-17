@@ -92,6 +92,9 @@ const goToSlide = (index) => {
                                             <img 
                                                 :src="item.image ? '/storage/' + item.image : '/storage/' + item.image_desktop_webp" 
                                                 :alt="item.title"
+                                                width="400"
+                                                height="400"
+                                                loading="lazy"
                                             />
                                         </picture>
                                         <div v-else class="image-placeholder">

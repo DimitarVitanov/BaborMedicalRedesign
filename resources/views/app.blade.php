@@ -18,10 +18,8 @@
 
         <!-- Page Loader Styles (inline for instant load) -->
         <style>
-            html.loading,
             html.loading body {
                 overflow: hidden !important;
-                height: 100% !important;
             }
             .page-loader {
                 position: fixed;
@@ -35,7 +33,7 @@
                 align-items: center;
                 justify-content: center;
                 z-index: 99999;
-                transition: opacity 0.5s ease, visibility 0.5s ease;
+                transition: opacity 0.3s ease, visibility 0.3s ease;
             }
             .page-loader.hidden {
                 opacity: 0;
@@ -115,16 +113,14 @@
                 if (loader) loader.style.display = 'flex';
             })();
             window.addEventListener('load', function() {
-                setTimeout(function() {
-                    var loader = document.getElementById('page-loader');
-                    if (loader) {
-                        loader.classList.add('hidden');
-                        document.documentElement.classList.remove('loading');
-                        setTimeout(function() {
-                            loader.remove();
-                        }, 500);
-                    }
-                }, 500);
+                var loader = document.getElementById('page-loader');
+                if (loader) {
+                    loader.classList.add('hidden');
+                    document.documentElement.classList.remove('loading');
+                    setTimeout(function() {
+                        loader.remove();
+                    }, 300);
+                }
             });
         </script>
     </body>

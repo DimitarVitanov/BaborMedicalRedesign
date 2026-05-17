@@ -174,8 +174,11 @@ onUnmounted(() => {
                                         :src="slide.image ? '/storage/' + slide.image : '/storage/' + slide.image_desktop_webp" 
                                         :alt="slide.title" 
                                         class="hero-image"
+                                        width="450"
+                                        height="500"
                                         loading="eager"
                                         decoding="async"
+                                        fetchpriority="high"
                                     />
                                 </picture>
                             </div>
@@ -275,6 +278,7 @@ onUnmounted(() => {
     user-select: none;
     -webkit-user-select: none;
     cursor: grab;
+    min-height: 70vh;
 }
 
 .hero-slider:active {
@@ -296,10 +300,8 @@ onUnmounted(() => {
 }
 
 .hero-slide.active {
-    position: relative;
     opacity: 1;
     visibility: visible;
-    width: 100%;
 }
 
 .hero-slide .container {
@@ -333,16 +335,6 @@ onUnmounted(() => {
     height: auto;
     max-height: 500px;
     object-fit: contain;
-    animation: gentleRotate 4s ease-in-out infinite;
-}
-
-@keyframes gentleRotate {
-    0%, 100% {
-        transform: rotate(-2deg);
-    }
-    50% {
-        transform: rotate(2deg);
-    }
 }
 
 .hero-slide.active .animate-fade-up {
