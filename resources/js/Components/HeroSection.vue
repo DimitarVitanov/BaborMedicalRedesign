@@ -100,8 +100,20 @@ const handleCancel = () => {
     isDragging = false;
 };
 
+const startAutoplay = () => {
+    if (!autoplayInterval) {
+        autoplayInterval = setInterval(nextSlide, 8000);
+    }
+};
+
 onMounted(() => {
-    // Autoplay disabled to prevent CLS - slides transition on user interaction only
+    // Start autoplay after first user interaction to avoid CLS
+    const events = ['click', 'touchstart', 'scroll'];
+    const handler = () => {
+        startAutoplay();
+        events.forEach(e => window.removeEventListener(e, handler));
+    };
+    events.forEach(e => window.addEventListener(e, handler, { once: false, passive: true }));
 });
 
 onUnmounted(() => {
