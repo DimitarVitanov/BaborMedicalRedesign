@@ -80,7 +80,7 @@ const content = computed(() => ({
                     </div>
 
                     <div class="footer-links">
-                        <h4>{{ content.quickLinks }}</h4>
+                        <p class="footer-heading">{{ content.quickLinks }}</p>
                         <ul>
                             <li v-for="link in content.links" :key="link.name">
                                 <a :href="link.href">{{ link.name }}</a>
@@ -89,7 +89,7 @@ const content = computed(() => ({
                     </div>
 
                     <div class="footer-links">
-                        <h4>{{ content.services }}</h4>
+                        <p class="footer-heading">{{ content.services }}</p>
                         <ul>
                             <li v-for="link in content.serviceLinks" :key="link.name">
                                 <a :href="link.href">{{ link.name }}</a>
@@ -98,7 +98,7 @@ const content = computed(() => ({
                     </div>
 
                     <div class="footer-contact">
-                        <h4>{{ content.contact }}</h4>
+                        <p class="footer-heading">{{ content.contact }}</p>
                         
                         <div v-for="location in locations" :key="location.id" class="location-block">
                             <div class="location-name" v-if="locations.length > 1">{{ location.name }}</div>
@@ -221,8 +221,7 @@ const content = computed(() => ({
     height: 18px;
 }
 
-.footer-links h4,
-.footer-contact h4 {
+.footer-heading {
     font-size: 1rem;
     font-weight: 600;
     color: #fff;
@@ -370,8 +369,7 @@ const content = computed(() => ({
         grid-column: span 1;
     }
     
-    .footer-links h4,
-    .footer-contact h4 {
+    .footer-heading {
         margin-bottom: 16px;
     }
     

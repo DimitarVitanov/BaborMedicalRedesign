@@ -93,8 +93,8 @@ const content = computed(() => ({
                     </div>
 
                     <div class="about-cta-group">
-                        <a href="/about" class="btn-cta about-cta" :aria-label="content.ctaAriaLabel">
-                            {{ content.cta }}
+                        <a href="/about" class="btn-cta about-cta">
+                            {{ content.cta }}<span class="visually-hidden"> about Babor Medical</span>
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M5 12h14M12 5l7 7-7 7"/>
                             </svg>

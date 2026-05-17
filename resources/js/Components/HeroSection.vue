@@ -154,11 +154,11 @@ onUnmounted(() => {
                                 {{ slide.description }}
                             </p>
                             <div class="d-flex gap-3 flex-wrap">
-                                <a :href="slide.cta_link || '#'" class="btn btn-cta btn-lg" :aria-label="slide.cta_text + ' - ' + (slide.title || '') + ' ' + (slide.highlight || '')">
-                                    {{ slide.cta_text }}
+                                <a :href="slide.cta_link || '#'" class="btn btn-cta btn-lg">
+                                    {{ slide.cta_text }}<span class="visually-hidden"> - {{ slide.title }} {{ slide.highlight }}</span>
                                 </a>
-                                <a :href="slide.secondary_link || '#'" class="btn btn-outline-light btn-lg rounded-pill px-4" :aria-label="slide.secondary_text + ' - ' + (slide.title || '') + ' ' + (slide.highlight || '')">
-                                    {{ slide.secondary_text }}
+                                <a :href="slide.secondary_link || '#'" class="btn btn-outline-light btn-lg rounded-pill px-4">
+                                    {{ slide.secondary_text }}<span class="visually-hidden"> - {{ slide.title }} {{ slide.highlight }}</span>
                                 </a>
                             </div>
                         </div>
