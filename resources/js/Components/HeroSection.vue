@@ -101,9 +101,7 @@ const handleCancel = () => {
 };
 
 onMounted(() => {
-    setTimeout(() => {
-        autoplayInterval = setInterval(nextSlide, 8000);
-    }, 30000);
+    // Autoplay disabled to prevent CLS - slides transition on user interaction only
 });
 
 onUnmounted(() => {
