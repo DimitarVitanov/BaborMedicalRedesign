@@ -163,7 +163,7 @@ const priceListLabel = computed(() => currentLocale.value === 'mk' ? 'Ценов
                 <!-- Desktop Navigation (with logo inside) -->
                 <nav class="desktop-nav">
                     <a href="/" class="nav-logo" aria-label="Babor Medical - Home">
-                        <img src="/logo.webp" alt="Babor Medical" width="150" height="50" fetchpriority="high" />
+                        <img src="/logo.webp" alt="Babor Medical" width="56" height="56" fetchpriority="high" />
                     </a>
                     
                     <a 
@@ -213,7 +213,7 @@ const priceListLabel = computed(() => currentLocale.value === 'mk' ? 'Ценов
 
                 <!-- Mobile Logo (visible only on mobile) -->
                 <a href="/" class="header-logo-mobile" aria-label="Babor Medical - Home">
-                    <img src="/logo.webp" alt="Babor Medical" width="120" height="40" fetchpriority="high" />
+                    <img src="/logo.webp" alt="Babor Medical" width="80" height="80" fetchpriority="high" />
                 </a>
 
                 <!-- Teleported dropdowns -->

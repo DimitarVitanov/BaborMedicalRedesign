@@ -51,7 +51,6 @@ const activeSlides = computed(() => {
 
 const currentSlide = ref(0);
 const isAnimating = ref(false);
-const hasMounted = ref(false);
 let autoplayInterval = null;
 
 const nextSlide = () => {
@@ -102,9 +101,6 @@ const handleCancel = () => {
 };
 
 onMounted(() => {
-    requestAnimationFrame(() => {
-        hasMounted.value = true;
-    });
     autoplayInterval = setInterval(nextSlide, 6000);
 });
 
@@ -130,22 +126,22 @@ onUnmounted(() => {
                 v-for="(slide, index) in activeSlides" 
                 :key="index"
                 class="hero-slide"
-                :class="{ active: currentSlide === index, 'no-animate': !hasMounted }"
+                :class="{ active: currentSlide === index }"
             >
                 <div class="container">
                     <div class="row align-items-center justify-content-between">
                         <div class="col-lg-5">
-                            <p class="hero-subtitle" :class="{ 'animate-fade-up': hasMounted }" :style="{ animationDelay: '0.1s' }">
+                            <p class="hero-subtitle">
                                 {{ slide.subtitle }}
                             </p>
-                            <h1 class="hero-title" :class="{ 'animate-fade-up': hasMounted }" :style="{ animationDelay: '0.2s' }">
+                            <h1 class="hero-title">
                                 {{ slide.title }}<br/>
                                 <span>{{ slide.highlight }}</span>
                             </h1>
-                            <p class="hero-description mb-4" :class="{ 'animate-fade-up': hasMounted }" :style="{ animationDelay: '0.3s' }">
+                            <p class="hero-description mb-4">
                                 {{ slide.description }}
                             </p>
-                            <div class="d-flex gap-3 flex-wrap" :class="{ 'animate-fade-up': hasMounted }" :style="{ animationDelay: '0.4s' }">
+                            <div class="d-flex gap-3 flex-wrap">
                                 <a :href="slide.cta_link || '#'" class="btn btn-cta btn-lg" :aria-label="slide.cta_text + ' - ' + (slide.title || '') + ' ' + (slide.highlight || '')">
                                     {{ slide.cta_text }}
                                 </a>
@@ -157,7 +153,7 @@ onUnmounted(() => {
                         
                         <div class="col-lg-5 hero-image-container d-flex align-items-center justify-content-center mt-5 mt-lg-0">
                             <div class="hero-glow animate-pulse"></div>
-                            <div v-if="slide.image || slide.image_desktop_webp" class="hero-image-wrapper" :class="{ 'animate-fade-up': hasMounted }" :style="{ animationDelay: '0.3s' }">
+                            <div v-if="slide.image || slide.image_desktop_webp" class="hero-image-wrapper">
                                 <picture>
                                     <!-- Mobile WebP (max 768px) -->
                                     <source 
@@ -310,20 +306,6 @@ onUnmounted(() => {
     object-fit: contain;
 }
 
-.hero-slide.no-animate.active .animate-fade-up,
-.hero-slide.no-animate.active .hero-subtitle,
-.hero-slide.no-animate.active .hero-title,
-.hero-slide.no-animate.active .hero-description,
-.hero-slide.no-animate.active .hero-image-wrapper,
-.hero-slide.no-animate.active .d-flex {
-    opacity: 1 !important;
-    transform: none !important;
-    animation: none !important;
-}
-
-.hero-slide.active .animate-fade-up {
-    animation: fadeUp 0.8s ease forwards;
-}
 
 .hero-subtitle {
     color: rgba(255, 255, 255, 0.7);
