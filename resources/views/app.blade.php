@@ -10,10 +10,11 @@
         <link rel="icon" type="image/webp" href="{{ asset('favicon.webp') }}">
         <link rel="apple-touch-icon" href="{{ asset('logo.webp') }}">
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=block">
+        <!-- Fonts - self-hosted -->
+        <link rel="preload" href="/fonts/poppins-400.woff2" as="font" type="font/woff2" crossorigin>
+        <link rel="preload" href="/fonts/poppins-600.woff2" as="font" type="font/woff2" crossorigin>
+        <link rel="preload" href="/fonts/playfair-variable.woff2" as="font" type="font/woff2" crossorigin>
+        <link rel="stylesheet" href="/fonts/fonts.css">
 
         <!-- Page Loader Styles (inline for instant load) -->
         <style>
