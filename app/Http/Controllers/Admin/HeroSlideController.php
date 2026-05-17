@@ -10,6 +10,55 @@ use Inertia\Inertia;
 
 class HeroSlideController extends Controller
 {
+    /**
+     * Resize and optimize an uploaded image to max 900px (longest side).
+     */
+    private function optimizeImage($file, string $directory = 'hero-slides'): string
+    {
+        $maxDimension = 900;
+        $quality = 85;
+
+        $path = $file->store($directory, 'public');
+        $fullPath = Storage::disk('public')->path($path);
+
+        $imageInfo = getimagesize($fullPath);
+        if (!$imageInfo) return $path;
+
+        [$width, $height, $type] = $imageInfo;
+
+        // Only resize if larger than max dimension
+        if ($width <= $maxDimension && $height <= $maxDimension) return $path;
+
+        // Calculate new dimensions maintaining aspect ratio
+        $ratio = min($maxDimension / $width, $maxDimension / $height);
+        $newWidth = (int)($width * $ratio);
+        $newHeight = (int)($height * $ratio);
+
+        // Create source image
+        $source = match($type) {
+            IMAGETYPE_JPEG => imagecreatefromjpeg($fullPath),
+            IMAGETYPE_PNG => imagecreatefrompng($fullPath),
+            IMAGETYPE_WEBP => imagecreatefromwebp($fullPath),
+            default => null,
+        };
+
+        if (!$source) return $path;
+
+        // Resize
+        $resized = imagecreatetruecolor($newWidth, $newHeight);
+        imagealphablending($resized, false);
+        imagesavealpha($resized, true);
+        imagecopyresampled($resized, $source, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
+
+        // Save as webp
+        imagewebp($resized, $fullPath, $quality);
+
+        imagedestroy($source);
+        imagedestroy($resized);
+
+        return $path;
+    }
+
     public function index()
     {
         $slides = HeroSlide::ordered()->get();
@@ -49,13 +98,13 @@ class HeroSlideController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('hero-slides', 'public');
+            $validated['image'] = $this->optimizeImage($request->file('image'));
         }
         if ($request->hasFile('image_desktop_webp')) {
-            $validated['image_desktop_webp'] = $request->file('image_desktop_webp')->store('hero-slides', 'public');
+            $validated['image_desktop_webp'] = $this->optimizeImage($request->file('image_desktop_webp'));
         }
         if ($request->hasFile('image_mobile_webp')) {
-            $validated['image_mobile_webp'] = $request->file('image_mobile_webp')->store('hero-slides', 'public');
+            $validated['image_mobile_webp'] = $this->optimizeImage($request->file('image_mobile_webp'));
         }
 
         $validated['order'] = $validated['order'] ?? HeroSlide::max('order') + 1;
@@ -105,19 +154,19 @@ class HeroSlideController extends Controller
             if ($heroSlide->image) {
                 Storage::disk('public')->delete($heroSlide->image);
             }
-            $validated['image'] = $request->file('image')->store('hero-slides', 'public');
+            $validated['image'] = $this->optimizeImage($request->file('image'));
         }
         if ($request->hasFile('image_desktop_webp')) {
             if ($heroSlide->image_desktop_webp) {
                 Storage::disk('public')->delete($heroSlide->image_desktop_webp);
             }
-            $validated['image_desktop_webp'] = $request->file('image_desktop_webp')->store('hero-slides', 'public');
+            $validated['image_desktop_webp'] = $this->optimizeImage($request->file('image_desktop_webp'));
         }
         if ($request->hasFile('image_mobile_webp')) {
             if ($heroSlide->image_mobile_webp) {
                 Storage::disk('public')->delete($heroSlide->image_mobile_webp);
             }
-            $validated['image_mobile_webp'] = $request->file('image_mobile_webp')->store('hero-slides', 'public');
+            $validated['image_mobile_webp'] = $this->optimizeImage($request->file('image_mobile_webp'));
         }
 
         $heroSlide->update($validated);
