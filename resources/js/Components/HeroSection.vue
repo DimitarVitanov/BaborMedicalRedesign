@@ -406,7 +406,10 @@ onUnmounted(() => {
     justify-content: center;
     gap: 12px;
     z-index: 10;
-    padding: 40px 0 30px;
+    position: absolute;
+    bottom: 50px;
+    left: 0;
+    right: 0;
 }
 
 .slider-dot {
@@ -473,7 +476,7 @@ onUnmounted(() => {
     }
     
     .slider-dots {
-        margin-top: 25px;
+        bottom: 15px;
     }
     
 }
@@ -519,7 +522,7 @@ onUnmounted(() => {
     }
     
     .slider-dots {
-        margin-top: 20px;
+        bottom: 10px;
     }
     
 }
@@ -637,7 +640,7 @@ onUnmounted(() => {
     }
     
     .slider-dots {
-        margin-top: 20px;
+        bottom: 10px;
         gap: 10px;
     }
     
