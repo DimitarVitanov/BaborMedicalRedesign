@@ -27,9 +27,9 @@
             @font-face{font-family:'Playfair Display';font-style:normal;font-weight:400 700;font-display:optional;src:url('/fonts/playfair-variable.woff2') format('woff2')}
             @font-face{font-family:'Poppins Fallback';src:local('Arial');size-adjust:112%;ascent-override:92%;descent-override:22%;line-gap-override:0%}
             @font-face{font-family:'Playfair Fallback';src:local('Georgia');size-adjust:112%;ascent-override:90%;descent-override:22%;line-gap-override:0%}
-            .hero-section{min-height:calc(100vh - 110px);position:relative;overflow:hidden;display:flex;flex-direction:column}
-            .hero-slider{position:relative;width:100%;flex:1;display:flex;align-items:center;justify-content:center;min-height:70vh}
-            .hero-slide{position:absolute;top:0;left:0;width:100%;height:70vh;opacity:0;visibility:hidden;display:flex;align-items:center;justify-content:center}
+            .hero-section{min-height:calc(100vh - 110px);height:calc(100vh - 110px);position:relative;overflow:hidden;display:flex;flex-direction:column}
+            .hero-slider{position:relative;width:100%;flex:1;display:flex;align-items:center;justify-content:center;min-height:70vh;overflow:hidden}
+            .hero-slide{position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;visibility:hidden;display:flex;align-items:center;justify-content:center}
             .hero-slide.active{opacity:1;visibility:visible}
             /* CLS-safe page loader: fixed position = no layout participation */
             .page-loader{position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(160deg,#1e2d3d,#3D4F5F);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:99999;opacity:1;transition:opacity 0.4s ease;pointer-events:all}
