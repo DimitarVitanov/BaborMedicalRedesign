@@ -60,6 +60,12 @@ Route::get('/', function () {
         ];
     });
     
+    // Share first slide image for LCP preload in blade
+    $firstSlideImage = $slides->first()['image'] ?? null;
+    if ($firstSlideImage) {
+        view()->share('heroImagePreload', '/storage/' . $firstSlideImage);
+    }
+
     return Inertia::render('Welcome', [
         'slides' => $slides,
         'services' => $services,

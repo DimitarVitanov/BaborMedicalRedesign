@@ -10,6 +10,11 @@
         <link rel="icon" type="image/webp" href="{{ asset('favicon.webp') }}">
         <link rel="apple-touch-icon" href="{{ asset('logo.webp') }}">
 
+        <!-- LCP hero image preload -->
+        @if(!empty($heroImagePreload))
+        <link rel="preload" href="{{ $heroImagePreload }}" as="image" type="image/webp" fetchpriority="high">
+        @endif
+
         <!-- Fonts - self-hosted, inlined to avoid render-blocking request -->
         <link rel="preload" href="/fonts/poppins-400.woff2" as="font" type="font/woff2" crossorigin>
         <link rel="preload" href="/fonts/poppins-500.woff2" as="font" type="font/woff2" crossorigin>
