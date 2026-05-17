@@ -37,17 +37,6 @@
             .hero-slider{position:relative;width:100%;flex:1;display:flex;align-items:center;justify-content:center;min-height:70vh;overflow:hidden}
             .hero-slide{position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;visibility:hidden;display:flex;align-items:center;justify-content:center}
             .hero-slide.active{opacity:1;visibility:visible}
-            /* CLS-safe page loader: fixed position = no layout participation */
-            .page-loader{position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(160deg,#1e2d3d,#3D4F5F);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:99999;opacity:1;transition:opacity 0.2s ease;pointer-events:all}
-            .page-loader.done{opacity:0;pointer-events:none}
-            .loader-logo{width:120px;height:auto;margin-bottom:30px;animation:pulse-logo 2s ease-in-out infinite}
-            .loader-spinner{width:50px;height:50px;position:relative}
-            .loader-spinner::before,.loader-spinner::after{content:'';position:absolute;border-radius:50%}
-            .loader-spinner::before{width:100%;height:100%;border:3px solid rgba(201,168,124,0.2)}
-            .loader-spinner::after{width:100%;height:100%;border:3px solid transparent;border-top-color:#c9a87c;animation:spin 1s linear infinite}
-            .loader-text{margin-top:20px;color:rgba(255,255,255,0.6);font-size:0.85rem;letter-spacing:2px;text-transform:uppercase}
-            @keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
-            @keyframes pulse-logo{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.7;transform:scale(0.95)}}
             /* Hide SSR-rendered mobile menu before Vue styles load */
             .mobile-menu{opacity:0;visibility:hidden;pointer-events:none}
         </style>
@@ -58,19 +47,6 @@
         @inertiaHead
     </head>
     <body class="font-sans antialiased">
-        <!-- CLS-safe loader: position:fixed, fades with opacity only, never removed from DOM -->
-        <div class="page-loader" aria-hidden="true">
-            <img src="/logo.webp" alt="" class="loader-logo" width="120" height="120" />
-            <div class="loader-spinner"></div>
-            <span class="loader-text">Loading...</span>
-        </div>
-
         @inertia
-
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                document.querySelector('.page-loader').classList.add('done');
-            });
-        </script>
     </body>
 </html>
