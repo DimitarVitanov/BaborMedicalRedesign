@@ -68,8 +68,10 @@
         @inertia
 
         <script>
-            window.addEventListener('load', function() {
-                document.querySelector('.page-loader').classList.add('done');
+            document.addEventListener('DOMContentLoaded', function() {
+                setTimeout(function() {
+                    document.querySelector('.page-loader').classList.add('done');
+                }, 300);
             });
         </script>
     </body>
