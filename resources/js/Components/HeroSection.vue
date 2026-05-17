@@ -101,7 +101,9 @@ const handleCancel = () => {
 };
 
 onMounted(() => {
-    autoplayInterval = setInterval(nextSlide, 6000);
+    setTimeout(() => {
+        autoplayInterval = setInterval(nextSlide, 8000);
+    }, 10000);
 });
 
 onUnmounted(() => {
