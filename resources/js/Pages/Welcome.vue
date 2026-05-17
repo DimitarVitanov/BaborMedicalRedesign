@@ -146,12 +146,14 @@ const jsonLd = computed(() => {
 
     <div class="main-wrapper">
         <Navbar />
-        <HeroSection :slides="slides" />
-        <AboutSection :about="about" />
-        <ServicesSection :services="services" />
-        <ServiceCategoriesSection />
-        <EquipmentSection :equipment="equipment" />
-        <NewsletterSection />
+        <main>
+            <HeroSection :slides="slides" />
+            <AboutSection :about="about" />
+            <ServicesSection :services="services" />
+            <ServiceCategoriesSection />
+            <EquipmentSection :equipment="equipment" />
+            <NewsletterSection />
+        </main>
         <Footer />
     </div>
 </template>
