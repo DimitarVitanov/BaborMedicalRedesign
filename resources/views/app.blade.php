@@ -30,6 +30,10 @@
             html.loading body {
                 overflow-y: scroll !important;
             }
+            .hero-section{min-height:calc(100vh - 110px);position:relative;overflow:hidden;display:flex;flex-direction:column}
+            .hero-slider{position:relative;width:100%;flex:1;display:flex;align-items:center;justify-content:center;min-height:70vh}
+            .hero-slide{position:absolute;top:0;left:0;width:100%;height:70vh;opacity:0;visibility:hidden;display:flex;align-items:center;justify-content:center}
+            .hero-slide.active{opacity:1;visibility:visible}
             .page-loader {
                 position: fixed;
                 top: 0;
