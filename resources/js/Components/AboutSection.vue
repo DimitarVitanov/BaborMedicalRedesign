@@ -55,7 +55,7 @@ const content = computed(() => ({
 </script>
 
 <template>
-    <section class="about-section">
+    <section class="about-section mt-4">
         <div class="container">
             <div class="about-grid">
                 <div class="about-content fade-in-left">

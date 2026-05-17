@@ -15,13 +15,6 @@
         <link rel="preload" href="{{ $heroImagePreload }}" as="image" type="image/webp" fetchpriority="high">
         @endif
 
-        <!-- Fonts - self-hosted, inlined to avoid render-blocking request -->
-        <link rel="preload" href="/fonts/poppins-400.woff2" as="font" type="font/woff2" crossorigin>
-        <link rel="preload" href="/fonts/poppins-500.woff2" as="font" type="font/woff2" crossorigin>
-        <link rel="preload" href="/fonts/poppins-600.woff2" as="font" type="font/woff2" crossorigin>
-        <link rel="preload" href="/fonts/poppins-700.woff2" as="font" type="font/woff2" crossorigin>
-        <link rel="preload" href="/fonts/playfair-variable.woff2" as="font" type="font/woff2" crossorigin>
-
         <style>
             /* Font declarations - inlined to avoid render-blocking request */
             @font-face{font-family:'Poppins';font-style:normal;font-weight:300;font-display:optional;src:url('/fonts/poppins-300.woff2') format('woff2')}
@@ -32,6 +25,7 @@
             @font-face{font-family:'Playfair Display';font-style:normal;font-weight:400 700;font-display:optional;src:url('/fonts/playfair-variable.woff2') format('woff2')}
             @font-face{font-family:'Poppins Fallback';src:local('Arial');size-adjust:112%;ascent-override:92%;descent-override:22%;line-gap-override:0%}
             @font-face{font-family:'Playfair Fallback';src:local('Georgia');size-adjust:112%;ascent-override:90%;descent-override:22%;line-gap-override:0%}
+            body{margin:0;background:#1e2d3d;color:#fff;font-family:'Poppins Fallback','Poppins',Arial,sans-serif}
             .site-header{position:fixed;top:0;left:0;width:100%;z-index:1000;height:110px}
             .hero-section{min-height:calc(100vh - 110px);height:calc(100vh - 110px);position:relative;overflow:hidden;display:flex;flex-direction:column;contain:layout style}
             .hero-slider{position:relative;width:100%;flex:1;display:flex;align-items:center;justify-content:center;min-height:70vh;overflow:hidden}
