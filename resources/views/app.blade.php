@@ -12,17 +12,19 @@
 
         <!-- Fonts - self-hosted, inlined to avoid render-blocking request -->
         <link rel="preload" href="/fonts/poppins-400.woff2" as="font" type="font/woff2" crossorigin>
+        <link rel="preload" href="/fonts/poppins-500.woff2" as="font" type="font/woff2" crossorigin>
         <link rel="preload" href="/fonts/poppins-600.woff2" as="font" type="font/woff2" crossorigin>
+        <link rel="preload" href="/fonts/poppins-700.woff2" as="font" type="font/woff2" crossorigin>
         <link rel="preload" href="/fonts/playfair-variable.woff2" as="font" type="font/woff2" crossorigin>
 
         <style>
             /* Font declarations - inlined to avoid render-blocking request */
-            @font-face{font-family:'Poppins';font-style:normal;font-weight:300;font-display:swap;src:url('/fonts/poppins-300.woff2') format('woff2')}
-            @font-face{font-family:'Poppins';font-style:normal;font-weight:400;font-display:swap;src:url('/fonts/poppins-400.woff2') format('woff2')}
-            @font-face{font-family:'Poppins';font-style:normal;font-weight:500;font-display:swap;src:url('/fonts/poppins-500.woff2') format('woff2')}
-            @font-face{font-family:'Poppins';font-style:normal;font-weight:600;font-display:swap;src:url('/fonts/poppins-600.woff2') format('woff2')}
-            @font-face{font-family:'Poppins';font-style:normal;font-weight:700;font-display:swap;src:url('/fonts/poppins-700.woff2') format('woff2')}
-            @font-face{font-family:'Playfair Display';font-style:normal;font-weight:400 700;font-display:swap;src:url('/fonts/playfair-variable.woff2') format('woff2')}
+            @font-face{font-family:'Poppins';font-style:normal;font-weight:300;font-display:optional;src:url('/fonts/poppins-300.woff2') format('woff2')}
+            @font-face{font-family:'Poppins';font-style:normal;font-weight:400;font-display:optional;src:url('/fonts/poppins-400.woff2') format('woff2')}
+            @font-face{font-family:'Poppins';font-style:normal;font-weight:500;font-display:optional;src:url('/fonts/poppins-500.woff2') format('woff2')}
+            @font-face{font-family:'Poppins';font-style:normal;font-weight:600;font-display:optional;src:url('/fonts/poppins-600.woff2') format('woff2')}
+            @font-face{font-family:'Poppins';font-style:normal;font-weight:700;font-display:optional;src:url('/fonts/poppins-700.woff2') format('woff2')}
+            @font-face{font-family:'Playfair Display';font-style:normal;font-weight:400 700;font-display:optional;src:url('/fonts/playfair-variable.woff2') format('woff2')}
             @font-face{font-family:'Poppins Fallback';src:local('Arial');size-adjust:112%;ascent-override:92%;descent-override:22%;line-gap-override:0%}
             @font-face{font-family:'Playfair Fallback';src:local('Georgia');size-adjust:112%;ascent-override:90%;descent-override:22%;line-gap-override:0%}
             html.loading body {
