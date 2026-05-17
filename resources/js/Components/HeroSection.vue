@@ -103,7 +103,7 @@ const handleCancel = () => {
 onMounted(() => {
     setTimeout(() => {
         autoplayInterval = setInterval(nextSlide, 8000);
-    }, 10000);
+    }, 30000);
 });
 
 onUnmounted(() => {
