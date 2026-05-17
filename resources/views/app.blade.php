@@ -38,7 +38,7 @@
             .hero-slide{position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;visibility:hidden;display:flex;align-items:center;justify-content:center}
             .hero-slide.active{opacity:1;visibility:visible}
             /* CLS-safe page loader: fixed position = no layout participation */
-            .page-loader{position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(160deg,#1e2d3d,#3D4F5F);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:99999;opacity:1;transition:opacity 0.4s ease;pointer-events:all}
+            .page-loader{position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(160deg,#1e2d3d,#3D4F5F);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:99999;opacity:1;transition:opacity 0.2s ease;pointer-events:all}
             .page-loader.done{opacity:0;pointer-events:none}
             .loader-logo{width:120px;height:auto;margin-bottom:30px;animation:pulse-logo 2s ease-in-out infinite}
             .loader-spinner{width:50px;height:50px;position:relative}
@@ -69,9 +69,7 @@
 
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-                setTimeout(function() {
-                    document.querySelector('.page-loader').classList.add('done');
-                }, 300);
+                document.querySelector('.page-loader').classList.add('done');
             });
         </script>
     </body>
