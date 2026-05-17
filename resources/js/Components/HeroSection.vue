@@ -51,6 +51,7 @@ const activeSlides = computed(() => {
 
 const currentSlide = ref(0);
 const isAnimating = ref(false);
+const hasMounted = ref(false);
 let autoplayInterval = null;
 
 const nextSlide = () => {
@@ -101,6 +102,9 @@ const handleCancel = () => {
 };
 
 onMounted(() => {
+    requestAnimationFrame(() => {
+        hasMounted.value = true;
+    });
     autoplayInterval = setInterval(nextSlide, 6000);
 });
 
@@ -126,22 +130,22 @@ onUnmounted(() => {
                 v-for="(slide, index) in activeSlides" 
                 :key="index"
                 class="hero-slide"
-                :class="{ active: currentSlide === index }"
+                :class="{ active: currentSlide === index, 'no-animate': !hasMounted }"
             >
                 <div class="container">
                     <div class="row align-items-center justify-content-between">
                         <div class="col-lg-5">
-                            <p class="hero-subtitle animate-fade-up" :style="{ animationDelay: '0.1s' }">
+                            <p class="hero-subtitle" :class="{ 'animate-fade-up': hasMounted }" :style="{ animationDelay: '0.1s' }">
                                 {{ slide.subtitle }}
                             </p>
-                            <h1 class="hero-title animate-fade-up" :style="{ animationDelay: '0.2s' }">
+                            <h1 class="hero-title" :class="{ 'animate-fade-up': hasMounted }" :style="{ animationDelay: '0.2s' }">
                                 {{ slide.title }}<br/>
                                 <span>{{ slide.highlight }}</span>
                             </h1>
-                            <p class="hero-description mb-4 animate-fade-up" :style="{ animationDelay: '0.3s' }">
+                            <p class="hero-description mb-4" :class="{ 'animate-fade-up': hasMounted }" :style="{ animationDelay: '0.3s' }">
                                 {{ slide.description }}
                             </p>
-                            <div class="d-flex gap-3 flex-wrap animate-fade-up" :style="{ animationDelay: '0.4s' }">
+                            <div class="d-flex gap-3 flex-wrap" :class="{ 'animate-fade-up': hasMounted }" :style="{ animationDelay: '0.4s' }">
                                 <a :href="slide.cta_link || '#'" class="btn btn-cta btn-lg">
                                     {{ slide.cta_text }}
                                 </a>
@@ -153,7 +157,7 @@ onUnmounted(() => {
                         
                         <div class="col-lg-5 hero-image-container d-flex align-items-center justify-content-center mt-5 mt-lg-0">
                             <div class="hero-glow animate-pulse"></div>
-                            <div v-if="slide.image || slide.image_desktop_webp" class="hero-image-wrapper animate-fade-up" :style="{ animationDelay: '0.3s' }">
+                            <div v-if="slide.image || slide.image_desktop_webp" class="hero-image-wrapper" :class="{ 'animate-fade-up': hasMounted }" :style="{ animationDelay: '0.3s' }">
                                 <picture>
                                     <!-- Mobile WebP (max 768px) -->
                                     <source 
@@ -223,37 +227,6 @@ onUnmounted(() => {
             ></button>
         </div>
 
-        <!-- Stats Row -->
-        <div class="stats-row">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-3 col-6">
-                        <div class="stat-item animate-fade-up" style="animation-delay: 0.5s;">
-                            <div class="stat-number">+50</div>
-                            <div class="stat-label">Products</div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-6">
-                        <div class="stat-item animate-fade-up" style="animation-delay: 0.6s;">
-                            <div class="stat-number">+10K</div>
-                            <div class="stat-label">Happy Clients</div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-6">
-                        <div class="stat-item animate-fade-up" style="animation-delay: 0.7s;">
-                            <div class="stat-number">+25</div>
-                            <div class="stat-label">Years Experience</div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-6">
-                        <div class="stat-item animate-fade-up" style="animation-delay: 0.8s;">
-                            <div class="stat-number">5★</div>
-                            <div class="stat-label">Client Reviews</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </section>
 </template>
 
@@ -335,6 +308,17 @@ onUnmounted(() => {
     height: auto;
     max-height: 500px;
     object-fit: contain;
+}
+
+.hero-slide.no-animate.active .animate-fade-up,
+.hero-slide.no-animate.active .hero-subtitle,
+.hero-slide.no-animate.active .hero-title,
+.hero-slide.no-animate.active .hero-description,
+.hero-slide.no-animate.active .hero-image-wrapper,
+.hero-slide.no-animate.active .d-flex {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
 }
 
 .hero-slide.active .animate-fade-up {
@@ -422,7 +406,7 @@ onUnmounted(() => {
     justify-content: center;
     gap: 12px;
     z-index: 10;
-    margin-top: 40px;
+    padding: 40px 0 30px;
 }
 
 .slider-dot {
@@ -444,33 +428,6 @@ onUnmounted(() => {
     transform: scale(1.2);
 }
 
-.stats-row {
-    padding: 30px 0;
-    z-index: 3;
-}
-
-.stat-item {
-    text-align: center;
-    padding: 20px;
-}
-
-.stat-number {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: var(--primary-light);
-    display: inline-block;
-}
-
-.stat-label {
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.stat-item:hover .stat-number {
-    animation: bounce 0.5s ease;
-}
 
 /* Responsive */
 @media (max-width: 1199.98px) {
@@ -519,22 +476,6 @@ onUnmounted(() => {
         margin-top: 25px;
     }
     
-    .stats-row {
-        margin-top: 30px;
-        padding-bottom: 20px;
-    }
-    
-    .stat-number {
-        font-size: 2rem;
-    }
-    
-    .stat-label {
-        font-size: 0.8rem;
-    }
-    
-    .stat-item {
-        padding: 15px 10px;
-    }
 }
 
 @media (max-width: 767.98px) {
@@ -581,23 +522,6 @@ onUnmounted(() => {
         margin-top: 20px;
     }
     
-    .stats-row {
-        margin-top: 25px;
-        padding-bottom: 20px;
-    }
-    
-    .stat-number {
-        font-size: 1.5rem;
-    }
-    
-    .stat-label {
-        font-size: 0.7rem;
-        letter-spacing: 0;
-    }
-    
-    .stat-item {
-        padding: 10px 5px;
-    }
 }
 
 @media (max-width: 575.98px) {
@@ -727,22 +651,6 @@ onUnmounted(() => {
         border-radius: 4px;
     }
     
-    .stats-row {
-        margin-top: 20px;
-        padding-bottom: 15px;
-    }
-    
-    .stat-number {
-        font-size: 1.3rem;
-    }
-    
-    .stat-label {
-        font-size: 0.65rem;
-    }
-    
-    .stat-item {
-        padding: 8px 3px;
-    }
 }
 
 @media (hover: none) and (pointer: coarse) {
@@ -750,8 +658,5 @@ onUnmounted(() => {
         transform: none;
     }
     
-    .stat-item:hover .stat-number {
-        animation: none;
-    }
 }
 </style>

@@ -19,7 +19,7 @@
         <!-- Page Loader Styles (inline for instant load) -->
         <style>
             html.loading body {
-                overflow: hidden !important;
+                overflow-y: scroll !important;
             }
             .page-loader {
                 position: fixed;
