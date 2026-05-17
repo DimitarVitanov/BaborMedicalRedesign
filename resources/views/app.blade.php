@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="loading">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -27,81 +27,23 @@
             @font-face{font-family:'Playfair Display';font-style:normal;font-weight:400 700;font-display:optional;src:url('/fonts/playfair-variable.woff2') format('woff2')}
             @font-face{font-family:'Poppins Fallback';src:local('Arial');size-adjust:112%;ascent-override:92%;descent-override:22%;line-gap-override:0%}
             @font-face{font-family:'Playfair Fallback';src:local('Georgia');size-adjust:112%;ascent-override:90%;descent-override:22%;line-gap-override:0%}
-            html.loading body {
-                overflow-y: scroll !important;
-            }
             .hero-section{min-height:calc(100vh - 110px);position:relative;overflow:hidden;display:flex;flex-direction:column}
             .hero-slider{position:relative;width:100%;flex:1;display:flex;align-items:center;justify-content:center;min-height:70vh}
             .hero-slide{position:absolute;top:0;left:0;width:100%;height:70vh;opacity:0;visibility:hidden;display:flex;align-items:center;justify-content:center}
             .hero-slide.active{opacity:1;visibility:visible}
-            .page-loader {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: linear-gradient(160deg, #1e2d3d, #3D4F5F);
-                display: none;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                z-index: 99999;
-                transition: opacity 0.3s ease, visibility 0.3s ease;
-            }
-            .page-loader.hidden {
-                opacity: 0;
-                visibility: hidden;
-            }
-            .loader-logo {
-                width: 120px;
-                height: auto;
-                margin-bottom: 30px;
-                animation: pulse-logo 2s ease-in-out infinite;
-            }
-            .loader-spinner {
-                width: 50px;
-                height: 50px;
-                position: relative;
-            }
-            .loader-spinner::before,
-            .loader-spinner::after {
-                content: '';
-                position: absolute;
-                border-radius: 50%;
-            }
-            .loader-spinner::before {
-                width: 100%;
-                height: 100%;
-                border: 3px solid rgba(201, 168, 124, 0.2);
-            }
-            .loader-spinner::after {
-                width: 100%;
-                height: 100%;
-                border: 3px solid transparent;
-                border-top-color: #c9a87c;
-                animation: spin 1s linear infinite;
-            }
-            .loader-text {
-                margin-top: 20px;
-                color: rgba(255, 255, 255, 0.6);
-                font-size: 0.85rem;
-                letter-spacing: 2px;
-                text-transform: uppercase;
-            }
-            @keyframes spin {
-                0% { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
-            }
-            @keyframes pulse-logo {
-                0%, 100% { opacity: 1; transform: scale(1); }
-                50% { opacity: 0.7; transform: scale(0.95); }
-            }
+            /* CLS-safe page loader: fixed position = no layout participation */
+            .page-loader{position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(160deg,#1e2d3d,#3D4F5F);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:99999;opacity:1;transition:opacity 0.4s ease;pointer-events:all}
+            .page-loader.done{opacity:0;pointer-events:none}
+            .loader-logo{width:120px;height:auto;margin-bottom:30px;animation:pulse-logo 2s ease-in-out infinite}
+            .loader-spinner{width:50px;height:50px;position:relative}
+            .loader-spinner::before,.loader-spinner::after{content:'';position:absolute;border-radius:50%}
+            .loader-spinner::before{width:100%;height:100%;border:3px solid rgba(201,168,124,0.2)}
+            .loader-spinner::after{width:100%;height:100%;border:3px solid transparent;border-top-color:#c9a87c;animation:spin 1s linear infinite}
+            .loader-text{margin-top:20px;color:rgba(255,255,255,0.6);font-size:0.85rem;letter-spacing:2px;text-transform:uppercase}
+            @keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+            @keyframes pulse-logo{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.7;transform:scale(0.95)}}
             /* Hide SSR-rendered mobile menu before Vue styles load */
-            .mobile-menu {
-                opacity: 0;
-                visibility: hidden;
-                pointer-events: none;
-            }
+            .mobile-menu{opacity:0;visibility:hidden;pointer-events:none}
         </style>
 
         <!-- Scripts -->
@@ -110,9 +52,9 @@
         @inertiaHead
     </head>
     <body class="font-sans antialiased">
-        <!-- Page Loader (hidden by default, shown via JS to avoid blocking crawlers) -->
-        <div id="page-loader" class="page-loader">
-            <img src="/logo.webp" alt="Babor Medical" class="loader-logo" />
+        <!-- CLS-safe loader: position:fixed, fades with opacity only, never removed from DOM -->
+        <div class="page-loader" aria-hidden="true">
+            <img src="/logo.webp" alt="" class="loader-logo" width="120" height="120" />
             <div class="loader-spinner"></div>
             <span class="loader-text">Loading...</span>
         </div>
@@ -120,20 +62,8 @@
         @inertia
 
         <script>
-            // Show loader immediately via JS (crawlers without JS won't see it)
-            (function() {
-                var loader = document.getElementById('page-loader');
-                if (loader) loader.style.display = 'flex';
-            })();
             window.addEventListener('load', function() {
-                var loader = document.getElementById('page-loader');
-                if (loader) {
-                    loader.classList.add('hidden');
-                    document.documentElement.classList.remove('loading');
-                    setTimeout(function() {
-                        loader.remove();
-                    }, 300);
-                }
+                document.querySelector('.page-loader').classList.add('done');
             });
         </script>
     </body>
