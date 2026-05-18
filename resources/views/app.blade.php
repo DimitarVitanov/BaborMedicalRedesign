@@ -35,9 +35,9 @@
             .mobile-menu{opacity:0;visibility:hidden;pointer-events:none}
         </style>
 
-        <!-- Scripts -->
-        @routes
+        <!-- CSS first, then scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @routes
         @inertiaHead
     </head>
     <body class="font-sans antialiased">
