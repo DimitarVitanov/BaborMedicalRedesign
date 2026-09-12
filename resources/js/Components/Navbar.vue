@@ -136,6 +136,7 @@ const navLinks = computed(() => [
     { name: currentLocale.value === 'mk' ? 'Почетна' : 'Home', href: '/' },
     { name: currentLocale.value === 'mk' ? 'За нас' : 'About', href: '/about' },
     { name: currentLocale.value === 'mk' ? 'Ласери' : 'Lasers', href: '/lasers' },
+    { name: currentLocale.value === 'mk' ? 'Онлајн продавница' : 'Online Store', href: 'https://www.skinboutique.mk', external: true },
     { name: currentLocale.value === 'mk' ? 'Контакт' : 'Contact', href: '/contact' },
 ]);
 
@@ -201,11 +202,13 @@ const priceListLabel = computed(() => currentLocale.value === 'mk' ? 'Ценов
                         </svg>
                     </a>
 
-                    <a 
-                        v-for="link in navLinks.slice(3)" 
-                        :key="link.name" 
+                    <a
+                        v-for="link in navLinks.slice(3)"
+                        :key="link.name"
                         :href="link.href"
                         class="nav-link"
+                        :target="link.external ? '_blank' : null"
+                        :rel="link.external ? 'noopener' : null"
                     >
                         {{ link.name }}
                     </a>
@@ -365,11 +368,13 @@ const priceListLabel = computed(() => currentLocale.value === 'mk' ? 'Ценов
                     </div>
                 </div>
                 
-                <a 
-                    v-for="link in navLinks.slice(3)" 
-                    :key="link.name" 
+                <a
+                    v-for="link in navLinks.slice(3)"
+                    :key="link.name"
                     :href="link.href"
                     class="mobile-link"
+                    :target="link.external ? '_blank' : null"
+                    :rel="link.external ? 'noopener' : null"
                     @click="mobileMenuOpen = false"
                 >
                     {{ link.name }}

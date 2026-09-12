@@ -44,11 +44,11 @@ const _sfc_main$2 = {
       () => {
         var _a;
         if (props.show) {
-          document.body.style.overflow = "hidden";
+          if (typeof document !== "undefined") document.body.style.overflow = "hidden";
           showSlot.value = true;
           (_a = dialog.value) == null ? void 0 : _a.showModal();
         } else {
-          document.body.style.overflow = "";
+          if (typeof document !== "undefined") document.body.style.overflow = "";
           setTimeout(() => {
             var _a2;
             (_a2 = dialog.value) == null ? void 0 : _a2.close();
@@ -70,10 +70,14 @@ const _sfc_main$2 = {
         }
       }
     };
-    onMounted(() => document.addEventListener("keydown", closeOnEscape));
+    onMounted(() => {
+      if (typeof document !== "undefined") document.addEventListener("keydown", closeOnEscape);
+    });
     onUnmounted(() => {
-      document.removeEventListener("keydown", closeOnEscape);
-      document.body.style.overflow = "";
+      if (typeof document !== "undefined") {
+        document.removeEventListener("keydown", closeOnEscape);
+        document.body.style.overflow = "";
+      }
     });
     const maxWidthClass = computed(() => {
       return {

@@ -1,7 +1,7 @@
 import { computed, unref, withCtx, createVNode, toDisplayString, useSSRContext } from "vue";
 import { ssrRenderComponent, ssrInterpolate, ssrRenderAttr, ssrRenderList, ssrRenderClass } from "vue/server-renderer";
 import { usePage, Head } from "@inertiajs/vue3";
-import { u as useScrollAnimation, N as Navbar, F as Footer } from "./useScrollAnimation-DxAAWq3P.js";
+import { u as useScrollAnimation, N as Navbar, F as Footer } from "./useScrollAnimation-DJ_FlRZp.js";
 import { _ as _export_sfc } from "./_plugin-vue_export-helper-1tPrXgE0.js";
 const _sfc_main = {
   __name: "PrivacyPolicy",
@@ -209,7 +209,7 @@ The company acts as the Data Controller.`
       _push(ssrRenderComponent(unref(Head), null, {
         default: withCtx((_, _push2, _parent2, _scopeId) => {
           if (_push2) {
-            _push2(`<title data-v-ddb2f345${_scopeId}>${ssrInterpolate(seoTitle.value)}</title><meta name="description"${ssrRenderAttr("content", content.value.subtitle)} data-v-ddb2f345${_scopeId}><meta name="robots" content="index, follow" data-v-ddb2f345${_scopeId}><meta property="og:title"${ssrRenderAttr("content", seoTitle.value)} data-v-ddb2f345${_scopeId}><meta property="og:description"${ssrRenderAttr("content", content.value.subtitle)} data-v-ddb2f345${_scopeId}><meta property="og:image" content="/logo.webp" data-v-ddb2f345${_scopeId}><meta property="og:type" content="website" data-v-ddb2f345${_scopeId}><link rel="canonical" href="https://babormedical.com/privacy-policy" data-v-ddb2f345${_scopeId}><link rel="alternate" hreflang="en" href="https://babormedical.com/privacy-policy?lang=en" data-v-ddb2f345${_scopeId}><link rel="alternate" hreflang="mk" href="https://babormedical.com/privacy-policy?lang=mk" data-v-ddb2f345${_scopeId}><link rel="alternate" hreflang="x-default" href="https://babormedical.com/privacy-policy" data-v-ddb2f345${_scopeId}>`);
+            _push2(`<title data-v-888b9a2c${_scopeId}>${ssrInterpolate(seoTitle.value)}</title><meta name="description"${ssrRenderAttr("content", content.value.subtitle)} data-v-888b9a2c${_scopeId}><meta name="robots" content="index, follow" data-v-888b9a2c${_scopeId}><meta property="og:title"${ssrRenderAttr("content", seoTitle.value)} data-v-888b9a2c${_scopeId}><meta property="og:description"${ssrRenderAttr("content", content.value.subtitle)} data-v-888b9a2c${_scopeId}><meta property="og:image" content="https://babormedical.com/logo.webp" data-v-888b9a2c${_scopeId}><meta property="og:type" content="website" data-v-888b9a2c${_scopeId}><link rel="canonical" href="https://babormedical.com/privacy-policy" data-v-888b9a2c${_scopeId}><link rel="alternate" hreflang="en" href="https://babormedical.com/privacy-policy?lang=en" data-v-888b9a2c${_scopeId}><link rel="alternate" hreflang="mk" href="https://babormedical.com/privacy-policy?lang=mk" data-v-888b9a2c${_scopeId}><link rel="alternate" hreflang="x-default" href="https://babormedical.com/privacy-policy" data-v-888b9a2c${_scopeId}>`);
           } else {
             return [
               createVNode("title", null, toDisplayString(seoTitle.value), 1),
@@ -231,7 +231,7 @@ The company acts as the Data Controller.`
               }, null, 8, ["content"]),
               createVNode("meta", {
                 property: "og:image",
-                content: "/logo.webp"
+                content: "https://babormedical.com/logo.webp"
               }),
               createVNode("meta", {
                 property: "og:type",
@@ -261,27 +261,27 @@ The company acts as the Data Controller.`
         }),
         _: 1
       }, _parent));
-      _push(`<div class="main-wrapper" data-v-ddb2f345>`);
+      _push(`<div class="main-wrapper" data-v-888b9a2c>`);
       _push(ssrRenderComponent(Navbar, null, null, _parent));
-      _push(`<section class="privacy-hero" data-v-ddb2f345><div class="container" data-v-ddb2f345><div class="hero-content fade-in-up" data-v-ddb2f345><span class="section-badge" data-v-ddb2f345>${ssrInterpolate(locale.value === "mk" ? "ПРАВНИ ИНФОРМАЦИИ" : "LEGAL")}</span><h1 class="hero-title" data-v-ddb2f345>${ssrInterpolate(content.value.title)}</h1><p class="hero-subtitle" data-v-ddb2f345>${ssrInterpolate(content.value.subtitle)}</p><p class="last-updated" data-v-ddb2f345>${ssrInterpolate(content.value.lastUpdated)}</p></div></div></section><section class="privacy-content" data-v-ddb2f345><div class="container" data-v-ddb2f345><div class="content-wrapper" data-v-ddb2f345><!--[-->`);
+      _push(`<section class="privacy-hero" data-v-888b9a2c><div class="container" data-v-888b9a2c><div class="hero-content fade-in-up" data-v-888b9a2c><span class="section-badge" data-v-888b9a2c>${ssrInterpolate(locale.value === "mk" ? "ПРАВНИ ИНФОРМАЦИИ" : "LEGAL")}</span><h1 class="hero-title" data-v-888b9a2c>${ssrInterpolate(content.value.title)}</h1><p class="hero-subtitle" data-v-888b9a2c>${ssrInterpolate(content.value.subtitle)}</p><p class="last-updated" data-v-888b9a2c>${ssrInterpolate(content.value.lastUpdated)}</p></div></div></section><section class="privacy-content" data-v-888b9a2c><div class="container" data-v-888b9a2c><div class="content-wrapper" data-v-888b9a2c><!--[-->`);
       ssrRenderList(content.value.sections, (section, index) => {
-        _push(`<div class="${ssrRenderClass([`stagger-${index % 4 + 1}`, "policy-section fade-in-up"])}" data-v-ddb2f345><h2 class="section-title" data-v-ddb2f345>${ssrInterpolate(section.title)}</h2><div class="section-content" data-v-ddb2f345><p class="section-text" data-v-ddb2f345>${section.content.replace(/\n/g, "<br>") ?? ""}</p>`);
+        _push(`<div class="${ssrRenderClass([`stagger-${index % 4 + 1}`, "policy-section fade-in-up"])}" data-v-888b9a2c><h2 class="section-title" data-v-888b9a2c>${ssrInterpolate(section.title)}</h2><div class="section-content" data-v-888b9a2c><p class="section-text" data-v-888b9a2c>${section.content.replace(/\n/g, "<br>") ?? ""}</p>`);
         if (section.list) {
-          _push(`<ul class="section-list" data-v-ddb2f345><!--[-->`);
+          _push(`<ul class="section-list" data-v-888b9a2c><!--[-->`);
           ssrRenderList(section.list, (item, i) => {
-            _push(`<li data-v-ddb2f345>${ssrInterpolate(item)}</li>`);
+            _push(`<li data-v-888b9a2c>${ssrInterpolate(item)}</li>`);
           });
           _push(`<!--]--></ul>`);
         } else {
           _push(`<!---->`);
         }
         if (section.footer) {
-          _push(`<p class="section-footer" data-v-ddb2f345>${ssrInterpolate(section.footer)}</p>`);
+          _push(`<p class="section-footer" data-v-888b9a2c>${ssrInterpolate(section.footer)}</p>`);
         } else {
           _push(`<!---->`);
         }
         if (section.contact) {
-          _push(`<div class="contact-info" data-v-ddb2f345><a${ssrRenderAttr("href", `mailto:${companyInfo.email}`)} class="contact-link" data-v-ddb2f345><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-v-ddb2f345><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" data-v-ddb2f345></path><polyline points="22,6 12,13 2,6" data-v-ddb2f345></polyline></svg> ${ssrInterpolate(companyInfo.email)}</a><a${ssrRenderAttr("href", `tel:${companyInfo.phone}`)} class="contact-link" data-v-ddb2f345><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-v-ddb2f345><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" data-v-ddb2f345></path></svg> ${ssrInterpolate(companyInfo.phone)}</a></div>`);
+          _push(`<div class="contact-info" data-v-888b9a2c><a${ssrRenderAttr("href", `mailto:${companyInfo.email}`)} class="contact-link" data-v-888b9a2c><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-v-888b9a2c><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" data-v-888b9a2c></path><polyline points="22,6 12,13 2,6" data-v-888b9a2c></polyline></svg> ${ssrInterpolate(companyInfo.email)}</a><a${ssrRenderAttr("href", `tel:${companyInfo.phone}`)} class="contact-link" data-v-888b9a2c><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-v-888b9a2c><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" data-v-888b9a2c></path></svg> ${ssrInterpolate(companyInfo.phone)}</a></div>`);
         } else {
           _push(`<!---->`);
         }
@@ -299,7 +299,7 @@ _sfc_main.setup = (props, ctx) => {
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Pages/PrivacyPolicy.vue");
   return _sfc_setup ? _sfc_setup(props, ctx) : void 0;
 };
-const PrivacyPolicy = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-ddb2f345"]]);
+const PrivacyPolicy = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-888b9a2c"]]);
 export {
   PrivacyPolicy as default
 };

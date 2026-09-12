@@ -1,7 +1,7 @@
-import { ref, computed, onMounted, onUnmounted, mergeProps, useSSRContext, unref, withCtx, createVNode, toDisplayString } from "vue";
-import { ssrRenderAttrs, ssrRenderList, ssrRenderClass, ssrRenderStyle, ssrInterpolate, ssrRenderAttr, ssrIncludeBooleanAttr, ssrRenderComponent } from "vue/server-renderer";
+import { ref, computed, onMounted, onUnmounted, mergeProps, useSSRContext, unref, withCtx, createVNode, resolveDynamicComponent, toDisplayString, openBlock, createBlock } from "vue";
+import { ssrRenderAttrs, ssrRenderList, ssrRenderClass, ssrInterpolate, ssrRenderAttr, ssrRenderStyle, ssrIncludeBooleanAttr, ssrRenderComponent, ssrRenderVNode } from "vue/server-renderer";
 import { usePage, Head } from "@inertiajs/vue3";
-import { u as useScrollAnimation, N as Navbar, F as Footer } from "./useScrollAnimation-DxAAWq3P.js";
+import { u as useScrollAnimation, N as Navbar, F as Footer } from "./useScrollAnimation-DJ_FlRZp.js";
 import { _ as _export_sfc } from "./_plugin-vue_export-helper-1tPrXgE0.js";
 const _sfc_main$6 = {
   __name: "HeroSection",
@@ -61,39 +61,49 @@ const _sfc_main$6 = {
         isAnimating.value = false;
       }, 800);
     };
+    const startAutoplay = () => {
+      if (!autoplayInterval) {
+        autoplayInterval = setInterval(nextSlide, 8e3);
+      }
+    };
     onMounted(() => {
-      autoplayInterval = setInterval(nextSlide, 6e3);
+      const events = ["click", "touchstart", "scroll"];
+      const handler = () => {
+        startAutoplay();
+        events.forEach((e) => window.removeEventListener(e, handler));
+      };
+      events.forEach((e) => window.addEventListener(e, handler, { once: false, passive: true }));
     });
     onUnmounted(() => {
       if (autoplayInterval) clearInterval(autoplayInterval);
     });
     return (_ctx, _push, _parent, _attrs) => {
-      _push(`<section${ssrRenderAttrs(mergeProps({ class: "hero-section" }, _attrs))} data-v-da4c37d1><div class="hero-slider" data-v-da4c37d1><!--[-->`);
+      _push(`<section${ssrRenderAttrs(mergeProps({ class: "hero-section" }, _attrs))} data-v-1215bc1f><div class="hero-slider" data-v-1215bc1f><!--[-->`);
       ssrRenderList(activeSlides.value, (slide, index) => {
-        _push(`<div class="${ssrRenderClass([{ active: currentSlide.value === index }, "hero-slide"])}" data-v-da4c37d1><div class="container" data-v-da4c37d1><div class="row align-items-center justify-content-between" data-v-da4c37d1><div class="col-lg-5" data-v-da4c37d1><p class="hero-subtitle animate-fade-up" style="${ssrRenderStyle({ animationDelay: "0.1s" })}" data-v-da4c37d1>${ssrInterpolate(slide.subtitle)}</p><h1 class="hero-title animate-fade-up" style="${ssrRenderStyle({ animationDelay: "0.2s" })}" data-v-da4c37d1>${ssrInterpolate(slide.title)}<br data-v-da4c37d1><span data-v-da4c37d1>${ssrInterpolate(slide.highlight)}</span></h1><p class="hero-description mb-4 animate-fade-up" style="${ssrRenderStyle({ animationDelay: "0.3s" })}" data-v-da4c37d1>${ssrInterpolate(slide.description)}</p><div class="d-flex gap-3 flex-wrap animate-fade-up" style="${ssrRenderStyle({ animationDelay: "0.4s" })}" data-v-da4c37d1><a${ssrRenderAttr("href", slide.cta_link || "#")} class="btn btn-cta btn-lg" data-v-da4c37d1>${ssrInterpolate(slide.cta_text)}</a><a${ssrRenderAttr("href", slide.secondary_link || "#")} class="btn btn-outline-light btn-lg rounded-pill px-4" data-v-da4c37d1>${ssrInterpolate(slide.secondary_text)}</a></div></div><div class="col-lg-5 hero-image-container d-flex align-items-center justify-content-center mt-5 mt-lg-0" data-v-da4c37d1><div class="hero-glow animate-pulse" data-v-da4c37d1></div>`);
+        _push(`<div class="${ssrRenderClass([{ active: currentSlide.value === index }, "hero-slide"])}" data-v-1215bc1f><div class="container" data-v-1215bc1f><div class="row align-items-center justify-content-between" data-v-1215bc1f><div class="col-lg-5" data-v-1215bc1f><p class="hero-subtitle" data-v-1215bc1f>${ssrInterpolate(slide.subtitle)}</p><h1 class="hero-title" data-v-1215bc1f>${ssrInterpolate(slide.title)}<br data-v-1215bc1f><span data-v-1215bc1f>${ssrInterpolate(slide.highlight)}</span></h1><p class="hero-description mb-4" data-v-1215bc1f>${ssrInterpolate(slide.description)}</p><div class="d-flex gap-3 flex-wrap" data-v-1215bc1f><a${ssrRenderAttr("href", slide.cta_link || "#")} class="btn btn-cta btn-lg" data-v-1215bc1f>${ssrInterpolate(slide.cta_text)}<span class="visually-hidden" data-v-1215bc1f> - ${ssrInterpolate(slide.title)} ${ssrInterpolate(slide.highlight)}</span></a><a${ssrRenderAttr("href", slide.secondary_link || "#")} class="btn btn-outline-light btn-lg rounded-pill px-4" data-v-1215bc1f>${ssrInterpolate(slide.secondary_text)}<span class="visually-hidden" data-v-1215bc1f> - ${ssrInterpolate(slide.title)} ${ssrInterpolate(slide.highlight)}</span></a></div></div><div class="col-lg-5 hero-image-container d-flex align-items-center justify-content-center mt-5 mt-lg-0" data-v-1215bc1f><div class="hero-glow animate-pulse" data-v-1215bc1f></div>`);
         if (slide.image || slide.image_desktop_webp) {
-          _push(`<div class="hero-image-wrapper animate-fade-up" style="${ssrRenderStyle({ animationDelay: "0.3s" })}" data-v-da4c37d1><picture data-v-da4c37d1>`);
+          _push(`<div class="hero-image-wrapper" data-v-1215bc1f><picture data-v-1215bc1f>`);
           if (slide.image_mobile_webp) {
-            _push(`<source media="(max-width: 768px)"${ssrRenderAttr("srcset", "/storage/" + slide.image_mobile_webp)} type="image/webp" data-v-da4c37d1>`);
+            _push(`<source media="(max-width: 768px)"${ssrRenderAttr("srcset", "/storage/" + slide.image_mobile_webp)} type="image/webp" data-v-1215bc1f>`);
           } else {
             _push(`<!---->`);
           }
           if (slide.image_desktop_webp) {
-            _push(`<source media="(min-width: 769px)"${ssrRenderAttr("srcset", "/storage/" + slide.image_desktop_webp)} type="image/webp" data-v-da4c37d1>`);
+            _push(`<source media="(min-width: 769px)"${ssrRenderAttr("srcset", "/storage/" + slide.image_desktop_webp)} type="image/webp" data-v-1215bc1f>`);
           } else {
             _push(`<!---->`);
           }
-          _push(`<img${ssrRenderAttr("src", slide.image ? "/storage/" + slide.image : "/storage/" + slide.image_desktop_webp)}${ssrRenderAttr("alt", slide.title)} class="hero-image" loading="eager" decoding="async" data-v-da4c37d1></picture></div>`);
+          _push(`<img${ssrRenderAttr("src", slide.image ? "/storage/" + slide.image : "/storage/" + slide.image_desktop_webp)}${ssrRenderAttr("alt", slide.title)} class="hero-image" width="450" height="500" loading="eager" decoding="async" fetchpriority="high" data-v-1215bc1f></picture></div>`);
         } else {
-          _push(`<div class="glass-card mx-auto animate-fade-up" style="${ssrRenderStyle([{ "max-width": "400px" }, { animationDelay: "0.3s" }])}" data-v-da4c37d1><div class="text-center py-5" data-v-da4c37d1><svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" fill="var(--primary-light)" viewBox="0 0 16 16" data-v-da4c37d1><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" data-v-da4c37d1></path><path d="M4.285 9.567a.5.5 0 0 1 .683.183A3.498 3.498 0 0 0 8 11.5a3.498 3.498 0 0 0 3.032-1.75.5.5 0 1 1 .866.5A4.498 4.498 0 0 1 8 12.5a4.498 4.498 0 0 1-3.898-2.25.5.5 0 0 1 .183-.683zM7 6.5C7 7.328 6.552 8 6 8s-1-.672-1-1.5S5.448 5 6 5s1 .672 1 1.5zm4 0c0 .828-.448 1.5-1 1.5s-1-.672-1-1.5S9.448 5 10 5s1 .672 1 1.5z" data-v-da4c37d1></path></svg><p class="text-white mt-3 mb-0" data-v-da4c37d1>No image uploaded</p></div></div>`);
+          _push(`<div class="glass-card mx-auto animate-fade-up" style="${ssrRenderStyle([{ "max-width": "400px" }, { animationDelay: "0.3s" }])}" data-v-1215bc1f><div class="text-center py-5" data-v-1215bc1f><svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" fill="var(--primary-light)" viewBox="0 0 16 16" data-v-1215bc1f><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" data-v-1215bc1f></path><path d="M4.285 9.567a.5.5 0 0 1 .683.183A3.498 3.498 0 0 0 8 11.5a3.498 3.498 0 0 0 3.032-1.75.5.5 0 1 1 .866.5A4.498 4.498 0 0 1 8 12.5a4.498 4.498 0 0 1-3.898-2.25.5.5 0 0 1 .183-.683zM7 6.5C7 7.328 6.552 8 6 8s-1-.672-1-1.5S5.448 5 6 5s1 .672 1 1.5zm4 0c0 .828-.448 1.5-1 1.5s-1-.672-1-1.5S9.448 5 10 5s1 .672 1 1.5z" data-v-1215bc1f></path></svg><p class="text-white mt-3 mb-0" data-v-1215bc1f>No image uploaded</p></div></div>`);
         }
         _push(`</div></div></div></div>`);
       });
-      _push(`<!--]--></div><div class="slider-controls d-none d-lg-flex" data-v-da4c37d1><button class="slider-btn slider-prev" aria-label="Previous slide" data-v-da4c37d1><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16" data-v-da4c37d1><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" data-v-da4c37d1></path></svg></button><button class="slider-btn slider-next" aria-label="Next slide" data-v-da4c37d1><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16" data-v-da4c37d1><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z" data-v-da4c37d1></path></svg></button></div><div class="slider-dots" data-v-da4c37d1><!--[-->`);
+      _push(`<!--]--></div><div class="slider-controls d-none d-lg-flex" data-v-1215bc1f><button class="slider-btn slider-prev" aria-label="Previous slide" data-v-1215bc1f><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16" data-v-1215bc1f><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" data-v-1215bc1f></path></svg></button><button class="slider-btn slider-next" aria-label="Next slide" data-v-1215bc1f><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16" data-v-1215bc1f><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z" data-v-1215bc1f></path></svg></button></div><div class="slider-dots" data-v-1215bc1f><!--[-->`);
       ssrRenderList(activeSlides.value, (slide, index) => {
-        _push(`<button class="${ssrRenderClass([{ active: currentSlide.value === index }, "slider-dot"])}"${ssrRenderAttr("aria-label", `Go to slide ${index + 1}`)} data-v-da4c37d1></button>`);
+        _push(`<button class="${ssrRenderClass([{ active: currentSlide.value === index }, "slider-dot"])}"${ssrRenderAttr("aria-label", `Go to slide ${index + 1}`)} data-v-1215bc1f></button>`);
       });
-      _push(`<!--]--></div><div class="stats-row" data-v-da4c37d1><div class="container" data-v-da4c37d1><div class="row" data-v-da4c37d1><div class="col-md-3 col-6" data-v-da4c37d1><div class="stat-item animate-fade-up" style="${ssrRenderStyle({ "animation-delay": "0.5s" })}" data-v-da4c37d1><div class="stat-number" data-v-da4c37d1>+50</div><div class="stat-label" data-v-da4c37d1>Products</div></div></div><div class="col-md-3 col-6" data-v-da4c37d1><div class="stat-item animate-fade-up" style="${ssrRenderStyle({ "animation-delay": "0.6s" })}" data-v-da4c37d1><div class="stat-number" data-v-da4c37d1>+10K</div><div class="stat-label" data-v-da4c37d1>Happy Clients</div></div></div><div class="col-md-3 col-6" data-v-da4c37d1><div class="stat-item animate-fade-up" style="${ssrRenderStyle({ "animation-delay": "0.7s" })}" data-v-da4c37d1><div class="stat-number" data-v-da4c37d1>+25</div><div class="stat-label" data-v-da4c37d1>Years Experience</div></div></div><div class="col-md-3 col-6" data-v-da4c37d1><div class="stat-item animate-fade-up" style="${ssrRenderStyle({ "animation-delay": "0.8s" })}" data-v-da4c37d1><div class="stat-number" data-v-da4c37d1>5★</div><div class="stat-label" data-v-da4c37d1>Client Reviews</div></div></div></div></div></div></section>`);
+      _push(`<!--]--></div></section>`);
     };
   }
 };
@@ -103,7 +113,7 @@ _sfc_main$6.setup = (props, ctx) => {
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Components/HeroSection.vue");
   return _sfc_setup$6 ? _sfc_setup$6(props, ctx) : void 0;
 };
-const HeroSection = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["__scopeId", "data-v-da4c37d1"]]);
+const HeroSection = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["__scopeId", "data-v-1215bc1f"]]);
 const _sfc_main$5 = {
   __name: "ServiceCategoriesSection",
   __ssrInlineRender: true,
@@ -272,23 +282,23 @@ const _sfc_main$3 = {
       };
     });
     return (_ctx, _push, _parent, _attrs) => {
-      _push(`<section${ssrRenderAttrs(mergeProps({ class: "about-section" }, _attrs))} data-v-16ac09ca><div class="container" data-v-16ac09ca><div class="about-grid" data-v-16ac09ca><div class="about-content fade-in-left" data-v-16ac09ca><span class="section-badge" data-v-16ac09ca>${ssrInterpolate(content.value.badge)}</span><h2 class="about-title" data-v-16ac09ca>${ssrInterpolate(content.value.title)}</h2><div class="about-subtitle" data-v-16ac09ca>${content.value.subtitle ?? ""}</div><div class="about-description" data-v-16ac09ca>${content.value.description ?? ""}</div><div class="features-list d-none" data-v-16ac09ca><!--[-->`);
+      _push(`<section${ssrRenderAttrs(mergeProps({ class: "about-section mt-4" }, _attrs))} data-v-fab47e2d><div class="container" data-v-fab47e2d><div class="about-grid" data-v-fab47e2d><div class="about-content fade-in-left" data-v-fab47e2d><span class="section-badge" data-v-fab47e2d>${ssrInterpolate(content.value.badge)}</span><h2 class="about-title" data-v-fab47e2d>${ssrInterpolate(content.value.title)}</h2><div class="about-subtitle" data-v-fab47e2d>${content.value.subtitle ?? ""}</div><div class="about-description" data-v-fab47e2d>${content.value.description ?? ""}</div><div class="features-list d-none" data-v-fab47e2d><!--[-->`);
       ssrRenderList(content.value.features, (feature, index) => {
-        _push(`<div class="feature-item" data-v-16ac09ca><div class="feature-icon" data-v-16ac09ca>`);
+        _push(`<div class="feature-item" data-v-fab47e2d><div class="feature-icon" data-v-fab47e2d>`);
         if (feature.icon === "certified") {
-          _push(`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-v-16ac09ca><path d="M12 15l-2 5l1.5-1l1.5 1l1.5-1l1.5 1l-2-5" data-v-16ac09ca></path><circle cx="12" cy="9" r="6" data-v-16ac09ca></circle><path d="M9 9l2 2l4-4" data-v-16ac09ca></path></svg>`);
+          _push(`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-v-fab47e2d><path d="M12 15l-2 5l1.5-1l1.5 1l1.5-1l1.5 1l-2-5" data-v-fab47e2d></path><circle cx="12" cy="9" r="6" data-v-fab47e2d></circle><path d="M9 9l2 2l4-4" data-v-fab47e2d></path></svg>`);
         } else if (feature.icon === "technology") {
-          _push(`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-v-16ac09ca><rect x="2" y="3" width="20" height="14" rx="2" data-v-16ac09ca></rect><path d="M8 21h8" data-v-16ac09ca></path><path d="M12 17v4" data-v-16ac09ca></path><path d="M7 8h2m2 0h2m2 0h2" data-v-16ac09ca></path><path d="M7 11h10" data-v-16ac09ca></path></svg>`);
+          _push(`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-v-fab47e2d><rect x="2" y="3" width="20" height="14" rx="2" data-v-fab47e2d></rect><path d="M8 21h8" data-v-fab47e2d></path><path d="M12 17v4" data-v-fab47e2d></path><path d="M7 8h2m2 0h2m2 0h2" data-v-fab47e2d></path><path d="M7 11h10" data-v-fab47e2d></path></svg>`);
         } else if (feature.icon === "products") {
-          _push(`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-v-16ac09ca><path d="M12 2L2 7l10 5l10-5l-10-5z" data-v-16ac09ca></path><path d="M2 17l10 5l10-5" data-v-16ac09ca></path><path d="M2 12l10 5l10-5" data-v-16ac09ca></path></svg>`);
+          _push(`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-v-fab47e2d><path d="M12 2L2 7l10 5l10-5l-10-5z" data-v-fab47e2d></path><path d="M2 17l10 5l10-5" data-v-fab47e2d></path><path d="M2 12l10 5l10-5" data-v-fab47e2d></path></svg>`);
         } else {
           _push(`<!---->`);
         }
-        _push(`</div><div class="feature-text" data-v-16ac09ca><h4 data-v-16ac09ca>${ssrInterpolate(feature.title)}</h4><p data-v-16ac09ca>${ssrInterpolate(feature.desc)}</p></div></div>`);
+        _push(`</div><div class="feature-text" data-v-fab47e2d><h4 data-v-fab47e2d>${ssrInterpolate(feature.title)}</h4><p data-v-fab47e2d>${ssrInterpolate(feature.desc)}</p></div></div>`);
       });
-      _push(`<!--]--></div><div class="about-cta-group" data-v-16ac09ca><a href="/about" class="btn-cta about-cta"${ssrRenderAttr("aria-label", content.value.ctaAriaLabel)} data-v-16ac09ca>${ssrInterpolate(content.value.cta)} <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-v-16ac09ca><path d="M5 12h14M12 5l7 7-7 7" data-v-16ac09ca></path></svg></a><a href="/contact" class="btn-outline about-cta-secondary"${ssrRenderAttr("aria-label", locale.value === "mk" ? "Закажи консултација во Babor Medical" : "Book a consultation at Babor Medical")} data-v-16ac09ca>${ssrInterpolate(content.value.ctaContact)}</a></div></div><div class="about-visual fade-in-right" data-v-16ac09ca><div class="visual-wrapper" data-v-16ac09ca><picture class="about-image-wrapper" data-v-16ac09ca><source media="(max-width: 575px)" srcset="/images/about-mobile.webp" type="image/webp" data-v-16ac09ca><source srcset="/images/about.webp" type="image/webp" data-v-16ac09ca><img src="/images/about.webp" alt="Babor Medical Team" class="about-image" loading="lazy" decoding="async" width="800" height="534" data-v-16ac09ca></picture><div class="floating-card card-1" data-v-16ac09ca><div class="card-icon" data-v-16ac09ca><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-v-16ac09ca><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" data-v-16ac09ca></path><polyline points="22 4 12 14.01 9 11.01" data-v-16ac09ca></polyline></svg></div><div class="card-text" data-v-16ac09ca><span class="card-number" data-v-16ac09ca>100%</span><span class="card-label" data-v-16ac09ca>${ssrInterpolate(locale.value === "mk" ? "Задоволство" : "Satisfaction")}</span></div></div><div class="floating-card card-2" data-v-16ac09ca><div class="card-icon" data-v-16ac09ca><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-v-16ac09ca><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" data-v-16ac09ca></path></svg></div><div class="card-text" data-v-16ac09ca><span class="card-number" data-v-16ac09ca>5.0</span><span class="card-label" data-v-16ac09ca>${ssrInterpolate(locale.value === "mk" ? "Рејтинг" : "Rating")}</span></div></div></div><div class="stats-grid" data-v-16ac09ca><!--[-->`);
+      _push(`<!--]--></div><div class="about-cta-group" data-v-fab47e2d><a href="/about" class="btn-cta about-cta" data-v-fab47e2d>${ssrInterpolate(content.value.cta)}<span class="visually-hidden" data-v-fab47e2d> about Babor Medical</span><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-v-fab47e2d><path d="M5 12h14M12 5l7 7-7 7" data-v-fab47e2d></path></svg></a><a href="/contact" class="btn-outline about-cta-secondary"${ssrRenderAttr("aria-label", locale.value === "mk" ? "Закажи консултација во Babor Medical" : "Book a consultation at Babor Medical")} data-v-fab47e2d>${ssrInterpolate(content.value.ctaContact)}</a></div></div><div class="about-visual fade-in-right" data-v-fab47e2d><div class="visual-wrapper" data-v-fab47e2d><picture class="about-image-wrapper" data-v-fab47e2d><source media="(max-width: 575px)" srcset="/images/about-mobile.webp" type="image/webp" data-v-fab47e2d><source srcset="/images/about.webp" type="image/webp" data-v-fab47e2d><img src="/images/about.webp" alt="Babor Medical Team" class="about-image" loading="lazy" decoding="async" width="800" height="534" data-v-fab47e2d></picture><div class="floating-card card-1" data-v-fab47e2d><div class="card-icon" data-v-fab47e2d><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-v-fab47e2d><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" data-v-fab47e2d></path><polyline points="22 4 12 14.01 9 11.01" data-v-fab47e2d></polyline></svg></div><div class="card-text" data-v-fab47e2d><span class="card-number" data-v-fab47e2d>100%</span><span class="card-label" data-v-fab47e2d>${ssrInterpolate(locale.value === "mk" ? "Задоволство" : "Satisfaction")}</span></div></div><div class="floating-card card-2" data-v-fab47e2d><div class="card-icon" data-v-fab47e2d><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-v-fab47e2d><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" data-v-fab47e2d></path></svg></div><div class="card-text" data-v-fab47e2d><span class="card-number" data-v-fab47e2d>5.0</span><span class="card-label" data-v-fab47e2d>${ssrInterpolate(locale.value === "mk" ? "Рејтинг" : "Rating")}</span></div></div></div><div class="stats-grid" data-v-fab47e2d><!--[-->`);
       ssrRenderList(content.value.stats, (stat, index) => {
-        _push(`<div class="${ssrRenderClass([`stagger-${index + 1}`, "stat-box fade-in-up"])}" data-v-16ac09ca><span class="stat-number" data-v-16ac09ca>${ssrInterpolate(stat.number)}</span><span class="stat-label" data-v-16ac09ca>${ssrInterpolate(stat.label)}</span></div>`);
+        _push(`<div class="${ssrRenderClass([`stagger-${index + 1}`, "stat-box fade-in-up"])}" data-v-fab47e2d><span class="stat-number" data-v-fab47e2d>${ssrInterpolate(stat.number)}</span><span class="stat-label" data-v-fab47e2d>${ssrInterpolate(stat.label)}</span></div>`);
       });
       _push(`<!--]--></div></div></div></div></section>`);
     };
@@ -300,7 +310,7 @@ _sfc_main$3.setup = (props, ctx) => {
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Components/AboutSection.vue");
   return _sfc_setup$3 ? _sfc_setup$3(props, ctx) : void 0;
 };
-const AboutSection = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["__scopeId", "data-v-16ac09ca"]]);
+const AboutSection = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["__scopeId", "data-v-fab47e2d"]]);
 const _sfc_main$2 = {
   __name: "EquipmentSection",
   __ssrInlineRender: true,
@@ -325,36 +335,36 @@ const _sfc_main$2 = {
       _push(`<section${ssrRenderAttrs(mergeProps({
         class: "equipment-section",
         id: "equipment"
-      }, _attrs))} data-v-13ab05af><div class="container" data-v-13ab05af><div class="section-header text-center fade-in-up" data-v-13ab05af><span class="section-badge" data-v-13ab05af>${ssrInterpolate(content.value.badge)}</span><h2 class="section-title" data-v-13ab05af>${ssrInterpolate(content.value.title)}</h2><p class="section-subtitle" data-v-13ab05af>${ssrInterpolate(content.value.subtitle)}</p></div><div class="carousel-container fade-in-up" data-v-13ab05af><button class="carousel-btn prev" aria-label="Previous" data-v-13ab05af><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-v-13ab05af><path d="M15 18l-6-6 6-6" data-v-13ab05af></path></svg></button><div class="carousel-viewport" data-v-13ab05af><div class="carousel-track" style="${ssrRenderStyle({ transform: `translateX(-${currentIndex.value * 100}%)` })}" data-v-13ab05af><!--[-->`);
+      }, _attrs))} data-v-07ef6e57><div class="container" data-v-07ef6e57><div class="section-header text-center fade-in-up" data-v-07ef6e57><span class="section-badge" data-v-07ef6e57>${ssrInterpolate(content.value.badge)}</span><h2 class="section-title" data-v-07ef6e57>${ssrInterpolate(content.value.title)}</h2><p class="section-subtitle" data-v-07ef6e57>${ssrInterpolate(content.value.subtitle)}</p></div><div class="carousel-container fade-in-up" data-v-07ef6e57><button class="carousel-btn prev" aria-label="Previous" data-v-07ef6e57><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-v-07ef6e57><path d="M15 18l-6-6 6-6" data-v-07ef6e57></path></svg></button><div class="carousel-viewport" data-v-07ef6e57><div class="carousel-track" style="${ssrRenderStyle({ transform: `translateX(-${currentIndex.value * 100}%)` })}" data-v-07ef6e57><!--[-->`);
       ssrRenderList(__props.equipment, (item, index) => {
-        _push(`<div class="carousel-slide" data-v-13ab05af><div class="${ssrRenderClass([{ active: index === currentIndex.value }, "equipment-card"])}" data-v-13ab05af><div class="card-inner" data-v-13ab05af><div class="card-image" data-v-13ab05af><div class="image-glow" data-v-13ab05af></div>`);
+        _push(`<div class="carousel-slide" data-v-07ef6e57><div class="${ssrRenderClass([{ active: index === currentIndex.value }, "equipment-card"])}" data-v-07ef6e57><div class="card-inner" data-v-07ef6e57><div class="card-image" data-v-07ef6e57><div class="image-glow" data-v-07ef6e57></div>`);
         if (item.image || item.image_desktop_webp) {
-          _push(`<picture data-v-13ab05af>`);
+          _push(`<picture data-v-07ef6e57>`);
           if (item.image_mobile_webp) {
-            _push(`<source media="(max-width: 768px)"${ssrRenderAttr("srcset", "/storage/" + item.image_mobile_webp)} type="image/webp" data-v-13ab05af>`);
+            _push(`<source media="(max-width: 768px)"${ssrRenderAttr("srcset", "/storage/" + item.image_mobile_webp)} type="image/webp" data-v-07ef6e57>`);
           } else {
             _push(`<!---->`);
           }
           if (item.image_desktop_webp) {
-            _push(`<source media="(min-width: 769px)"${ssrRenderAttr("srcset", "/storage/" + item.image_desktop_webp)} type="image/webp" data-v-13ab05af>`);
+            _push(`<source media="(min-width: 769px)"${ssrRenderAttr("srcset", "/storage/" + item.image_desktop_webp)} type="image/webp" data-v-07ef6e57>`);
           } else {
             _push(`<!---->`);
           }
-          _push(`<img${ssrRenderAttr("src", item.image ? "/storage/" + item.image : "/storage/" + item.image_desktop_webp)}${ssrRenderAttr("alt", item.title)} data-v-13ab05af></picture>`);
+          _push(`<img${ssrRenderAttr("src", item.image ? "/storage/" + item.image : "/storage/" + item.image_desktop_webp)}${ssrRenderAttr("alt", item.title)} width="400" height="400" loading="lazy" data-v-07ef6e57></picture>`);
         } else {
-          _push(`<div class="image-placeholder" data-v-13ab05af><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-v-13ab05af><rect x="3" y="3" width="18" height="18" rx="2" data-v-13ab05af></rect><circle cx="8.5" cy="8.5" r="1.5" data-v-13ab05af></circle><path d="M21 15l-5-5L5 21" data-v-13ab05af></path></svg></div>`);
+          _push(`<div class="image-placeholder" data-v-07ef6e57><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-v-07ef6e57><rect x="3" y="3" width="18" height="18" rx="2" data-v-07ef6e57></rect><circle cx="8.5" cy="8.5" r="1.5" data-v-07ef6e57></circle><path d="M21 15l-5-5L5 21" data-v-07ef6e57></path></svg></div>`);
         }
-        _push(`</div><div class="card-content" data-v-13ab05af><h3 class="card-title" data-v-13ab05af>${ssrInterpolate(item.title)}</h3>`);
+        _push(`</div><div class="card-content" data-v-07ef6e57><h3 class="card-title" data-v-07ef6e57>${ssrInterpolate(item.title)}</h3>`);
         if (item.description) {
-          _push(`<p class="card-description" data-v-13ab05af>${ssrInterpolate(item.description)}</p>`);
+          _push(`<p class="card-description" data-v-07ef6e57>${ssrInterpolate(item.description)}</p>`);
         } else {
           _push(`<!---->`);
         }
-        _push(`<a${ssrRenderAttr("href", item.link || "#")} class="card-link"${ssrRenderAttr("aria-label", locale.value === "mk" ? `Погледни детали за ${item.title}` : `View ${item.title} details`)} data-v-13ab05af>${ssrInterpolate(locale.value === "mk" ? "Погледни детали" : "View details")} <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-v-13ab05af><path d="M5 12h14M12 5l7 7-7 7" data-v-13ab05af></path></svg></a></div></div></div></div>`);
+        _push(`<a${ssrRenderAttr("href", item.link || "#")} class="card-link"${ssrRenderAttr("aria-label", locale.value === "mk" ? `Погледни детали за ${item.title}` : `View ${item.title} details`)} data-v-07ef6e57>${ssrInterpolate(locale.value === "mk" ? "Погледни детали" : "View details")} <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-v-07ef6e57><path d="M5 12h14M12 5l7 7-7 7" data-v-07ef6e57></path></svg></a></div></div></div></div>`);
       });
-      _push(`<!--]--></div></div><button class="carousel-btn next" aria-label="Next" data-v-13ab05af><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-v-13ab05af><path d="M9 18l6-6-6-6" data-v-13ab05af></path></svg></button></div><div class="carousel-dots" data-v-13ab05af><!--[-->`);
+      _push(`<!--]--></div></div><button class="carousel-btn next" aria-label="Next" data-v-07ef6e57><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-v-07ef6e57><path d="M9 18l6-6-6-6" data-v-07ef6e57></path></svg></button></div><div class="carousel-dots" data-v-07ef6e57><!--[-->`);
       ssrRenderList(__props.equipment, (item, index) => {
-        _push(`<button class="${ssrRenderClass([{ active: index === currentIndex.value }, "dot"])}"${ssrRenderAttr("aria-label", `Go to slide ${index + 1}`)} data-v-13ab05af></button>`);
+        _push(`<button class="${ssrRenderClass([{ active: index === currentIndex.value }, "dot"])}"${ssrRenderAttr("aria-label", `Go to slide ${index + 1}`)} data-v-07ef6e57></button>`);
       });
       _push(`<!--]--></div></div></section>`);
     };
@@ -366,7 +376,7 @@ _sfc_main$2.setup = (props, ctx) => {
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Components/EquipmentSection.vue");
   return _sfc_setup$2 ? _sfc_setup$2(props, ctx) : void 0;
 };
-const EquipmentSection = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-13ab05af"]]);
+const EquipmentSection = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-07ef6e57"]]);
 const _sfc_main$1 = {
   __name: "NewsletterSection",
   __ssrInlineRender: true,
@@ -459,12 +469,77 @@ const _sfc_main = {
       return locale.value === "mk" ? "ласерски центар, laserski centar, естетски центар, estetski centar, ласерско естетски центар, lasersko estetski centar, најдобар спа центар, najdobar spa center, најдобар ласерски центар, najdobar laserski centar, најдобар дерматолошки центар, najdobar dermatoloski centar, babor medical, нега на кожа" : "laser center, aesthetic center, laser aesthetic center, babor medical, skincare, dermatology, spa center, laser treatments, skin care, premium skincare, beauty treatments";
     });
     const ogLocale = computed(() => locale.value === "mk" ? "mk_MK" : "en_US");
+    const jsonLd = computed(() => {
+      return JSON.stringify({
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "Babor Medical",
+            "url": "https://babormedical.com",
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": "https://babormedical.com/?q={search_term_string}",
+              "query-input": "required name=search_term_string"
+            }
+          },
+          {
+            "@type": "MedicalBusiness",
+            "@id": "https://babormedical.com/#organization",
+            "name": "Babor Medical",
+            "url": "https://babormedical.com",
+            "logo": "https://babormedical.com/logo.webp",
+            "image": "https://babormedical.com/logo.webp",
+            "telephone": "+389 75 340 933",
+            "address": {
+              "@type": "PostalAddress",
+              "addressLocality": "Skopje",
+              "addressCountry": "MK"
+            },
+            "priceRange": "$$",
+            "description": locale.value === "mk" ? "Ласерски центар, естетски центар и ласерско естетски центар во Скопје. Ласерска епилација, козметологија, инјектибилни методи, третмани на тело." : "Laser center, aesthetic center and laser aesthetic center in Skopje. Laser hair removal, cosmetology, injectable methods, body treatments.",
+            "hasOfferCatalog": {
+              "@type": "OfferCatalog",
+              "name": locale.value === "mk" ? "Третмани" : "Treatments",
+              "itemListElement": [
+                { "@type": "Offer", "itemOffered": { "@type": "Service", "name": locale.value === "mk" ? "Ласерска епилација" : "Laser Hair Removal", "url": "https://babormedical.com/services/laser-aesthetic" } },
+                { "@type": "Offer", "itemOffered": { "@type": "Service", "name": locale.value === "mk" ? "Козметологија" : "Cosmetology", "url": "https://babormedical.com/services/cosmetology" } },
+                { "@type": "Offer", "itemOffered": { "@type": "Service", "name": locale.value === "mk" ? "Инјектибилни методи" : "Injectable Methods", "url": "https://babormedical.com/services/injectable-methods" } },
+                { "@type": "Offer", "itemOffered": { "@type": "Service", "name": locale.value === "mk" ? "Третмани на тело" : "Body Treatments", "url": "https://babormedical.com/services/body-treatments" } }
+              ]
+            }
+          },
+          {
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": locale.value === "mk" ? "Кои третмани ги нуди Babor Medical во Скопје?" : "What treatments does Babor Medical offer in Skopje?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": locale.value === "mk" ? "Babor Medical нуди ласерска епилација со Alma Soprano Titanium, козметолошки третмани со BABOR протоколи, инјектибилни методи (филери, ботокс, биостимулација) и апаратурни третмани на тело со Accent Prime, Ultraformer и EM Time." : "Babor Medical offers laser hair removal with Alma Soprano Titanium, cosmetology treatments with BABOR protocols, injectable methods (fillers, botox, biostimulation) and body treatments with Accent Prime, Ultraformer and EM Time."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": locale.value === "mk" ? "Како да закажам термин?" : "How do I book an appointment?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": locale.value === "mk" ? "Можете да закажете термин преку нашата контакт страница, преку телефон на +389 75 340 933, или преку Instagram @babormedical." : "You can book an appointment through our contact page, by phone at +389 75 340 933, or via Instagram @babormedical."
+                }
+              }
+            ]
+          }
+        ]
+      });
+    });
     return (_ctx, _push, _parent, _attrs) => {
       _push(`<!--[-->`);
       _push(ssrRenderComponent(unref(Head), null, {
         default: withCtx((_, _push2, _parent2, _scopeId) => {
           if (_push2) {
-            _push2(`<title${_scopeId}>${ssrInterpolate(seoTitle.value)}</title><meta name="description"${ssrRenderAttr("content", seoDescription.value)}${_scopeId}><meta name="keywords"${ssrRenderAttr("content", seoKeywords.value)}${_scopeId}><meta name="author" content="Babor Medical"${_scopeId}><meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"${_scopeId}><meta property="og:type" content="website"${_scopeId}><meta property="og:title"${ssrRenderAttr("content", seoTitle.value)}${_scopeId}><meta property="og:description"${ssrRenderAttr("content", seoDescription.value)}${_scopeId}><meta property="og:image" content="/logo.webp"${_scopeId}><meta property="og:locale"${ssrRenderAttr("content", ogLocale.value)}${_scopeId}><meta property="og:site_name" content="Babor Medical"${_scopeId}><meta name="twitter:card" content="summary_large_image"${_scopeId}><meta name="twitter:title"${ssrRenderAttr("content", seoTitle.value)}${_scopeId}><meta name="twitter:description"${ssrRenderAttr("content", seoDescription.value)}${_scopeId}><meta name="twitter:image" content="/logo.webp"${_scopeId}><link rel="alternate" hreflang="en" href="https://babormedical.com/?lang=en"${_scopeId}><link rel="alternate" hreflang="mk" href="https://babormedical.com/?lang=mk"${_scopeId}><link rel="alternate" hreflang="x-default" href="https://babormedical.com/"${_scopeId}>`);
+            _push2(`<title${_scopeId}>${ssrInterpolate(seoTitle.value)}</title><meta name="description"${ssrRenderAttr("content", seoDescription.value)}${_scopeId}><meta name="keywords"${ssrRenderAttr("content", seoKeywords.value)}${_scopeId}><meta name="author" content="Babor Medical"${_scopeId}><meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"${_scopeId}><meta property="og:type" content="website"${_scopeId}><meta property="og:title"${ssrRenderAttr("content", seoTitle.value)}${_scopeId}><meta property="og:description"${ssrRenderAttr("content", seoDescription.value)}${_scopeId}><meta property="og:image" content="https://babormedical.com/logo.webp"${_scopeId}><meta property="og:locale"${ssrRenderAttr("content", ogLocale.value)}${_scopeId}><meta property="og:site_name" content="Babor Medical"${_scopeId}><meta name="twitter:card" content="summary_large_image"${_scopeId}><meta name="twitter:title"${ssrRenderAttr("content", seoTitle.value)}${_scopeId}><meta name="twitter:description"${ssrRenderAttr("content", seoDescription.value)}${_scopeId}><meta name="twitter:image" content="https://babormedical.com/logo.webp"${_scopeId}><link rel="alternate" hreflang="en" href="https://babormedical.com/?lang=en"${_scopeId}><link rel="alternate" hreflang="mk" href="https://babormedical.com/?lang=mk"${_scopeId}><link rel="alternate" hreflang="x-default" href="https://babormedical.com/"${_scopeId}>`);
+            ssrRenderVNode(_push2, createVNode(resolveDynamicComponent("script"), { type: "application/ld+json" }, null), _parent2, _scopeId);
           } else {
             return [
               createVNode("title", null, toDisplayString(seoTitle.value), 1),
@@ -498,7 +573,7 @@ const _sfc_main = {
               }, null, 8, ["content"]),
               createVNode("meta", {
                 property: "og:image",
-                content: "/logo.webp"
+                content: "https://babormedical.com/logo.webp"
               }),
               createVNode("meta", {
                 property: "og:locale",
@@ -522,7 +597,7 @@ const _sfc_main = {
               }, null, 8, ["content"]),
               createVNode("meta", {
                 name: "twitter:image",
-                content: "/logo.webp"
+                content: "https://babormedical.com/logo.webp"
               }),
               createVNode("link", {
                 rel: "alternate",
@@ -538,7 +613,11 @@ const _sfc_main = {
                 rel: "alternate",
                 hreflang: "x-default",
                 href: "https://babormedical.com/"
-              })
+              }),
+              (openBlock(), createBlock(resolveDynamicComponent("script"), {
+                type: "application/ld+json",
+                innerHTML: jsonLd.value
+              }, null, 8, ["innerHTML"]))
             ];
           }
         }),
@@ -546,12 +625,14 @@ const _sfc_main = {
       }, _parent));
       _push(`<div class="main-wrapper">`);
       _push(ssrRenderComponent(Navbar, null, null, _parent));
+      _push(`<main>`);
       _push(ssrRenderComponent(HeroSection, { slides: __props.slides }, null, _parent));
       _push(ssrRenderComponent(AboutSection, { about: __props.about }, null, _parent));
       _push(ssrRenderComponent(ServicesSection, { services: __props.services }, null, _parent));
       _push(ssrRenderComponent(ServiceCategoriesSection, null, null, _parent));
       _push(ssrRenderComponent(EquipmentSection, { equipment: __props.equipment }, null, _parent));
       _push(ssrRenderComponent(NewsletterSection, null, null, _parent));
+      _push(`</main>`);
       _push(ssrRenderComponent(Footer, null, null, _parent));
       _push(`</div><!--]-->`);
     };

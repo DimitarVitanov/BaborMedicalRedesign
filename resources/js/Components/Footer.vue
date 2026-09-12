@@ -21,9 +21,10 @@ const content = computed(() => ({
     contact: locale.value === 'mk' ? 'Контакт' : 'Contact',
     workingHours: locale.value === 'mk' ? 'Работно време' : 'Working Hours',
     followUs: locale.value === 'mk' ? 'Следете нè' : 'Follow Us',
-    copyright: locale.value === 'mk' 
+    copyright: locale.value === 'mk'
         ? `© ${currentYear} Babor Medical. Сите права задржани.`
         : `© ${currentYear} Babor Medical. All rights reserved.`,
+    poweredBy: locale.value === 'mk' ? 'Изработено од' : 'Powered by',
     mondayFriday: locale.value === 'mk' ? 'Понеделник - Петок' : 'Monday - Friday',
     saturday: locale.value === 'mk' ? 'Сабота' : 'Saturday',
     sunday: locale.value === 'mk' ? 'Недела' : 'Sunday',
@@ -145,8 +146,11 @@ const content = computed(() => ({
         </div>
 
         <div class="footer-bottom">
-            <div class="container">
+            <div class="container footer-bottom-inner">
                 <p>{{ content.copyright }}</p>
+                <p class="powered-by">
+                    {{ content.poweredBy }} <a href="https://nyxeon.io" target="_blank" rel="noopener">nyxeon.io</a>
+                </p>
             </div>
         </div>
     </footer>
@@ -335,6 +339,31 @@ const content = computed(() => ({
     color: rgba(255, 255, 255, 0.4);
     font-size: 0.85rem;
     margin: 0;
+}
+
+.footer-bottom-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.powered-by a {
+    color: rgba(255, 255, 255, 0.6);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.powered-by a:hover {
+    color: #c9a87c;
+}
+
+@media (max-width: 575.98px) {
+    .footer-bottom-inner {
+        flex-direction: column;
+        justify-content: center;
+    }
 }
 
 @media (max-width: 991.98px) {
