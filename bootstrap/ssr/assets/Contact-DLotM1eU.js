@@ -1,7 +1,7 @@
 import { computed, ref, unref, withCtx, createVNode, resolveDynamicComponent, toDisplayString, openBlock, createBlock, useSSRContext } from "vue";
 import { ssrRenderComponent, ssrInterpolate, ssrRenderAttr, ssrRenderVNode, ssrRenderList, ssrIncludeBooleanAttr, ssrLooseContain, ssrLooseEqual, ssrRenderStyle } from "vue/server-renderer";
 import { usePage, useForm, Head } from "@inertiajs/vue3";
-import { u as useScrollAnimation, N as Navbar, F as Footer } from "./useScrollAnimation-D2kxU4zH.js";
+import { u as useScrollAnimation, N as Navbar, F as Footer } from "./useScrollAnimation-6nhil2vG.js";
 import { _ as _export_sfc } from "./_plugin-vue_export-helper-1tPrXgE0.js";
 const _sfc_main = {
   __name: "Contact",

@@ -1,7 +1,7 @@
 import { ref, computed, onMounted, onUnmounted, mergeProps, useSSRContext, unref, withCtx, createVNode, resolveDynamicComponent, toDisplayString, openBlock, createBlock } from "vue";
 import { ssrRenderAttrs, ssrRenderList, ssrRenderClass, ssrInterpolate, ssrRenderAttr, ssrRenderStyle, ssrIncludeBooleanAttr, ssrRenderComponent, ssrRenderVNode } from "vue/server-renderer";
 import { usePage, Head } from "@inertiajs/vue3";
-import { u as useScrollAnimation, N as Navbar, F as Footer } from "./useScrollAnimation-D2kxU4zH.js";
+import { u as useScrollAnimation, N as Navbar, F as Footer } from "./useScrollAnimation-6nhil2vG.js";
 import { _ as _export_sfc } from "./_plugin-vue_export-helper-1tPrXgE0.js";
 const _sfc_main$6 = {
   __name: "HeroSection",

@@ -434,7 +434,7 @@ const priceListLabel = computed(() => currentLocale.value === 'mk' ? 'Ценов
 .desktop-nav {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 4px;
     background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -484,9 +484,10 @@ const priceListLabel = computed(() => currentLocale.value === 'mk' ? 'Ценов
     text-decoration: none;
     font-size: 0.9rem;
     font-weight: 500;
-    padding: 10px 20px;
+    padding: 10px 14px;
     border-radius: 50px;
     transition: all 0.3s ease;
+    white-space: nowrap;
 }
 
 .nav-link:hover {
@@ -770,10 +771,34 @@ const priceListLabel = computed(() => currentLocale.value === 'mk' ? 'Ценов
 }
 
 /* Responsive */
+@media (max-width: 1499.98px) {
+    .nav-link {
+        padding: 10px 10px;
+        font-size: 0.85rem;
+    }
+
+    .nav-logo {
+        padding: 0 10px 0 6px;
+    }
+}
+
 @media (max-width: 1199.98px) {
     .nav-link {
+        padding: 8px 8px;
+        font-size: 0.78rem;
+    }
+
+    .header-right {
+        gap: 10px;
+    }
+
+    .header-cta {
         padding: 10px 16px;
         font-size: 0.85rem;
+    }
+
+    .lang-btn {
+        padding: 6px 8px;
     }
 }
 
