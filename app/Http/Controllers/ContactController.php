@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ContactInquiryNotification;
 use App\Models\ContactMessage;
+use App\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class ContactController extends Controller
 {
@@ -17,7 +21,16 @@ class ContactController extends Controller
             'message' => 'required|string|max:5000',
         ]);
 
-        ContactMessage::create($validated);
+        $contactMessage = ContactMessage::create($validated);
+
+        try {
+            $recipients = Setting::notificationEmails();
+            if (!empty($recipients)) {
+                Mail::to($recipients)->send(new ContactInquiryNotification($contactMessage));
+            }
+        } catch (\Exception $e) {
+            Log::error('Failed to send contact inquiry notification email: ' . $e->getMessage());
+        }
 
         return response()->json([
             'success' => true,

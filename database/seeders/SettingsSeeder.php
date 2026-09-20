@@ -42,6 +42,17 @@ class SettingsSeeder extends Seeder
             );
         }
 
+        // firstOrCreate so a re-run never resets the admin-edited recipient list
+        Setting::firstOrCreate(
+            ['key' => 'notification_emails'],
+            [
+                'value_en' => 'vitanov1@yahoo.com',
+                'value_mk' => 'vitanov1@yahoo.com',
+                'type' => 'text',
+                'group' => 'notifications',
+            ]
+        );
+
         // Default locations
         Location::updateOrCreate(
             ['name_en' => 'Main Location'],

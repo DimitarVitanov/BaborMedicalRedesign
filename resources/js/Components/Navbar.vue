@@ -137,6 +137,7 @@ const navLinks = computed(() => [
     { name: currentLocale.value === 'mk' ? 'За нас' : 'About', href: '/about' },
     { name: currentLocale.value === 'mk' ? 'Ласери' : 'Lasers', href: '/lasers' },
     { name: currentLocale.value === 'mk' ? 'Онлајн продавница' : 'Online Store', href: 'https://www.skinboutique.mk', external: true },
+    { name: currentLocale.value === 'mk' ? 'Кариера' : 'Careers', href: '/careers' },
     { name: currentLocale.value === 'mk' ? 'Контакт' : 'Contact', href: '/contact' },
 ]);
 

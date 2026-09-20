@@ -193,6 +193,11 @@ Route::get('/privacy-policy', function () {
     return Inertia::render('PrivacyPolicy');
 })->name('privacy-policy');
 
+Route::get('/careers', [\App\Http\Controllers\CareersController::class, 'index'])->name('careers');
+Route::post('/careers/apply', [\App\Http\Controllers\CareersController::class, 'apply'])
+    ->middleware('throttle:10,1')
+    ->name('careers.apply');
+
 Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe'])->name('newsletter.subscribe');
 Route::post('/contact/submit', [ContactController::class, 'store'])->name('contact.submit');
 
@@ -318,6 +323,20 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::delete('locations/{location}', [\App\Http\Controllers\Admin\LocationController::class, 'destroy'])->name('locations.destroy');
     
     Route::get('search-console', [\App\Http\Controllers\Admin\SearchConsoleController::class, 'index'])->name('search-console.index');
+
+    Route::get('job-postings', [\App\Http\Controllers\Admin\JobPostingController::class, 'index'])->name('job-postings.index');
+    Route::get('job-postings/create', [\App\Http\Controllers\Admin\JobPostingController::class, 'create'])->name('job-postings.create');
+    Route::post('job-postings', [\App\Http\Controllers\Admin\JobPostingController::class, 'store'])->name('job-postings.store');
+    Route::get('job-postings/{jobPosting}/edit', [\App\Http\Controllers\Admin\JobPostingController::class, 'edit'])->name('job-postings.edit');
+    Route::post('job-postings/{jobPosting}', [\App\Http\Controllers\Admin\JobPostingController::class, 'update'])->name('job-postings.update');
+    Route::delete('job-postings/{jobPosting}', [\App\Http\Controllers\Admin\JobPostingController::class, 'destroy'])->name('job-postings.destroy');
+
+    Route::get('job-applications', [\App\Http\Controllers\Admin\JobApplicationController::class, 'index'])->name('job-applications.index');
+    Route::get('job-applications/{jobApplication}', [\App\Http\Controllers\Admin\JobApplicationController::class, 'show'])->name('job-applications.show');
+    Route::get('job-applications/{jobApplication}/cv', [\App\Http\Controllers\Admin\JobApplicationController::class, 'downloadCv'])->name('job-applications.cv');
+    Route::delete('job-applications/{jobApplication}', [\App\Http\Controllers\Admin\JobApplicationController::class, 'destroy'])->name('job-applications.destroy');
+    Route::post('job-applications/{jobApplication}/mark-read', [\App\Http\Controllers\Admin\JobApplicationController::class, 'markAsRead'])->name('job-applications.mark-read');
+    Route::post('job-applications/{jobApplication}/mark-unread', [\App\Http\Controllers\Admin\JobApplicationController::class, 'markAsUnread'])->name('job-applications.mark-unread');
 });
 
 require __DIR__.'/auth.php';

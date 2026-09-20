@@ -10,6 +10,7 @@ const defaultSettings = [
     { key: 'social_facebook', label: 'Facebook URL', group: 'social' },
     { key: 'social_instagram', label: 'Instagram URL', group: 'social' },
     { key: 'social_tiktok', label: 'TikTok URL', group: 'social' },
+    { key: 'notification_emails', label: 'Notification Emails', group: 'notifications' },
 ];
 
 const getSettingValue = (key, lang) => {
@@ -42,6 +43,7 @@ const submit = () => {
 };
 
 const socialSettings = defaultSettings.filter(s => s.group === 'social');
+const notificationSettings = defaultSettings.filter(s => s.group === 'notifications');
 </script>
 
 <template>
@@ -75,9 +77,32 @@ const socialSettings = defaultSettings.filter(s => s.group === 'social');
                         </div>
                     </div>
 
+                    <!-- Email Notifications -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Email Notifications</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted small mb-3">
+                                Contact form inquiries and job applications are sent to these email addresses.
+                                Separate multiple addresses with a comma, e.g. <code>vitanov1@yahoo.com, info@babormedical.com</code>
+                            </p>
+                            <div v-for="setting in notificationSettings" :key="setting.key" class="mb-3">
+                                <label class="form-label fw-bold">{{ setting.label }}</label>
+                                <input
+                                    v-model="form[`${setting.key}_en`]"
+                                    @input="form[`${setting.key}_mk`] = form[`${setting.key}_en`]"
+                                    type="text"
+                                    class="form-control"
+                                    placeholder="email@example.com, another@example.com"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="d-flex justify-content-end">
-                        <button 
-                            type="submit" 
+                        <button
+                            type="submit"
                             class="btn btn-primary"
                             :disabled="form.processing"
                         >

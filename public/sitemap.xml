@@ -90,6 +90,17 @@
         <priority>0.7</priority>
     </url>
 
+    <!-- Careers / Кариера -->
+    <url>
+        <loc>https://babormedical.com/careers</loc>
+        <xhtml:link rel="alternate" hreflang="en" href="https://babormedical.com/careers?lang=en"/>
+        <xhtml:link rel="alternate" hreflang="mk" href="https://babormedical.com/careers?lang=mk"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://babormedical.com/careers"/>
+        <lastmod>2026-09-20</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+    </url>
+
     <!-- Lasers Index / Ласери -->
     <url>
         <loc>https://babormedical.com/lasers</loc>

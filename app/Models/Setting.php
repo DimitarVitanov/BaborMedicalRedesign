@@ -46,4 +46,19 @@ class Setting extends Model
     {
         return $query->where('group', $group);
     }
+
+    /**
+     * Email addresses that receive contact/career notifications.
+     * Stored as a comma-separated list, editable in Admin > Settings.
+     */
+    public static function notificationEmails()
+    {
+        $raw = static::get('notification_emails', 'en', 'vitanov1@yahoo.com');
+
+        return collect(preg_split('/[,;\s]+/', (string) $raw))
+            ->filter(fn ($email) => filter_var($email, FILTER_VALIDATE_EMAIL))
+            ->unique()
+            ->values()
+            ->all();
+    }
 }

@@ -33,6 +33,7 @@ const content = computed(() => ({
         { name: locale.value === 'mk' ? 'За нас' : 'About', href: '/about' },
         { name: locale.value === 'mk' ? 'Услуги' : 'Services', href: '/services' },
         { name: locale.value === 'mk' ? 'Ласери' : 'Lasers', href: '/lasers' },
+        { name: locale.value === 'mk' ? 'Кариера' : 'Careers', href: '/careers' },
         { name: locale.value === 'mk' ? 'Контакт' : 'Contact', href: '/contact' },
         { name: locale.value === 'mk' ? 'Политика за приватност' : 'Privacy Policy', href: '/privacy-policy' },
     ],
