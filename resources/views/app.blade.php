@@ -35,8 +35,9 @@
             .mobile-menu{opacity:0;visibility:hidden;pointer-events:none}
         </style>
 
-        <!-- CSS first, then scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <!-- CSS first, then scripts. Include the current page component so its
+             scoped CSS chunk loads in <head> instead of after hydration (FOUC fix) -->
+        @vite(['resources/css/app.css', 'resources/js/app.js', "resources/js/Pages/{$page['component']}.vue"])
         @routes
         @inertiaHead
     </head>
