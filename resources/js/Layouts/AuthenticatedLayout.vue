@@ -346,6 +346,8 @@ const isActive = (routeName) => {
     display: flex;
     flex-direction: column;
     gap: 4px;
+    overflow-y: auto;
+    min-height: 0;
 }
 
 .nav-item {
@@ -441,6 +443,9 @@ const isActive = (routeName) => {
 /* Main Content */
 .admin-main {
     flex: 1;
+    /* min-width: 0 lets content shrink to the viewport so wide tables scroll
+       inside .table-responsive instead of stretching the whole page */
+    min-width: 0;
     margin-left: 260px;
     transition: margin-left 0.3s ease;
 }
@@ -454,6 +459,12 @@ const isActive = (routeName) => {
     padding: 20px 30px;
     border-bottom: 1px solid #e5e7eb;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Let title + action buttons in page headers wrap instead of cramming on small screens */
+.page-header :deep(.d-flex) {
+    flex-wrap: wrap;
+    gap: 10px 12px;
 }
 
 .page-content {
@@ -550,23 +561,37 @@ const isActive = (routeName) => {
     .admin-sidebar {
         display: none;
     }
-    
+
     .mobile-header {
         display: flex;
     }
-    
+
     .mobile-sidebar {
         display: flex;
         flex-direction: column;
     }
-    
+
     .admin-main {
         margin-left: 0;
         padding-top: 60px;
     }
-    
+
     .page-content {
         padding: 20px;
+    }
+
+    .page-header {
+        padding: 16px 20px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .page-content {
+        padding: 12px;
+    }
+
+    :deep(.card-body) {
+        padding: 16px;
     }
 }
 
@@ -589,6 +614,22 @@ const isActive = (routeName) => {
     font-weight: 600;
     color: #374151;
     border-top: none;
+}
+
+:deep(.pagination) {
+    flex-wrap: wrap;
+    justify-content: center;
+    row-gap: 6px;
+}
+
+/* Long unbreakable strings (emails, URLs) wrap instead of overflowing cards;
+   tables keep normal wrapping so they scroll inside .table-responsive */
+:deep(.card-body) {
+    overflow-wrap: anywhere;
+}
+
+:deep(.table) {
+    overflow-wrap: normal;
 }
 
 :deep(.btn-primary) {
@@ -625,6 +666,20 @@ const isActive = (routeName) => {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
     min-width: 280px;
     max-width: 400px;
+}
+
+@media (max-width: 575.98px) {
+    .toast-container {
+        left: 16px;
+        right: 16px;
+        top: 76px; /* below the fixed mobile header */
+    }
+
+    .toast {
+        min-width: 0;
+        max-width: 100%;
+        width: 100%;
+    }
 }
 
 .toast-success {

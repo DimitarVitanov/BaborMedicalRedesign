@@ -361,6 +361,13 @@ const pagesChartSeries = computed(() =>
     gap: 24px;
 }
 
+@media (max-width: 575.98px) {
+    .dashboard-container {
+        padding: 12px;
+        gap: 16px;
+    }
+}
+
 /* Error Banner */
 .error-banner {
     display: flex;
@@ -581,6 +588,7 @@ const pagesChartSeries = computed(() =>
 
 .data-table {
     width: 100%;
+    min-width: 560px;
     border-collapse: collapse;
 }
 
