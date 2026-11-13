@@ -1,4 +1,5 @@
-@import 'bootstrap/dist/css/bootstrap.min.css';
+/* NOTE: Bootstrap deliberately NOT imported here — it lives in admin.css,
+   loaded only by admin/auth layouts. The public site is pure .bm styles. */
 @import 'lenis/dist/lenis.css';
 
 /* ==========================================================================

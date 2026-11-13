@@ -1,4 +1,5 @@
 <script setup>
+import '../../../css/admin.css';
 import { Head, useForm } from '@inertiajs/vue3';
 
 defineProps({

@@ -20,6 +20,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Vite::prefetch(concurrency: 3);
+        // Vite::prefetch() removed on purpose: it made every public visitor
+        // download the ENTIRE app bundle (admin pages, apexcharts, the rich
+        // text editor — ~1.6 MB) at page load, competing with the hero image
+        // on slow connections. Pages lazy-load their own chunks on navigation.
     }
 }

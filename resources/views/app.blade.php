@@ -20,7 +20,15 @@
         @php($fontSubset = app()->getLocale() === 'mk' ? 'cyrillic' : 'latin')
         <link rel="preload" href="/fonts/noto-serif-display-{{ $fontSubset }}.woff2" as="font" type="font/woff2" crossorigin>
         <link rel="preload" href="/fonts/noto-serif-display-italic-{{ $fontSubset }}.woff2" as="font" type="font/woff2" crossorigin>
-        <link rel="preload" href="/fonts/manrope-{{ $fontSubset }}.woff2" as="font" type="font/woff2" crossorigin>
+        @if($fontSubset === 'cyrillic')
+        {{-- Brand names in headlines (Alma Soprano, BABOR...) are latin even on MK pages --}}
+        <link rel="preload" href="/fonts/noto-serif-display-latin.woff2" as="font" type="font/woff2" crossorigin>
+        <link rel="preload" href="/fonts/noto-serif-display-italic-latin.woff2" as="font" type="font/woff2" crossorigin>
+        @endif
+        {{-- Both Manrope subsets are needed on every page (МК/EN switcher, mixed-script UI);
+             a late cyrillic load caused a visible font-swap layout shift (CLS). --}}
+        <link rel="preload" href="/fonts/manrope-latin.woff2" as="font" type="font/woff2" crossorigin>
+        <link rel="preload" href="/fonts/manrope-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
 
         <script>document.documentElement.classList.add('js')</script>
         <!-- Don't paint a half-parsed hero (avoids layout shift); the marker sits at the end of the hero.

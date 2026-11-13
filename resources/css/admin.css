@@ -1,0 +1,4 @@
+/* Bootstrap is only needed by the admin panel and auth screens. It is imported
+   from AuthenticatedLayout / GuestLayout / Auth pages so public visitors never
+   download it (it was ~225 KiB of unused CSS on every public page). */
+@import 'bootstrap/dist/css/bootstrap.min.css';

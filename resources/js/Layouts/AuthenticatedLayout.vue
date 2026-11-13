@@ -1,4 +1,5 @@
 <script setup>
+import '../../css/admin.css';
 import { ref, computed, onMounted, watch } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 

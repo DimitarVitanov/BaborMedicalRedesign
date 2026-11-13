@@ -145,6 +145,10 @@ const subtitleIsPlain = computed(() => !/<[a-z!/][\s\S]*>/i.test(content.value.s
 </template>
 
 <style scoped>
+/* This block was hidden by Bootstrap's d-none; Bootstrap no longer loads on
+   public pages, so hide it here (content kept in the DOM for parity). */
+.features-list { display: none; }
+
 .bm-about__head {
     display: grid;
     grid-template-columns: minmax(180px, 0.42fr) 1fr;
