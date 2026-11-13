@@ -1,11 +1,13 @@
 <script setup>
 import { Head, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
-import Navbar from '@/Components/Navbar.vue';
-import Footer from '@/Components/Footer.vue';
-import { useScrollAnimation } from '@/Composables/useScrollAnimation';
-
-useScrollAnimation();
+import SiteLayout from '@/Layouts/SiteLayout.vue';
+import PageHero from '@/Components/Site/PageHero.vue';
+import MaskText from '@/Components/Site/MaskText.vue';
+import Marquee from '@/Components/Site/Marquee.vue';
+import ScrollWords from '@/Components/Site/ScrollWords.vue';
+import RotatingBadge from '@/Components/Site/RotatingBadge.vue';
+import Icon from '@/Components/Site/Icon.vue';
 
 const page = usePage();
 const locale = computed(() => page.props.locale || 'en');
@@ -109,6 +111,16 @@ const categories = computed(() => [
         icon: 'body',
     },
 ]);
+
+// Presentation-only helpers
+const pad = (n) => String(n).padStart(2, '0');
+const iconFor = (icon) => (icon === 'sparkles' ? 'sparkle' : icon);
+// "Choose a Category" -> ["Choose a", "Category"] so the last word can render as the italic accent line
+const splitLast = (text) => {
+    const words = String(text || '').trim().split(/\s+/);
+    return words.length > 1 ? [words.slice(0, -1).join(' '), words[words.length - 1]] : [String(text || ''), ''];
+};
+const heroTitle = computed(() => splitLast(content.value.title));
 </script>
 
 <template>
@@ -136,458 +148,328 @@ const categories = computed(() => [
         <component is="script" type="application/ld+json" v-html="jsonLd" />
     </Head>
 
-    <div class="services-page">
-        <Navbar />
+    <SiteLayout>
+        <!-- Hero -->
+        <PageHero
+            :eyebrow="content.badge"
+            :title="heroTitle[0]"
+            :accent="heroTitle[1]"
+            :crumb="locale === 'mk' ? 'Услуги' : 'Services'"
+            align="center"
+        >
+            <nav class="sv-jump" :aria-label="locale === 'mk' ? 'Категории' : 'Categories'">
+                <a v-for="(category, index) in categories" :key="`jump-${category.id}`" :href="category.href" class="sv-jump__chip">
+                    <span class="sv-jump__idx">{{ pad(index + 1) }}</span>
+                    <Icon :name="iconFor(category.icon)" :size="16" :stroke="1.5" />
+                    <span>{{ category.name }}</span>
+                </a>
+            </nav>
+        </PageHero>
 
-        <!-- Hero Section -->
-        <section class="services-hero">
-            <div class="hero-bg">
-                <div class="gradient-orb orb-1"></div>
-                <div class="gradient-orb orb-2"></div>
-            </div>
-            <div class="container">
-                <div class="hero-content">
-                    <span class="hero-badge fade-in-up">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
-                        </svg>
-                        {{ content.badge }}
-                    </span>
-                    <h1 class="hero-title fade-in-up">{{ content.title }}</h1>
-                    <p class="hero-subtitle fade-in-up">{{ content.subtitle }}</p>
+        <!-- Crossing ribbons -->
+        <div class="sv-ribbons" aria-hidden="true">
+            <Marquee :items="categories.map((c) => c.name)" variant="wine" :tilt="-3" :duration="40" />
+            <Marquee :items="categories.map((c) => c.name)" variant="outline" :tilt="2.2" :duration="46" reverse />
+        </div>
+
+        <!-- Categories -->
+        <section class="sv-cats bm-cream bm-sheet bm-section">
+            <div class="bm-container">
+                <div class="sv-cats__head">
+                    <div class="sv-cats__intro">
+                        <span class="bm-eyebrow" data-reveal>{{ content.badge }}</span>
+                        <ScrollWords :text="content.subtitle" tag="p" class="sv-cats__lede" />
+                    </div>
+                    <span class="sv-cats__count bm-numeral" aria-hidden="true" data-reveal style="--d: 0.15s">{{ pad(categories.length) }}</span>
                 </div>
-            </div>
-        </section>
 
-        <!-- Categories Section -->
-        <section class="categories-section">
-            <div class="container">
-                <div class="categories-grid">
-                    <a 
-                        v-for="category in categories" 
+                <div class="sv-list">
+                    <a
+                        v-for="(category, index) in categories"
                         :key="category.id"
                         :href="category.href"
-                        class="category-box fade-in-up"
+                        class="sv-row"
+                        data-reveal
+                        :style="{ '--d': `${index * 0.08}s` }"
                     >
-                        <div class="box-icon">
-                            <svg v-if="category.icon === 'sparkles'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <path d="M12 3L13.5 8.5L19 10L13.5 11.5L12 17L10.5 11.5L5 10L10.5 8.5L12 3Z"/>
-                                <path d="M19 15L20 17L22 18L20 19L19 21L18 19L16 18L18 17L19 15Z"/>
-                                <path d="M5 17L6 19L8 20L6 21L5 23L4 21L2 20L4 19L5 17Z"/>
-                            </svg>
-                            <svg v-else-if="category.icon === 'laser'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <path d="M12 2C12 2 14 6 14 10C14 14 12 18 12 22"/>
-                                <path d="M12 2C12 2 10 6 10 10C10 14 12 18 12 22"/>
-                                <path d="M4 12H20"/>
-                                <circle cx="12" cy="12" r="10"/>
-                            </svg>
-                            <svg v-else-if="category.icon === 'injectable'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <path d="M12 2v6M12 16v6"/>
-                                <path d="M9 8h6l-1 8H10L9 8z"/>
-                                <circle cx="12" cy="5" r="1"/>
-                            </svg>
-                            <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <path d="M12 2a4 4 0 0 1 4 4c0 2-1.5 3.5-4 5-2.5-1.5-4-3-4-5a4 4 0 0 1 4-4z"/>
-                                <path d="M8 11c-2 1-4 3-4 6 0 2.5 3 5 8 5s8-2.5 8-5c0-3-2-5-4-6"/>
-                                <path d="M9 16h6"/>
-                            </svg>
+                        <span class="sv-row__num bm-numeral" aria-hidden="true">{{ pad(index + 1) }}</span>
+                        <div class="sv-row__main">
+                            <span class="sv-row__icon"><Icon :name="iconFor(category.icon)" :size="22" :stroke="1.4" /></span>
+                            <h2 class="sv-row__name">{{ category.name }}</h2>
                         </div>
-                        <h2 class="box-title">{{ category.name }}</h2>
-                        <p class="box-description">{{ category.description }}</p>
-                        <div class="box-cta">
-                            <span>{{ locale === 'mk' ? 'Погледни Третмани' : 'View Treatments' }}</span>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M5 12h14M12 5l7 7-7 7"/>
-                            </svg>
-                        </div>
+                        <p class="sv-row__desc">{{ category.description }}</p>
+                        <span class="sv-row__cta">
+                            <span class="sv-row__cta-label">{{ locale === 'mk' ? 'Погледни Третмани' : 'View Treatments' }}</span>
+                            <span class="sv-row__cta-icon"><Icon name="arrow-right" :size="20" :stroke="1.6" /></span>
+                        </span>
                     </a>
                 </div>
-            </div>
-        </section>
 
-        <!-- CTA Section -->
-        <section class="cta-section">
-            <div class="container">
-                <div class="cta-card fade-in-up">
-                    <div class="cta-content">
-                        <h2>{{ locale === 'mk' ? 'Не сте сигурни кој третман е за вас?' : 'Not sure which treatment is for you?' }}</h2>
-                        <p>{{ locale === 'mk' ? 'Закажете бесплатна консултација со нашите експерти' : 'Book a free consultation with our experts' }}</p>
+                <!-- CTA -->
+                <div class="sv-cta bm-wine bm-grain" data-reveal>
+                    <div class="bm-aura" aria-hidden="true"><span></span><span></span><span></span></div>
+                    <div class="sv-cta__inner">
+                        <h2 class="bm-h2 sv-cta__title"><MaskText :text="locale === 'mk' ? 'Не сте сигурни кој третман е за вас?' : 'Not sure which treatment is for you?'" /></h2>
+                        <div class="sv-cta__side">
+                            <p class="bm-lead sv-cta__text">{{ locale === 'mk' ? 'Закажете бесплатна консултација со нашите експерти' : 'Book a free consultation with our experts' }}</p>
+                            <a href="/contact" class="bm-btn sv-cta__btn">
+                                <span>{{ locale === 'mk' ? 'Закажи Консултација' : 'Book Consultation' }}</span>
+                                <span class="bm-btn__icon"><Icon name="arrow-right" :stroke="2" /></span>
+                            </a>
+                        </div>
                     </div>
-                    <a href="/contact" class="cta-btn">
-                        {{ locale === 'mk' ? 'Закажи Консултација' : 'Book Consultation' }}
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="5" y1="12" x2="19" y2="12"/>
-                            <polyline points="12 5 19 12 12 19"/>
-                        </svg>
-                    </a>
+                    <div class="sv-cta__seal" aria-hidden="true">
+                        <RotatingBadge :size="140" />
+                    </div>
                 </div>
             </div>
         </section>
 
-        <Footer />
-    </div>
+    </SiteLayout>
 </template>
 
 <style scoped>
-.services-page {
-    min-height: 100vh;
-    background: #0a0f14;
-    overflow-x: hidden;
-}
-
-/* Hero Section */
-.services-hero {
-    position: relative;
-    min-height: 50vh;
+/* ---------- Hero quick-jump chips ---------- */
+.sv-jump {
     display: flex;
-    align-items: center;
+    flex-wrap: wrap;
     justify-content: center;
-    padding: 160px 0 80px;
-    overflow: hidden;
+    gap: 10px;
 }
-
-.hero-bg {
-    position: absolute;
-    inset: 0;
-    overflow: hidden;
-}
-
-.gradient-orb {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(100px);
-    opacity: 0.4;
-    animation: float 20s ease-in-out infinite;
-}
-
-.orb-1 {
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, #c9a87c 0%, transparent 70%);
-    top: -200px;
-    right: -100px;
-}
-
-.orb-2 {
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(circle, #1e3a5f 0%, transparent 70%);
-    bottom: -150px;
-    left: -100px;
-    animation-delay: -7s;
-}
-
-@keyframes float {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    25% { transform: translate(30px, -30px) scale(1.05); }
-    50% { transform: translate(-20px, 20px) scale(0.95); }
-    75% { transform: translate(20px, 10px) scale(1.02); }
-}
-
-.hero-content {
-    position: relative;
-    z-index: 2;
-    text-align: center;
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-.hero-badge {
+.sv-jump__chip {
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    padding: 12px 28px;
-    background: rgba(201, 168, 124, 0.1);
-    border: 1px solid rgba(201, 168, 124, 0.2);
-    border-radius: 100px;
-    color: #c9a87c;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 3px;
-    margin-bottom: 32px;
-    backdrop-filter: blur(10px);
+    padding: 10px 18px 10px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--line-dark);
+    background: rgba(246, 238, 230, 0.03);
+    color: var(--on-dark);
+    font-size: 0.84rem;
+    font-weight: 500;
+    line-height: 1.3;
+    transition: background 0.5s var(--ease-out), border-color 0.5s, color 0.5s;
 }
-
-.hero-badge svg {
-    width: 16px;
-    height: 16px;
+.sv-jump__chip svg { color: var(--gold-300); flex: none; transition: color 0.5s; }
+.sv-jump__idx {
+    display: inline-grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid rgba(217, 185, 149, 0.35);
+    color: var(--gold-300);
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    flex: none;
+    transition: background 0.5s, color 0.5s;
 }
-
-.hero-title {
-    font-size: clamp(2.5rem, 6vw, 4rem);
-    font-weight: 800;
-    color: #fff;
-    margin-bottom: 24px;
-    line-height: 1.1;
-    letter-spacing: -1px;
+.sv-jump__chip:hover,
+.sv-jump__chip:focus-visible {
+    background: var(--beige-200);
+    border-color: var(--beige-200);
+    color: var(--wine-800);
 }
+.sv-jump__chip:hover svg { color: var(--wine-600); }
+.sv-jump__chip:hover .sv-jump__idx { background: var(--wine-600); border-color: var(--wine-600); color: var(--cream-50); }
 
-.hero-subtitle {
-    font-size: 1.15rem;
-    color: rgba(255, 255, 255, 0.6);
-    max-width: 500px;
-    margin: 0 auto;
-    line-height: 1.7;
-    font-weight: 300;
-}
-
-/* Categories Section */
-.categories-section {
-    padding: 40px 0 120px;
-}
-
-.categories-grid {
+/* ---------- Ribbons ---------- */
+.sv-ribbons {
+    position: relative;
+    z-index: 1;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 24px;
-}
-
-.category-box {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding: 50px 36px;
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 28px;
-    text-decoration: none;
-    transition: all 0.4s ease;
+    background: var(--wine-950);
+    padding: clamp(24px, 4vw, 56px) 0 clamp(80px, 9vw, 130px);
+    margin-top: -1px;
     overflow: hidden;
 }
+.sv-ribbons > * { grid-area: 1 / 1; align-self: center; }
 
-.category-box::before {
+/* ---------- Categories ---------- */
+.sv-cats { padding-bottom: clamp(64px, 8vw, 120px); }
+.sv-cats__head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 32px;
+    margin-bottom: clamp(44px, 6vw, 84px);
+}
+.sv-cats__intro { display: grid; gap: 26px; max-width: 980px; }
+.sv-cats__lede {
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: clamp(1.9rem, 3.9vw, 3.7rem);
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+}
+.sv-cats__count {
+    display: block;
+    flex: none;
+    font-size: clamp(4rem, 8vw, 7.5rem);
+    line-height: 0.8;
+}
+
+.sv-list { border-top: 1px solid var(--line-light); }
+
+.sv-row {
+    position: relative;
+    display: grid;
+    grid-template-columns: clamp(150px, 17vw, 260px) minmax(0, 1.15fr) minmax(0, 1fr) auto;
+    gap: clamp(20px, 3vw, 52px);
+    align-items: center;
+    padding: clamp(34px, 4.4vw, 64px) clamp(12px, 2.4vw, 40px);
+    border-bottom: 1px solid var(--line-light);
+    color: var(--ink);
+    isolation: isolate;
+    overflow: hidden;
+    transition: color 0.7s var(--ease-out);
+}
+/* burgundy fill rises from the bottom */
+.sv-row::before {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, rgba(201, 168, 124, 0.1), transparent 60%);
-    opacity: 0;
-    transition: opacity 0.4s ease;
+    z-index: -1;
+    background:
+        radial-gradient(70% 140% at 12% 100%, rgba(201, 162, 122, 0.22), transparent 60%),
+        radial-gradient(90% 160% at 100% 0%, rgba(140, 42, 72, 0.65), transparent 62%),
+        linear-gradient(100deg, var(--wine-800), var(--wine-700));
+    clip-path: inset(100% 0 0 0);
+    transition: clip-path 0.85s var(--ease-out);
+}
+.sv-row:hover, .sv-row:focus-visible { color: var(--cream-50); }
+.sv-row:hover::before, .sv-row:focus-visible::before { clip-path: inset(0 0 0 0); }
+.sv-row:focus-visible { outline: 2px solid var(--wine-600); outline-offset: -2px; }
+
+.sv-row__num {
+    font-size: clamp(5rem, 10.5vw, 10rem);
+    line-height: 0.82;
+    letter-spacing: -0.04em;
+    transition: color 0.7s var(--ease-out), -webkit-text-stroke-color 0.7s, transform 0.9s var(--ease-out);
+}
+.sv-row:hover .sv-row__num {
+    color: rgba(217, 185, 149, 0.14);
+    -webkit-text-stroke-color: rgba(217, 185, 149, 0.85);
+    transform: translateX(8px);
 }
 
-.category-box:hover {
-    border-color: rgba(201, 168, 124, 0.3);
-    transform: translateY(-6px);
-    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.25);
-}
-
-.category-box:hover::before {
-    opacity: 1;
-}
-
-.box-icon {
-    position: relative;
-    z-index: 1;
-    width: 88px;
-    height: 88px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, rgba(201, 168, 124, 0.15), rgba(201, 168, 124, 0.05));
-    border: 1px solid rgba(201, 168, 124, 0.2);
+.sv-row__main { display: grid; gap: 18px; justify-items: start; }
+.sv-row__icon {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
     border-radius: 50%;
-    margin-bottom: 28px;
-    transition: all 0.4s ease;
+    border: 1px solid var(--line-light);
+    color: var(--wine-600);
+    transition: border-color 0.7s, color 0.7s, transform 0.9s var(--ease-out);
 }
+.sv-row:hover .sv-row__icon { border-color: rgba(217, 185, 149, 0.45); color: var(--gold-300); transform: rotate(-14deg); }
 
-.category-box:hover .box-icon {
-    transform: scale(1.08);
-    background: linear-gradient(135deg, rgba(201, 168, 124, 0.25), rgba(201, 168, 124, 0.1));
+.sv-row__name {
+    font-size: clamp(2rem, 3.7vw, 3.5rem);
+    font-weight: 300;
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+    transition: transform 0.9s var(--ease-out);
 }
+.sv-row:hover .sv-row__name { transform: translateX(10px); }
 
-.box-icon svg {
-    width: 40px;
-    height: 40px;
-    color: #c9a87c;
-}
-
-.box-title {
-    position: relative;
-    z-index: 1;
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #fff;
-    margin: 0 0 14px;
-    transition: color 0.3s ease;
-}
-
-.category-box:hover .box-title {
-    color: #c9a87c;
-}
-
-.box-description {
-    position: relative;
-    z-index: 1;
-    font-size: 0.95rem;
-    color: rgba(255, 255, 255, 0.5);
-    line-height: 1.7;
-    margin: 0 0 28px;
-    max-width: 280px;
-}
-
-.box-cta {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 24px;
-    background: rgba(201, 168, 124, 0.1);
-    border: 1px solid rgba(201, 168, 124, 0.2);
-    border-radius: 100px;
-    color: #c9a87c;
-    font-size: 0.85rem;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    margin-top: auto;
-}
-
-.category-box:hover .box-cta {
-    background: #c9a87c;
-    color: #0a0f14;
-    border-color: #c9a87c;
-}
-
-.box-cta svg {
-    width: 18px;
-    height: 18px;
-    transition: transform 0.3s ease;
-}
-
-.category-box:hover .box-cta svg {
-    transform: translateX(4px);
-}
-
-/* CTA Section */
-.cta-section {
-    padding: 0 0 120px;
-}
-
-.cta-card {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 40px;
-    padding: 60px 80px;
-    background: linear-gradient(135deg, rgba(201, 168, 124, 0.1), rgba(201, 168, 124, 0.02));
-    border: 1px solid rgba(201, 168, 124, 0.2);
-    border-radius: 32px;
-    position: relative;
-    overflow: hidden;
-}
-
-.cta-card::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -20%;
-    width: 400px;
-    height: 400px;
-    background: radial-gradient(circle, rgba(201, 168, 124, 0.15), transparent 70%);
-    pointer-events: none;
-}
-
-.cta-content {
-    position: relative;
-    z-index: 1;
-}
-
-.cta-content h2 {
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: #fff;
-    margin: 0 0 12px;
-}
-
-.cta-content p {
-    font-size: 1.05rem;
-    color: rgba(255, 255, 255, 0.6);
-    margin: 0;
-}
-
-.cta-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-    padding: 20px 40px;
-    background: linear-gradient(135deg, #c9a87c, #a88a5c);
-    border-radius: 100px;
-    color: #0a0f14;
+.sv-row__desc {
     font-size: 1rem;
-    font-weight: 600;
-    text-decoration: none;
-    transition: all 0.3s ease;
+    line-height: 1.7;
+    color: var(--ink-soft);
+    max-width: 420px;
+    transition: color 0.7s;
+}
+.sv-row:hover .sv-row__desc { color: rgba(246, 238, 230, 0.78); }
+
+.sv-row__cta { display: inline-flex; align-items: center; gap: 16px; }
+.sv-row__cta-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    max-width: 9.5em;
+    text-align: right;
+    line-height: 1.5;
+}
+.sv-row__cta-icon {
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--wine-600);
+    color: var(--cream-50);
+    flex: none;
+    transition: background 0.6s, color 0.6s, transform 0.9s var(--ease-out);
+}
+.sv-row:hover .sv-row__cta-icon { background: var(--beige-200); color: var(--wine-800); transform: rotate(-45deg) scale(1.06); }
+
+/* ---------- CTA card ---------- */
+.sv-cta {
+    position: relative;
+    margin-top: clamp(72px, 9vw, 130px);
+    border-radius: var(--radius-lg);
+    padding: clamp(96px, 8vw, 116px) clamp(24px, 6vw, 88px) clamp(44px, 6vw, 96px);
+    overflow: visible;
+    isolation: isolate;
+    box-shadow: 0 60px 90px -60px rgba(56, 19, 34, 0.7);
+}
+.sv-cta .bm-aura { border-radius: inherit; }
+.sv-cta.bm-grain::after { border-radius: inherit; }
+.sv-cta__inner {
     position: relative;
     z-index: 1;
-    flex-shrink: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    gap: clamp(32px, 5vw, 80px);
+    align-items: end;
+}
+.sv-cta__title { max-width: 12em; }
+.sv-cta__side { display: grid; gap: 28px; justify-items: start; padding-bottom: 6px; }
+.sv-cta__text { color: var(--on-dark-muted); max-width: 420px; }
+.sv-cta__seal {
+    position: absolute;
+    z-index: 2;
+    right: clamp(24px, 5vw, 72px);
+    top: -70px;
 }
 
-.cta-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 15px 40px rgba(201, 168, 124, 0.4);
+/* ---------- Responsive ---------- */
+@media (max-width: 1199.98px) {
+    .sv-row { grid-template-columns: clamp(120px, 15vw, 170px) minmax(0, 1fr) auto; }
+    .sv-row__desc { grid-column: 2; grid-row: 2; }
+    .sv-row__num { grid-row: 1 / span 2; }
+    .sv-row__cta { grid-column: 3; grid-row: 1 / span 2; }
+    .sv-row__cta-label { display: none; }
 }
-
-.cta-btn svg {
-    width: 20px;
-    height: 20px;
-    transition: transform 0.3s ease;
-}
-
-.cta-btn:hover svg {
-    transform: translateX(5px);
-}
-
-/* Responsive */
 @media (max-width: 991.98px) {
-    
-    .cta-card {
-        flex-direction: column;
-        text-align: center;
-        padding: 40px;
-    }
+    .sv-cta__inner { grid-template-columns: 1fr; align-items: start; }
+    .sv-cta__seal { top: -56px; }
+    .sv-cta__seal :deep(.bm-seal) { width: 112px !important; height: 112px !important; }
+    .sv-cta__title { padding-right: 90px; }
 }
-
-@media (max-width: 575.98px) {
-    .categories-grid {
-        grid-template-columns: 1fr;
-        max-width: 400px;
-        margin: 0 auto;
+@media (max-width: 767.98px) {
+    .sv-row {
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 14px 16px;
+        padding: 30px 6px 34px;
     }
-    
-    .services-hero {
-        padding: 140px 0 60px;
-    }
-    
-    .hero-title {
-        font-size: 2rem;
-    }
-    
-    .category-box {
-        padding: 40px 24px;
-    }
-    
-    .box-icon {
-        width: 80px;
-        height: 80px;
-    }
-    
-    .box-icon svg {
-        width: 36px;
-        height: 36px;
-    }
-    
-    .box-title {
-        font-size: 1.4rem;
-    }
-    
-    .cta-content h2 {
-        font-size: 1.4rem;
-    }
-    
-    .cta-btn {
-        padding: 16px 32px;
-        font-size: 0.9rem;
-    }
+    .sv-row__num { grid-column: 1; grid-row: 1; font-size: 4.4rem; }
+    .sv-row__main { grid-column: 1 / -1; grid-row: 2; gap: 0; }
+    .sv-row__icon { display: none; }
+    .sv-row__name { font-size: clamp(1.9rem, 8.4vw, 2.4rem); }
+    .sv-row__desc { grid-column: 1 / -1; grid-row: 3; font-size: 0.97rem; }
+    .sv-row__cta { grid-column: 2; grid-row: 1; align-self: center; }
+    .sv-row__cta-icon { width: 54px; height: 54px; }
+    .sv-jump__chip { font-size: 0.8rem; }
+    .sv-cats__head { align-items: flex-start; flex-direction: column-reverse; gap: 18px; }
+    .sv-cats__count { font-size: 3.6rem; }
+    .sv-cta__title { padding-right: 0; }
+    .sv-cta { padding-top: 76px; }
 }
 </style>

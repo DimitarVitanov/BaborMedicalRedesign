@@ -1,11 +1,12 @@
 <script setup>
 import { Head, usePage, useForm } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
-import Navbar from '@/Components/Navbar.vue';
-import Footer from '@/Components/Footer.vue';
-import { useScrollAnimation } from '@/Composables/useScrollAnimation';
-
-useScrollAnimation();
+import SiteLayout from '@/Layouts/SiteLayout.vue';
+import PageHero from '@/Components/Site/PageHero.vue';
+import MaskText from '@/Components/Site/MaskText.vue';
+import Marquee from '@/Components/Site/Marquee.vue';
+import RotatingBadge from '@/Components/Site/RotatingBadge.vue';
+import Icon from '@/Components/Site/Icon.vue';
 
 const props = defineProps({
     locations: Array,
@@ -163,6 +164,15 @@ const submitForm = async () => {
         isSubmitting.value = false;
     }
 };
+
+// ---- Presentation-only helpers (redesign) ----
+const pad = (n) => String(n).padStart(2, '0');
+const primaryLocation = computed(() => locations.value[0] || null);
+const ribbonServices = computed(() => services.value.filter((s) => s.value && s.value !== 'other').map((s) => s.label));
+const ribbonContact = computed(() => {
+    const words = [content.value.title, content.value.formTitle, content.value.followUs];
+    return [...words, ...words];
+});
 </script>
 
 <template>
@@ -185,210 +195,225 @@ const submitForm = async () => {
         <link rel="alternate" hreflang="x-default" href="https://babormedical.com/contact" />
         <component is="script" type="application/ld+json" v-html="jsonLd" />
     </Head>
-
-    <div class="main-wrapper">
-        <Navbar />
-        
-        <section class="contact-hero">
-            <div class="container">
-                <div class="hero-content fade-in-up">
-                    <span class="section-badge">{{ content.badge }}</span>
-                    <h1 class="hero-title">{{ content.title }}</h1>
-                    <p class="hero-subtitle">{{ content.subtitle }}</p>
+    <SiteLayout>
+        <PageHero
+            :eyebrow="content.badge"
+            :title="content.title"
+            :subtitle="content.subtitle"
+            :crumb="locale === 'mk' ? 'Контакт' : 'Contact'"
+            class="ct-hero"
+        >
+            <template v-if="primaryLocation && (primaryLocation.phone || primaryLocation.email)" #default>
+                <div class="ct-quick">
+                    <a v-if="primaryLocation.phone" :href="`tel:${primaryLocation.phone}`" class="bm-btn ct-quick__btn">
+                        <span>{{ primaryLocation.phone }}</span>
+                        <span class="bm-btn__icon"><Icon name="phone" :stroke="1.8" /></span>
+                    </a>
+                    <a v-if="primaryLocation.email" :href="`mailto:${primaryLocation.email}`" class="bm-btn bm-btn--ghost ct-quick__btn ct-quick__btn--mail">
+                        <Icon name="mail" :size="18" :stroke="1.6" />
+                        <span>{{ primaryLocation.email }}</span>
+                    </a>
                 </div>
-            </div>
-        </section>
+            </template>
+            <template #aside>
+                <div class="ct-art" aria-hidden="true">
+                    <div class="ct-art__arch">
+                        <span class="ct-art__line ct-art__line--1"></span>
+                        <span class="ct-art__line ct-art__line--2"></span>
+                        <RotatingBadge :size="184" class="ct-art__seal" />
+                    </div>
+                    <span class="ct-art__chip ct-art__chip--pin"><Icon name="pin" :size="22" /></span>
+                    <span class="ct-art__chip ct-art__chip--phone"><Icon name="phone" :size="22" /></span>
+                    <span class="ct-art__chip ct-art__chip--mail"><Icon name="mail" :size="22" /></span>
+                </div>
+            </template>
+        </PageHero>
 
-        <section class="contact-section">
-            <div class="container">
-                <div class="contact-grid">
-                    <div class="contact-form-wrapper fade-in-left">
-                        <h2 class="form-title">{{ content.formTitle }}</h2>
-                        
-                        <div v-if="submitted" class="success-message">
-                            <div class="success-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                                    <polyline points="22 4 12 14.01 9 11.01"/>
-                                </svg>
+        <!-- Form + contact details -->
+        <section class="ct-main bm-cream bm-sheet bm-section">
+            <div class="bm-container ct-main__grid">
+                <div class="ct-form">
+                    <div class="ct-form__head">
+                        <span class="bm-numeral ct-form__num" aria-hidden="true">01</span>
+                        <h2 class="bm-h2 ct-form__title"><MaskText :text="content.formTitle" /></h2>
+                    </div>
+
+                    <Transition name="ct-swap" mode="out-in">
+                        <div v-if="submitted" class="ct-success" data-reveal="scale">
+                            <div class="ct-success__icon">
+                                <Icon name="check" :size="30" :stroke="1.8" />
                             </div>
-                            <h3>{{ content.successTitle }}</h3>
-                            <p>{{ content.successText }}</p>
+                            <h3 class="bm-h3">{{ content.successTitle }}</h3>
+                            <p class="bm-muted">{{ content.successText }}</p>
                         </div>
-                        
-                        <form v-else @submit.prevent="submitForm" class="contact-form">
-                            <div class="form-group">
-                                <label :for="'name'">{{ content.name }}</label>
-                                <input 
-                                    type="text" 
-                                    id="name" 
-                                    v-model="form.name" 
+
+                        <form v-else @submit.prevent="submitForm" class="ct-form__form">
+                            <div class="bm-field" data-reveal style="--d: 0.05s">
+                                <label class="bm-label" :for="'name'">{{ content.name }}</label>
+                                <input
+                                    type="text"
+                                    id="name"
+                                    class="bm-input"
+                                    v-model="form.name"
                                     required
                                     :placeholder="content.name"
                                 >
                             </div>
-                            
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label :for="'email'">{{ content.email }}</label>
-                                    <input 
-                                        type="email" 
-                                        id="email" 
-                                        v-model="form.email" 
+
+                            <div class="ct-form__row">
+                                <div class="bm-field" data-reveal style="--d: 0.1s">
+                                    <label class="bm-label" :for="'email'">{{ content.email }}</label>
+                                    <input
+                                        type="email"
+                                        id="email"
+                                        class="bm-input"
+                                        v-model="form.email"
                                         required
                                         :placeholder="content.email"
                                     >
                                 </div>
-                                <div class="form-group">
-                                    <label :for="'phone'">{{ content.phone }}</label>
-                                    <input 
-                                        type="tel" 
-                                        id="phone" 
+                                <div class="bm-field" data-reveal style="--d: 0.15s">
+                                    <label class="bm-label" :for="'phone'">{{ content.phone }}</label>
+                                    <input
+                                        type="tel"
+                                        id="phone"
+                                        class="bm-input"
                                         v-model="form.phone"
                                         :placeholder="content.phone"
                                     >
                                 </div>
                             </div>
-                            
-                            <div class="form-group">
-                                <label :for="'service'">{{ content.service }}</label>
-                                <select id="service" v-model="form.service">
+
+                            <div class="bm-field" data-reveal style="--d: 0.2s">
+                                <label class="bm-label" :for="'service'">{{ content.service }}</label>
+                                <select id="service" class="bm-input ct-select" v-model="form.service">
                                     <option v-for="service in services" :key="service.value" :value="service.value">
                                         {{ service.label }}
                                     </option>
                                 </select>
                             </div>
-                            
-                            <div class="form-group">
-                                <label :for="'message'">{{ content.message }}</label>
-                                <textarea 
-                                    id="message" 
-                                    v-model="form.message" 
+
+                            <div class="bm-field" data-reveal style="--d: 0.25s">
+                                <label class="bm-label" :for="'message'">{{ content.message }}</label>
+                                <textarea
+                                    id="message"
+                                    class="bm-input"
+                                    v-model="form.message"
                                     rows="5"
                                     required
                                     :placeholder="content.message"
                                 ></textarea>
                             </div>
-                            
-                            <div v-if="errorMessage" class="error-message">
-                                {{ errorMessage }}
-                            </div>
-                            
-                            <button type="submit" class="btn-cta submit-btn" :disabled="isSubmitting">
-                                {{ isSubmitting ? (locale === 'mk' ? 'Се испраќа...' : 'Sending...') : content.submit }}
-                                <svg v-if="!isSubmitting" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
-                                </svg>
-                            </button>
-                        </form>
-                    </div>
 
-                    <div class="contact-info-wrapper fade-in-right">
-                        <h2 class="info-title">{{ content.infoTitle }}</h2>
-                        
-                        <!-- Loop through locations -->
-                        <div v-for="location in locations" :key="location.id" class="location-card">
-                            <h3 class="location-name">{{ location.name }}</h3>
-                            
-                            <div class="info-cards">
-                                <div class="info-card">
-                                    <div class="info-icon">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                                            <circle cx="12" cy="10" r="3"/>
-                                        </svg>
-                                    </div>
-                                    <div class="info-content">
-                                        <h4>{{ locale === 'mk' ? 'Адреса' : 'Address' }}</h4>
-                                        <p>{{ location.address }}</p>
-                                    </div>
+                            <div v-if="errorMessage" class="ct-error" role="alert">
+                                <Icon name="info" :size="18" :stroke="1.8" />
+                                <span>{{ errorMessage }}</span>
+                            </div>
+
+                            <div class="ct-form__actions" data-reveal style="--d: 0.3s">
+                                <button type="submit" class="bm-btn bm-btn--wine ct-submit" :disabled="isSubmitting">
+                                    <span>{{ isSubmitting ? (locale === 'mk' ? 'Се испраќа...' : 'Sending...') : content.submit }}</span>
+                                    <span class="bm-btn__icon">
+                                        <Icon v-if="!isSubmitting" name="arrow-up-right" :stroke="2" />
+                                        <span v-else class="ct-spinner" aria-hidden="true"></span>
+                                    </span>
+                                </button>
+                            </div>
+                        </form>
+                    </Transition>
+                </div>
+
+                <aside class="ct-info" data-reveal="right" style="--d: 0.15s">
+                    <div class="ct-info__glow" aria-hidden="true"></div>
+                    <h2 class="ct-info__title">{{ content.infoTitle }}</h2>
+
+                    <!-- Loop through locations -->
+                    <div v-for="(location, li) in locations" :key="location.id" class="ct-loc">
+                        <div class="ct-loc__head">
+                            <span class="ct-loc__num" aria-hidden="true">{{ pad(li + 1) }}</span>
+                            <h3 class="ct-loc__name">{{ location.name }}</h3>
+                        </div>
+
+                        <div class="ct-loc__rows">
+                            <div class="ct-row">
+                                <span class="ct-row__icon"><Icon name="pin" :size="18" /></span>
+                                <div class="ct-row__body">
+                                    <h4 class="ct-row__label">{{ locale === 'mk' ? 'Адреса' : 'Address' }}</h4>
+                                    <p class="ct-row__value">{{ location.address }}</p>
                                 </div>
-                                
-                                <div v-if="location.phone" class="info-card">
-                                    <div class="info-icon">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-                                        </svg>
-                                    </div>
-                                    <div class="info-content">
-                                        <h4>{{ locale === 'mk' ? 'Телефон' : 'Phone' }}</h4>
-                                        <p><a :href="`tel:${location.phone}`">{{ location.phone }}</a></p>
-                                    </div>
+                            </div>
+
+                            <div v-if="location.phone" class="ct-row">
+                                <span class="ct-row__icon"><Icon name="phone" :size="18" /></span>
+                                <div class="ct-row__body">
+                                    <h4 class="ct-row__label">{{ locale === 'mk' ? 'Телефон' : 'Phone' }}</h4>
+                                    <p><a class="ct-big" :href="`tel:${location.phone}`">{{ location.phone }}</a></p>
                                 </div>
-                                
-                                <div v-if="location.email" class="info-card">
-                                    <div class="info-icon">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                                            <polyline points="22,6 12,13 2,6"/>
-                                        </svg>
-                                    </div>
-                                    <div class="info-content">
-                                        <h4>{{ locale === 'mk' ? 'Е-пошта' : 'Email' }}</h4>
-                                        <p><a :href="`mailto:${location.email}`">{{ location.email }}</a></p>
-                                    </div>
+                            </div>
+
+                            <div v-if="location.email" class="ct-row">
+                                <span class="ct-row__icon"><Icon name="mail" :size="18" /></span>
+                                <div class="ct-row__body">
+                                    <h4 class="ct-row__label">{{ locale === 'mk' ? 'Е-пошта' : 'Email' }}</h4>
+                                    <p><a class="ct-big" :href="`mailto:${location.email}`">{{ location.email }}</a></p>
                                 </div>
-                                
-                                <div v-if="location.show_working_hours" class="info-card">
-                                    <div class="info-icon">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <circle cx="12" cy="12" r="10"/>
-                                            <polyline points="12 6 12 12 16 14"/>
-                                        </svg>
-                                    </div>
-                                    <div class="info-content">
-                                        <h4>{{ content.workingHoursLabel }}</h4>
-                                        <div class="hours-list">
-                                            <div class="hour-item">
-                                                <span class="day">{{ content.mondayFriday }}</span>
-                                                <span class="time">{{ location.working_hours_weekdays }}</span>
-                                            </div>
-                                            <div class="hour-item">
-                                                <span class="day">{{ content.saturday }}</span>
-                                                <span class="time">{{ location.working_hours_saturday }}</span>
-                                            </div>
-                                            <div class="hour-item">
-                                                <span class="day">{{ content.sunday }}</span>
-                                                <span class="time">{{ location.working_hours_sunday }}</span>
-                                            </div>
+                            </div>
+
+                            <div v-if="location.show_working_hours" class="ct-row">
+                                <span class="ct-row__icon"><Icon name="clock" :size="18" /></span>
+                                <div class="ct-row__body">
+                                    <h4 class="ct-row__label">{{ content.workingHoursLabel }}</h4>
+                                    <div class="ct-hours">
+                                        <div class="ct-hours__row">
+                                            <span class="ct-hours__day">{{ content.mondayFriday }}</span>
+                                            <span class="ct-hours__time">{{ location.working_hours_weekdays }}</span>
+                                        </div>
+                                        <div class="ct-hours__row">
+                                            <span class="ct-hours__day">{{ content.saturday }}</span>
+                                            <span class="ct-hours__time">{{ location.working_hours_saturday }}</span>
+                                        </div>
+                                        <div class="ct-hours__row">
+                                            <span class="ct-hours__day">{{ content.sunday }}</span>
+                                            <span class="ct-hours__time">{{ location.working_hours_sunday }}</span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="social-section">
-                            <h4>{{ content.followUs }}</h4>
-                            <div class="social-links">
-                                <a href="https://facebook.com/babormedical" target="_blank" rel="noopener" aria-label="Facebook">
-                                    <svg viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
-                                    </svg>
-                                </a>
-                                <a href="https://instagram.com/babormedical" target="_blank" rel="noopener" aria-label="Instagram">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <rect x="2" y="2" width="20" height="20" rx="5"/>
-                                        <circle cx="12" cy="12" r="4"/>
-                                        <circle cx="18" cy="6" r="1"/>
-                                    </svg>
-                                </a>
-                                <!--
-                                <a href="https://tiktok.com/@babormedical" target="_blank" rel="noopener" aria-label="TikTok">
-                                    <svg viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
-                                    </svg>
-                                </a>
+                    <div class="ct-social">
+                        <h4 class="ct-row__label">{{ content.followUs }}</h4>
+                        <div class="ct-social__links">
+                            <a href="https://facebook.com/babormedical" target="_blank" rel="noopener" aria-label="Facebook">
+                                <Icon name="facebook" :size="19" />
+                            </a>
+                            <a href="https://instagram.com/babormedical" target="_blank" rel="noopener" aria-label="Instagram">
+                                <Icon name="instagram" :size="19" />
+                            </a>
+                            <!--
+                            <a href="https://tiktok.com/@babormedical" target="_blank" rel="noopener" aria-label="TikTok">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                                </svg>
+                            </a>
                             -->
-                            </div>
                         </div>
                     </div>
-                </div>
+                </aside>
             </div>
         </section>
 
-        <section class="map-section fade-in-up">
-            <div class="container">
-                <div class="map-wrapper">
+        <!-- Crossing ribbons (decorative) -->
+        <div class="ct-ribbons" aria-hidden="true">
+            <Marquee :items="ribbonServices" variant="wine" :tilt="-2.6" :duration="44" />
+            <Marquee :items="ribbonContact" variant="outline" :tilt="2" :duration="52" reverse />
+        </div>
+
+        <!-- Map -->
+        <section class="ct-map bm-dark">
+            <div class="bm-container">
+                <div class="ct-map__frame" data-reveal="scale">
                     <iframe 
                         src="https://maps.google.com/maps?q=East+Gate+Mall,+Skopje&t=&z=15&ie=UTF8&iwloc=&output=embed"
                         width="100%" 
@@ -398,380 +423,457 @@ const submitForm = async () => {
                         loading="lazy" 
                         referrerpolicy="no-referrer-when-downgrade"
                     ></iframe>
+                    <div v-if="primaryLocation" class="ct-map__card">
+                        <span class="ct-map__pin"><Icon name="pin" :size="20" :stroke="1.7" /></span>
+                        <span class="ct-map__text">
+                            <span class="ct-map__name">{{ primaryLocation.name }}</span>
+                            <span class="ct-map__addr">{{ primaryLocation.address }}</span>
+                        </span>
+                    </div>
                 </div>
             </div>
         </section>
-
-        <Footer />
-    </div>
+    </SiteLayout>
 </template>
 
 <style scoped>
-.contact-hero {
-    padding: 80px 0 60px;
-    text-align: center;
+/* ---------- Hero quick actions ---------- */
+.ct-quick {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
 }
-
-.hero-content {
-    max-width: 700px;
-    margin: 0 auto;
-}
-
-.section-badge {
-    display: inline-block;
-    padding: 8px 20px;
-    background: linear-gradient(135deg, rgba(201, 168, 124, 0.2), rgba(201, 168, 124, 0.1));
-    border: 1px solid rgba(201, 168, 124, 0.3);
-    border-radius: 30px;
-    color: #c9a87c;
-    font-size: 0.75rem;
+.ct-quick__btn { letter-spacing: 0.08em; }
+.ct-quick__btn--mail {
+    gap: 12px;
+    text-transform: none;
+    letter-spacing: 0.02em;
+    font-size: 0.92rem;
     font-weight: 600;
-    letter-spacing: 3px;
-    margin-bottom: 24px;
 }
 
-.hero-title {
-    font-size: 3rem;
-    font-weight: 600;
-    color: #fff;
-    margin-bottom: 20px;
-    line-height: 1.2;
+/* ---------- Hero visual ---------- */
+.ct-art {
+    position: relative;
+    width: min(100%, 440px);
+    margin-left: auto;
+    margin-right: clamp(0px, 3vw, 40px);
+    padding: 28px 0;
 }
-
-.hero-subtitle {
-    font-size: 1.15rem;
-    color: rgba(255, 255, 255, 0.7);
-    line-height: 1.8;
-}
-
-.contact-section {
-    padding: 60px 0 100px;
-}
-
-.contact-grid {
+.ct-art__arch {
+    position: relative;
     display: grid;
-    grid-template-columns: 1.2fr 1fr;
-    gap: 60px;
+    place-items: center;
+    aspect-ratio: 4 / 5;
+    border-radius: 999px 999px var(--radius-md) var(--radius-md);
+    border: 1px solid rgba(217, 185, 149, 0.28);
+    overflow: hidden;
+    background:
+        radial-gradient(60% 50% at 50% 45%, rgba(217, 185, 149, 0.22) 0%, transparent 70%),
+        radial-gradient(90% 60% at 50% 100%, rgba(140, 42, 72, 0.65) 0%, transparent 70%),
+        linear-gradient(180deg, var(--wine-850) 0%, var(--wine-800) 100%);
+}
+.ct-art__line {
+    position: absolute;
+    border: 1px solid rgba(217, 185, 149, 0.16);
+    border-radius: 999px 999px 10px 10px;
+    pointer-events: none;
+}
+.ct-art__line--1 { inset: 22px; }
+.ct-art__line--2 { inset: 48px; border-color: rgba(217, 185, 149, 0.1); }
+.ct-art__chip {
+    position: absolute;
+    display: grid;
+    place-items: center;
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    border: 1px solid rgba(217, 185, 149, 0.3);
+    background: rgba(41, 16, 27, 0.72);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    color: var(--gold-300);
+    box-shadow: 0 24px 50px -24px rgba(0, 0, 0, 0.8);
+    animation: ct-float 7s var(--ease-in-out) infinite alternate;
+}
+.ct-art__chip--pin { left: -34px; top: 26%; }
+.ct-art__chip--phone { right: -30px; top: 52%; animation-delay: -2.4s; }
+.ct-art__chip--mail { left: 12%; bottom: 0; animation-delay: -4.6s; background: var(--beige-200); color: var(--wine-700); border-color: transparent; }
+@keyframes ct-float {
+    from { transform: translate3d(0, -8px, 0); }
+    to { transform: translate3d(0, 10px, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .ct-art__chip { animation: none; }
+}
+
+/* ---------- Main: form + details ---------- */
+.ct-main__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
+    gap: clamp(48px, 6vw, 104px);
     align-items: start;
 }
 
-.contact-form-wrapper,
-.contact-info-wrapper {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 24px;
-    padding: 40px;
-}
-
-.form-title,
-.info-title {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #fff;
-    margin-bottom: 30px;
-}
-
-.contact-form {
+.ct-form__head {
+    position: relative;
     display: flex;
-    flex-direction: column;
-    gap: 20px;
+    align-items: flex-end;
+    gap: 22px;
+    margin-bottom: clamp(36px, 4.5vw, 56px);
 }
+.ct-form__num {
+    font-size: clamp(3.4rem, 6vw, 5.6rem);
+    flex: none;
+    margin-bottom: -0.08em;
+}
+.ct-form__title { color: var(--ink); }
 
-.form-row {
+.ct-form__form {
+    display: grid;
+    gap: 22px;
+}
+.ct-form__row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    gap: 22px;
 }
-
-.form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.form-group label {
-    font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.7);
-    font-weight: 500;
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    padding: 14px 18px;
-    color: #fff;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-}
-
-.form-group input::placeholder,
-.form-group textarea::placeholder {
-    color: rgba(255, 255, 255, 0.4);
-}
-
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-    outline: none;
-    border-color: #c9a87c;
-    background: rgba(201, 168, 124, 0.1);
-}
-
-.form-group select {
+.ct-form__row > .bm-field { align-content: start; }
+.ct-form .bm-label { color: var(--wine-800); opacity: 0.85; }
+.ct-form .bm-input { color: var(--ink); }
+/* `.bm-cream .bm-input { background: … }` resets the select chevron, so re-apply it here */
+.ct-select {
     cursor: pointer;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23c9a87c' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none' stroke='%236e2039' stroke-width='1.5'%3E%3Cpath d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
-    background-position: right 16px center;
+    background-position: right 20px center;
+    padding-right: 48px;
 }
 
-.form-group select option {
-    background: #1e2d3d;
-    color: #fff;
-}
-
-.form-group textarea {
-    resize: vertical;
-    min-height: 120px;
-}
-
-.submit-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    width: 100%;
-    margin-top: 10px;
-}
-
-.success-message {
-    text-align: center;
-    padding: 40px 20px;
-}
-
-.success-icon {
-    width: 80px;
-    height: 80px;
-    margin: 0 auto 24px;
-    background: linear-gradient(135deg, rgba(201, 168, 124, 0.2), rgba(201, 168, 124, 0.1));
+.ct-form__actions { margin-top: 8px; }
+.ct-submit { min-width: 240px; justify-content: space-between; }
+.ct-spinner {
+    width: 16px;
+    height: 16px;
     border-radius: 50%;
+    border: 2px solid rgba(110, 32, 57, 0.25);
+    border-top-color: var(--wine-600);
+    animation: ct-spin 0.8s linear infinite;
+}
+@keyframes ct-spin { to { transform: rotate(360deg); } }
+
+.ct-error {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #c9a87c;
-}
-
-.success-icon svg {
-    width: 40px;
-    height: 40px;
-}
-
-.success-message h3 {
-    font-size: 1.5rem;
-    color: #fff;
-    margin-bottom: 12px;
-}
-
-.success-message p {
-    color: rgba(255, 255, 255, 0.7);
-}
-
-.location-card {
-    margin-bottom: 30px;
-    padding-bottom: 30px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.location-card:last-of-type {
-    border-bottom: none;
-    margin-bottom: 20px;
-    padding-bottom: 0;
-}
-
-.location-name {
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: #c9a87c;
-    margin-bottom: 20px;
-}
-
-.info-cards {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    margin-bottom: 0;
-}
-
-.info-content a {
-    color: rgba(255, 255, 255, 0.6);
-    text-decoration: none;
-    transition: color 0.3s ease;
-}
-
-.info-content a:hover {
-    color: #c9a87c;
-}
-
-.info-card {
-    display: flex;
-    gap: 16px;
     align-items: flex-start;
-}
-
-.info-icon {
-    width: 50px;
-    height: 50px;
-    flex-shrink: 0;
-    background: linear-gradient(135deg, rgba(201, 168, 124, 0.2), rgba(201, 168, 124, 0.1));
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #c9a87c;
-}
-
-.info-icon svg {
-    width: 22px;
-    height: 22px;
-}
-
-.info-content h4 {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #fff;
-    margin-bottom: 4px;
-}
-
-.info-content p {
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 0.95rem;
-}
-
-.hours-list {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.hour-item {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.9rem;
-}
-
-.hour-item .day {
-    color: rgba(255, 255, 255, 0.6);
-}
-
-.hour-item .time {
-    color: #c9a87c;
-    font-weight: 500;
-}
-
-.social-section h4 {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #fff;
-    margin-bottom: 16px;
-}
-
-.social-links {
-    display: flex;
     gap: 12px;
+    padding: 14px 18px;
+    border-radius: 14px;
+    border: 1px solid rgba(160, 36, 56, 0.28);
+    background: rgba(160, 36, 56, 0.07);
+    color: #8f1d33;
+    font-size: 0.94rem;
+    line-height: 1.5;
+}
+.ct-error svg { flex: none; margin-top: 1px; }
+
+.ct-success {
+    display: grid;
+    justify-items: start;
+    gap: 14px;
+    padding: clamp(32px, 4vw, 52px);
+    border-radius: var(--radius-lg);
+    background: #fffaf5;
+    border: 1px solid var(--line-light);
+    box-shadow: 0 40px 80px -50px rgba(82, 26, 47, 0.35);
+}
+.ct-success__icon {
+    display: grid;
+    place-items: center;
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    background: var(--wine-600);
+    color: var(--cream-50);
+    margin-bottom: 8px;
+    box-shadow: 0 0 0 10px rgba(110, 32, 57, 0.08);
+}
+.ct-success .bm-h3 { color: var(--ink); }
+.ct-success p { max-width: 460px; }
+
+.ct-swap-enter-active, .ct-swap-leave-active { transition: opacity 0.45s var(--ease-out), transform 0.6s var(--ease-out); }
+.ct-swap-enter-from { opacity: 0; transform: translateY(24px); }
+.ct-swap-leave-to { opacity: 0; transform: translateY(-12px); }
+
+/* ---------- Details panel (dark, on the cream sheet) ---------- */
+.ct-info {
+    position: sticky;
+    top: calc(var(--header-h) + 24px);
+    overflow: hidden;
+    isolation: isolate;
+    padding: clamp(30px, 3.4vw, 48px);
+    border-radius: 200px 200px var(--radius-lg) var(--radius-lg);
+    padding-top: clamp(84px, 9vw, 120px);
+    background:
+        radial-gradient(120% 70% at 50% 0%, rgba(140, 42, 72, 0.55) 0%, transparent 62%),
+        linear-gradient(170deg, var(--wine-800) 0%, var(--wine-900) 100%);
+    color: var(--on-dark);
+    box-shadow: 0 60px 100px -60px rgba(56, 19, 34, 0.75);
+}
+.ct-info::before {
+    content: '';
+    position: absolute;
+    inset: 12px;
+    border: 1px solid rgba(217, 185, 149, 0.22);
+    border-radius: 190px 190px calc(var(--radius-lg) - 8px) calc(var(--radius-lg) - 8px);
+    pointer-events: none;
+    z-index: -1;
+}
+.ct-info__glow {
+    position: absolute;
+    width: 70%;
+    aspect-ratio: 1;
+    left: 50%;
+    top: -18%;
+    transform: translateX(-50%);
+    background: radial-gradient(circle, rgba(217, 185, 149, 0.22), transparent 65%);
+    filter: blur(20px);
+    z-index: -1;
+    pointer-events: none;
+}
+.ct-info__title {
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: clamp(1.7rem, 2.4vw, 2.3rem);
+    line-height: 1.12;
+    text-align: center;
+    margin-bottom: clamp(28px, 3vw, 40px);
 }
 
-.social-links a {
+.ct-loc + .ct-loc { margin-top: 36px; padding-top: 32px; border-top: 1px solid var(--line-dark); }
+.ct-loc__head {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    padding-bottom: 22px;
+    border-bottom: 1px solid var(--line-dark);
+}
+.ct-loc__num {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--gold-300);
+    flex: none;
+}
+.ct-loc__name {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(1.3rem, 1.7vw, 1.6rem);
+    line-height: 1.25;
+    color: var(--gold-300);
+}
+
+.ct-loc__rows { display: grid; }
+.ct-row {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr);
+    gap: 18px;
+    align-items: start;
+    padding: 22px 0;
+    border-bottom: 1px solid var(--line-dark);
+}
+.ct-row__icon {
+    display: grid;
+    place-items: center;
     width: 44px;
     height: 44px;
+    border-radius: 50%;
+    border: 1px solid rgba(217, 185, 149, 0.35);
+    color: var(--gold-300);
+}
+.ct-row__label {
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--on-dark-faint);
+    line-height: 1.4;
+    margin-bottom: 6px;
+}
+.ct-row__value { color: var(--on-dark); font-size: 1.02rem; line-height: 1.55; }
+
+.ct-big {
+    position: relative;
+    display: inline-block;
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: clamp(1.32rem, 1.85vw, 1.75rem);
+    line-height: 1.25;
+    color: var(--on-dark);
+    overflow-wrap: anywhere;
+    padding-bottom: 4px;
+    transition: color 0.4s var(--ease-out);
+}
+.ct-big::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.6s var(--ease-out);
+}
+.ct-big:hover { color: var(--gold-300); }
+.ct-big:hover::after { transform: scaleX(1); transform-origin: left; }
+
+.ct-hours { display: grid; gap: 10px; margin-top: 6px; }
+.ct-hours__row {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    font-size: 0.95rem;
+}
+.ct-hours__day { color: var(--on-dark-muted); flex: 0 1 auto; min-width: 0; }
+.ct-hours__row::after {
+    content: '';
+    order: 1;
+    flex: 1;
+    min-width: 16px;
+    border-bottom: 1px dotted rgba(217, 185, 149, 0.4);
+    transform: translateY(-4px);
+}
+.ct-hours__time {
+    order: 2;
+    color: var(--gold-300);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.ct-social {
     display: flex;
     align-items: center;
-    justify-content: center;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    color: rgba(255, 255, 255, 0.7);
-    transition: all 0.3s ease;
+    justify-content: space-between;
+    gap: 16px;
+    padding-top: 26px;
+}
+.ct-social .ct-row__label { margin: 0; }
+.ct-social__links { display: flex; gap: 10px; }
+.ct-social__links a {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1px solid var(--line-dark);
+    color: var(--on-dark);
+    transition: background 0.4s var(--ease-out), color 0.4s var(--ease-out), border-color 0.4s, transform 0.4s var(--ease-out);
+}
+.ct-social__links a:hover {
+    background: var(--beige-200);
+    border-color: var(--beige-200);
+    color: var(--wine-800);
+    transform: translateY(-3px);
 }
 
-.social-links a:hover {
-    background: #c9a87c;
-    border-color: #c9a87c;
-    color: #1e2d3d;
-}
-
-.social-links svg {
-    width: 20px;
-    height: 20px;
-}
-
-.error-message {
-    background: rgba(220, 53, 69, 0.15);
-    border: 1px solid rgba(220, 53, 69, 0.3);
-    color: #ff6b6b;
-    padding: 12px 16px;
-    border-radius: 8px;
-    margin-bottom: 16px;
-    font-size: 0.9rem;
-}
-
-.submit-btn:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-}
-
-.map-section {
-    padding: 0 0 100px;
-}
-
-.map-wrapper {
-    border-radius: 24px;
+/* ---------- Ribbons ---------- */
+.ct-ribbons {
+    position: relative;
+    display: grid;
+    background: var(--wine-950);
+    padding: clamp(64px, 8vw, 110px) 0 clamp(40px, 5vw, 70px);
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.08);
 }
+.ct-ribbons > * { grid-area: 1 / 1; align-self: center; }
 
-.map-wrapper iframe {
+/* ---------- Map ---------- */
+.ct-map { padding-bottom: clamp(84px, 10vw, 150px); }
+.ct-map__frame {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--line-dark);
+    background: var(--wine-900);
+    box-shadow: 0 60px 120px -60px rgba(0, 0, 0, 0.8);
+}
+.ct-map__frame iframe {
     display: block;
-    filter: grayscale(100%) invert(92%) contrast(83%);
+    width: 100%;
+    height: clamp(380px, 46vw, 600px);
+    /* burgundy night-mode map; natural colours while the visitor interacts with it */
+    filter: grayscale(1) invert(0.92) contrast(0.88) sepia(0.5) hue-rotate(290deg) saturate(1.6) brightness(0.9);
+    transition: filter 0.9s var(--ease-out);
 }
+.ct-map__frame:hover iframe,
+.ct-map__frame:focus-within iframe { filter: none; }
+.ct-map__frame::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: inset 0 0 0 1px rgba(217, 185, 149, 0.12), inset 0 0 120px rgba(22, 10, 14, 0.55);
+    pointer-events: none;
+}
+.ct-map__card {
+    position: absolute;
+    z-index: 2;
+    right: clamp(16px, 2.4vw, 32px);
+    top: clamp(16px, 2.4vw, 32px);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    max-width: min(420px, calc(100% - 32px));
+    padding: 14px 26px 14px 14px;
+    border-radius: 999px;
+    background: var(--cream-50);
+    color: var(--ink);
+    box-shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.7);
+}
+.ct-map__pin {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--wine-600);
+    color: var(--cream-50);
+    flex: none;
+}
+.ct-map__text { display: grid; gap: 2px; min-width: 0; }
+.ct-map__name { font-family: var(--font-display); font-size: 1.12rem; line-height: 1.25; }
+.ct-map__addr { font-size: 0.82rem; color: var(--ink-soft); line-height: 1.4; }
 
+/* ---------- Responsive ---------- */
 @media (max-width: 991.98px) {
-    .contact-grid {
-        grid-template-columns: 1fr;
-        gap: 40px;
-    }
-    
-    .hero-title {
-        font-size: 2.2rem;
-    }
+    .ct-hero :deep(.bm-phero__aside) { display: none; }
+    .ct-main__grid { grid-template-columns: 1fr; }
+    .ct-info { position: relative; top: 0; }
 }
 
 @media (max-width: 575.98px) {
-    .contact-hero {
-        padding: 60px 0 40px;
-    }
-    
-    .hero-title {
-        font-size: 1.8rem;
-    }
-    
-    .contact-section {
-        padding: 40px 0 60px;
-    }
-    
-    .contact-form-wrapper,
-    .contact-info-wrapper {
-        padding: 24px;
-    }
-    
-    .form-row {
-        grid-template-columns: 1fr;
-    }
-    
-    .map-section {
-        padding: 0 0 60px;
+    .ct-quick__btn { width: 100%; justify-content: space-between; }
+    .ct-quick__btn--mail { justify-content: center; }
+    .ct-form__row { grid-template-columns: 1fr; }
+    .ct-submit { width: 100%; min-width: 0; }
+    .ct-info { border-radius: 140px 140px var(--radius-lg) var(--radius-lg); padding-inline: 22px; }
+    .ct-info::before { border-radius: 130px 130px calc(var(--radius-lg) - 8px) calc(var(--radius-lg) - 8px); }
+    .ct-row { grid-template-columns: 40px minmax(0, 1fr); gap: 14px; }
+    .ct-row__icon { width: 40px; height: 40px; }
+    .ct-social { flex-direction: column; align-items: flex-start; }
+    .ct-map__frame iframe { height: 420px; }
+    .ct-map__card {
+        position: relative;
+        right: auto;
+        top: auto;
+        max-width: none;
+        margin: -1px 0 0;
+        border-radius: 0;
+        padding: 18px;
     }
 }
 </style>

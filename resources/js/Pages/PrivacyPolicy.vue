@@ -1,11 +1,10 @@
 <script setup>
 import { Head, usePage } from '@inertiajs/vue3';
-import { computed } from 'vue';
-import Navbar from '@/Components/Navbar.vue';
-import Footer from '@/Components/Footer.vue';
-import { useScrollAnimation } from '@/Composables/useScrollAnimation';
-
-useScrollAnimation();
+import { computed, nextTick, onMounted, onUnmounted, ref, useId } from 'vue';
+import SiteLayout from '@/Layouts/SiteLayout.vue';
+import PageHero from '@/Components/Site/PageHero.vue';
+import Icon from '@/Components/Site/Icon.vue';
+import RotatingBadge from '@/Components/Site/RotatingBadge.vue';
 
 const page = usePage();
 const locale = computed(() => page.props.locale || 'en');
@@ -210,6 +209,76 @@ The company acts as the Data Controller.`
 };
 
 const content = computed(() => locale.value === 'mk' ? contentMk : contentEn);
+
+// ---------- UI-only helpers (presentation, no content changes) ----------
+
+// Hero: the last word of the title renders as the italic accent line.
+const heroTitle = computed(() => {
+    const words = String(content.value.title || '').trim().split(/\s+/).filter(Boolean);
+    if (words.length < 2) return { main: words.join(' '), accent: '' };
+    return { main: words.slice(0, -1).join(' '), accent: words[words.length - 1] };
+});
+
+// "1. General Information" -> number + name, so the number can sit in the margin.
+const titleParts = (title) => {
+    const m = String(title || '').match(/^(\d+\.)\s+(.*)$/);
+    return m ? { num: m[1], text: m[2] } : { num: '', text: title };
+};
+const pad = (n) => String(n).padStart(2, '0');
+const anchorId = (index) => `policy-${index + 1}`;
+const tocLabel = computed(() => (locale.value === 'mk' ? 'Содржина' : 'Contents'));
+const tocId = useId();
+
+// Table of contents: active section + reading progress (client only).
+const tocOpen = ref(false);
+const activeSection = ref(0);
+const tocEl = ref(null);
+const docEl = ref(null);
+let raf = 0;
+
+const updateActive = () => {
+    raf = 0;
+    const line = window.innerHeight * 0.35;
+    let idx = 0;
+    content.value.sections.forEach((_, i) => {
+        const el = document.getElementById(anchorId(i));
+        if (el && el.getBoundingClientRect().top <= line) idx = i;
+    });
+    activeSection.value = idx;
+    if (docEl.value && tocEl.value) {
+        const r = docEl.value.getBoundingClientRect();
+        const p = Math.min(1, Math.max(0, (line - r.top) / Math.max(1, r.height - line * 0.5)));
+        tocEl.value.style.setProperty('--pp-p', p.toFixed(4));
+    }
+};
+const onScroll = () => {
+    if (!raf) raf = requestAnimationFrame(updateActive);
+};
+
+const goTo = async (event, index) => {
+    if (!document.getElementById(anchorId(index))) return;
+    event.preventDefault();
+    tocOpen.value = false;
+    await nextTick(); // the mobile list collapses first, then we measure
+    const el = document.getElementById(anchorId(index));
+    const offset = parseFloat(getComputedStyle(el).scrollMarginTop) || 0;
+    const top = el.getBoundingClientRect().top + window.scrollY - offset;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({ top, behavior: reduce ? 'auto' : 'smooth' });
+    history.replaceState(null, '', `#${anchorId(index)}`);
+};
+
+onMounted(() => {
+    updateActive();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+});
+
+onUnmounted(() => {
+    window.removeEventListener('scroll', onScroll);
+    window.removeEventListener('resize', onScroll);
+    if (raf) cancelAnimationFrame(raf);
+});
 </script>
 
 <template>
@@ -227,257 +296,355 @@ const content = computed(() => locale.value === 'mk' ? contentMk : contentEn);
         <link rel="alternate" hreflang="x-default" href="https://babormedical.com/privacy-policy" />
     </Head>
 
-    <div class="main-wrapper">
-        <Navbar />
-        
-        <section class="privacy-hero">
-            <div class="container">
-                <div class="hero-content fade-in-up">
-                    <span class="section-badge">{{ locale === 'mk' ? 'ПРАВНИ ИНФОРМАЦИИ' : 'LEGAL' }}</span>
-                    <h1 class="hero-title">{{ content.title }}</h1>
-                    <p class="hero-subtitle">{{ content.subtitle }}</p>
-                    <p class="last-updated">{{ content.lastUpdated }}</p>
-                </div>
-            </div>
-        </section>
+    <SiteLayout>
+        <PageHero
+            :eyebrow="locale === 'mk' ? 'ПРАВНИ ИНФОРМАЦИИ' : 'LEGAL'"
+            :title="heroTitle.main"
+            :accent="heroTitle.accent"
+            :subtitle="content.subtitle"
+            :crumb="content.title"
+            align="center"
+            compact
+        >
+            <p class="pp-updated">
+                <Icon name="clock" :size="16" :stroke="1.6" />
+                <span>{{ content.lastUpdated }}</span>
+            </p>
+        </PageHero>
 
-        <section class="privacy-content">
-            <div class="container">
-                <div class="content-wrapper">
-                    <div 
-                        v-for="(section, index) in content.sections" 
-                        :key="index" 
-                        class="policy-section fade-in-up"
-                        :class="`stagger-${(index % 4) + 1}`"
+        <section class="pp-doc bm-cream bm-sheet">
+            <div class="bm-container pp-doc__grid">
+                <!-- Table of contents -->
+                <aside ref="tocEl" class="pp-toc">
+                    <div class="pp-toc__inner">
+                        <button
+                            type="button"
+                            class="pp-toc__toggle"
+                            :aria-expanded="tocOpen ? 'true' : 'false'"
+                            :aria-controls="tocId"
+                            @click="tocOpen = !tocOpen"
+                        >
+                            <span class="bm-eyebrow">{{ tocLabel }}</span>
+                            <span class="pp-toc__chev" aria-hidden="true"><Icon name="chevron-down" :size="18" :stroke="1.8" /></span>
+                        </button>
+                        <nav :id="tocId" class="pp-toc__nav" :class="{ 'is-open': tocOpen }" :aria-label="tocLabel">
+                            <ol class="pp-toc__list">
+                                <li v-for="(section, index) in content.sections" :key="index">
+                                    <a
+                                        :href="`#${anchorId(index)}`"
+                                        class="pp-toc__link"
+                                        :class="{ 'is-active': activeSection === index }"
+                                        :aria-current="activeSection === index ? 'location' : null"
+                                        @click="goTo($event, index)"
+                                    >
+                                        <span class="pp-toc__n">{{ pad(index + 1) }}</span>
+                                        <span class="pp-toc__t">{{ titleParts(section.title).text }}</span>
+                                    </a>
+                                </li>
+                            </ol>
+                            <span class="pp-toc__track" aria-hidden="true"><span></span></span>
+                        </nav>
+                    </div>
+                </aside>
+
+                <!-- Document -->
+                <div ref="docEl" class="pp-doc__body">
+                    <article
+                        v-for="(section, index) in content.sections"
+                        :key="index"
+                        :id="anchorId(index)"
+                        class="pp-sec"
+                        data-reveal
                     >
-                        <h2 class="section-title">{{ section.title }}</h2>
-                        <div class="section-content">
-                            <p class="section-text" v-html="section.content.replace(/\n/g, '<br>')"></p>
-                            <ul v-if="section.list" class="section-list">
+                        <h2 class="pp-sec__title">
+                            <span v-if="titleParts(section.title).num" class="pp-sec__num">{{ titleParts(section.title).num }}</span>{{ titleParts(section.title).num ? ' ' : '' }}<span class="pp-sec__name">{{ titleParts(section.title).text }}</span>
+                        </h2>
+                        <div class="pp-sec__content">
+                            <p class="pp-sec__text" v-html="section.content.replace(/\n/g, '<br>')"></p>
+                            <ul v-if="section.list" class="bm-list pp-sec__list">
                                 <li v-for="(item, i) in section.list" :key="i">{{ item }}</li>
                             </ul>
-                            <p v-if="section.footer" class="section-footer">{{ section.footer }}</p>
-                            <div v-if="section.contact" class="contact-info">
-                                <a :href="`mailto:${companyInfo.email}`" class="contact-link">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                                        <polyline points="22,6 12,13 2,6"/>
-                                    </svg>
-                                    {{ companyInfo.email }}
+                            <p v-if="section.footer" class="pp-sec__note">{{ section.footer }}</p>
+                            <div v-if="section.contact" class="pp-contact">
+                                <a :href="`mailto:${companyInfo.email}`" class="pp-contact__link">
+                                    <span class="pp-contact__icon"><Icon name="mail" :size="18" /></span>
+                                    <span class="pp-contact__value">{{ companyInfo.email }}</span>
+                                    <span class="pp-contact__arrow"><Icon name="arrow-up-right" :size="18" /></span>
                                 </a>
-                                <a :href="`tel:${companyInfo.phone}`" class="contact-link">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-                                    </svg>
-                                    {{ companyInfo.phone }}
+                                <a :href="`tel:${companyInfo.phone}`" class="pp-contact__link">
+                                    <span class="pp-contact__icon"><Icon name="phone" :size="18" /></span>
+                                    <span class="pp-contact__value">{{ companyInfo.phone }}</span>
+                                    <span class="pp-contact__arrow"><Icon name="arrow-up-right" :size="18" /></span>
                                 </a>
                             </div>
                         </div>
+                    </article>
+
+                    <!-- Closing seal, like the stamp on a signed document -->
+                    <div class="pp-seal" data-reveal="scale">
+                        <RotatingBadge :size="132" />
                     </div>
                 </div>
             </div>
         </section>
-
-        <Footer />
-    </div>
+    </SiteLayout>
 </template>
 
 <style scoped>
-.privacy-hero {
-    padding: 80px 0 60px;
-    text-align: center;
-}
-
-.hero-content {
-    max-width: 700px;
-    margin: 0 auto;
-}
-
-.section-badge {
-    display: inline-block;
-    padding: 8px 20px;
-    background: linear-gradient(135deg, rgba(201, 168, 124, 0.2), rgba(201, 168, 124, 0.1));
-    border: 1px solid rgba(201, 168, 124, 0.3);
-    border-radius: 30px;
-    color: #c9a87c;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 3px;
-    margin-bottom: 24px;
-}
-
-.hero-title {
-    font-size: 3rem;
-    font-weight: 600;
-    color: #fff;
-    margin-bottom: 16px;
-    line-height: 1.2;
-}
-
-.hero-subtitle {
-    font-size: 1.15rem;
-    color: rgba(255, 255, 255, 0.7);
-    line-height: 1.8;
-    margin-bottom: 12px;
-}
-
-.last-updated {
-    font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.5);
-}
-
-.privacy-content {
-    padding: 60px 0 100px;
-}
-
-.content-wrapper {
-    max-width: 900px;
-    margin: 0 auto;
-}
-
-.policy-section {
-    margin-bottom: 40px;
-    padding: 40px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 20px;
-    transition: all 0.3s ease;
-}
-
-.policy-section:hover {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(201, 168, 124, 0.2);
-}
-
-.policy-section:last-child {
-    margin-bottom: 0;
-}
-
-.section-title {
-    font-size: 1.35rem;
-    font-weight: 600;
-    color: #c9a87c;
-    margin-bottom: 20px;
-}
-
-.section-content {
-    color: rgba(255, 255, 255, 0.75);
-}
-
-.section-text {
-    font-size: 1rem;
-    line-height: 1.8;
-    margin-bottom: 16px;
-}
-
-.section-text:last-child {
-    margin-bottom: 0;
-}
-
-.section-list {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 16px 0;
-}
-
-.section-list li {
-    position: relative;
-    padding-left: 24px;
-    margin-bottom: 10px;
-    font-size: 1rem;
-    line-height: 1.6;
-}
-
-.section-list li::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 10px;
-    width: 8px;
-    height: 8px;
-    background: linear-gradient(135deg, #c9a87c, #b8956b);
-    border-radius: 50%;
-}
-
-.section-list li:last-child {
-    margin-bottom: 0;
-}
-
-.section-footer {
-    font-size: 0.95rem;
-    color: rgba(255, 255, 255, 0.6);
-    font-style: italic;
-    margin-top: 16px;
-    padding-top: 16px;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.contact-info {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-top: 20px;
-}
-
-.contact-link {
+/* ---------- hero extra ---------- */
+.pp-updated {
     display: inline-flex;
     align-items: center;
-    gap: 12px;
-    color: #c9a87c;
-    text-decoration: none;
-    font-size: 1rem;
-    transition: all 0.3s ease;
+    gap: 10px;
+    padding: 10px 20px;
+    border-radius: 999px;
+    border: 1px solid var(--line-dark);
+    background: rgba(246, 238, 230, 0.04);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: var(--on-dark-muted);
+}
+.pp-updated svg { color: var(--gold-300); flex: none; }
+
+/* ---------- document sheet ---------- */
+.pp-doc {
+    padding-block: clamp(72px, 9vw, 136px) clamp(96px, 11vw, 168px);
+}
+.pp-doc__grid {
+    display: grid;
+    grid-template-columns: minmax(240px, 300px) minmax(0, 1fr);
+    gap: clamp(48px, 8vw, 136px);
 }
 
-.contact-link:hover {
-    color: #fff;
+/* ---------- TOC ---------- */
+.pp-toc__inner {
+    position: sticky;
+    top: calc(var(--header-h) + 36px);
+}
+.pp-toc__toggle {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 0;
+    background: none;
+    border: 0;
+    color: inherit;
+    text-align: left;
+    pointer-events: none;
+}
+.pp-toc__chev { display: none; }
+.pp-toc__nav {
+    position: relative;
+    margin-top: 26px;
+    padding-left: 22px;
+}
+.pp-toc__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 2px;
+}
+.pp-toc__link {
+    position: relative;
+    display: grid;
+    grid-template-columns: 30px minmax(0, 1fr);
+    gap: 8px;
+    padding: 8px 0;
+    font-size: 0.92rem;
+    line-height: 1.45;
+    color: var(--ink-soft);
+    transition: color 0.4s var(--ease-out), transform 0.5s var(--ease-out);
+}
+.pp-toc__link::before {
+    content: '';
+    position: absolute;
+    left: -25px;
+    top: calc(8px + 0.725em - 3.5px);
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--wine-600);
+    transform: scale(0);
+    transition: transform 0.4s var(--ease-out);
+}
+.pp-toc__link:hover { color: var(--ink); transform: translateX(3px); }
+.pp-toc__link.is-active { color: var(--wine-600); }
+.pp-toc__link.is-active::before { transform: scale(1); }
+.pp-toc__n {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 0.95rem;
+    color: var(--wine-500);
+    opacity: 0.7;
+}
+.pp-toc__link.is-active .pp-toc__n { opacity: 1; }
+.pp-toc__t { font-weight: 600; }
+.pp-toc__track {
+    position: absolute;
+    left: 0;
+    top: 8px;
+    bottom: 8px;
+    width: 1px;
+    background: var(--line-light);
+}
+.pp-toc__track span {
+    position: absolute;
+    inset: 0;
+    background: var(--wine-600);
+    transform-origin: top;
+    transform: scaleY(var(--pp-p, 0));
 }
 
-.contact-link svg {
-    width: 20px;
-    height: 20px;
-    flex-shrink: 0;
+/* ---------- sections ---------- */
+.pp-doc__body {
+    max-width: 820px;
+    border-top: 1px solid var(--line-light);
+}
+.pp-sec {
+    position: relative;
+    padding: clamp(40px, 5vw, 64px) 0 clamp(40px, 5vw, 64px) clamp(84px, 8vw, 120px);
+    border-bottom: 1px solid var(--line-light);
+    scroll-margin-top: calc(var(--header-h) + 20px);
+}
+.pp-sec__title {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(1.6rem, 2.4vw, 2.25rem);
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+}
+.pp-sec__num {
+    position: absolute;
+    left: 0;
+    top: clamp(28px, 3.6vw, 46px);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(3.2rem, 5vw, 4.6rem);
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(110, 32, 57, 0.5);
+    transition: color 0.6s var(--ease-out), -webkit-text-stroke-color 0.6s;
+}
+.pp-sec:hover .pp-sec__num { color: rgba(110, 32, 57, 0.08); -webkit-text-stroke-color: var(--wine-600); }
+.pp-sec__content {
+    margin-top: 22px;
+    max-width: 660px;
+    font-size: 1.04rem;
+    line-height: 1.85;
+    color: var(--ink-soft);
+}
+.pp-sec__text { color: var(--ink-soft); }
+.pp-sec__list {
+    margin-top: 22px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 36px;
+    color: var(--ink);
+}
+.pp-sec__note {
+    margin-top: 28px;
+    padding: 18px 24px;
+    border-left: 2px solid var(--wine-600);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    background: rgba(110, 32, 57, 0.05);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.15rem;
+    line-height: 1.55;
+    color: var(--wine-700);
+    overflow-wrap: anywhere;
 }
 
+/* ---------- contact rows ---------- */
+.pp-contact {
+    display: grid;
+    margin-top: 26px;
+    border-top: 1px solid var(--line-light);
+}
+.pp-contact__link {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 18px;
+    padding: 18px 12px;
+    border-bottom: 1px solid var(--line-light);
+    color: var(--ink);
+    overflow: hidden;
+    transition: color 0.5s var(--ease-out);
+}
+.pp-contact__link::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--wine-600);
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.6s var(--ease-out);
+}
+.pp-contact__link:hover { color: var(--cream-50); }
+.pp-contact__link:hover::before { transform: scaleY(1); }
+.pp-contact__icon {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid rgba(110, 32, 57, 0.3);
+    color: var(--wine-600);
+    transition: border-color 0.5s, color 0.5s, background 0.5s;
+}
+.pp-contact__link:hover .pp-contact__icon { border-color: transparent; background: var(--cream-50); color: var(--wine-600); }
+.pp-contact__value {
+    font-family: var(--font-display);
+    font-size: clamp(1.15rem, 1.6vw, 1.4rem);
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+}
+.pp-contact__arrow { display: grid; transition: transform 0.5s var(--ease-out); }
+.pp-contact__link:hover .pp-contact__arrow { transform: translate(3px, -3px); }
+
+.pp-seal {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: clamp(40px, 5vw, 64px);
+}
+
+/* ---------- responsive ---------- */
 @media (max-width: 991.98px) {
-    .hero-title {
-        font-size: 2.5rem;
+    .pp-doc__grid { grid-template-columns: 1fr; gap: 40px; }
+    .pp-toc__inner {
+        position: static;
+        padding: 18px 22px;
+        border: 1px solid var(--line-light);
+        border-radius: var(--radius-md);
+        background: #fffaf5;
     }
-    
-    .policy-section {
-        padding: 30px;
-    }
+    .pp-toc__toggle { pointer-events: auto; cursor: pointer; min-height: 32px; }
+    .pp-toc__chev { display: grid; transition: transform 0.5s var(--ease-out); color: var(--wine-600); }
+    .pp-toc__toggle[aria-expanded='true'] .pp-toc__chev { transform: rotate(180deg); }
+    .pp-toc__nav { display: none; margin-top: 16px; }
+    .pp-toc__nav.is-open { display: block; }
+    .pp-doc__body { max-width: none; }
 }
 
 @media (max-width: 575.98px) {
-    .privacy-hero {
-        padding: 40px 0;
+    .pp-sec { padding: 40px 0 44px; }
+    .pp-sec__num {
+        position: static;
+        display: block;
+        margin-bottom: 10px;
+        font-size: 3rem;
     }
-    
-    .hero-title {
-        font-size: 1.8rem;
-    }
-    
-    .hero-subtitle {
-        font-size: 1rem;
-    }
-    
-    .privacy-content {
-        padding: 40px 0 60px;
-    }
-    
-    .policy-section {
-        padding: 24px;
-        margin-bottom: 20px;
-    }
-    
-    .section-title {
-        font-size: 1.15rem;
-    }
-    
-    .section-text,
-    .section-list li {
-        font-size: 0.95rem;
-    }
+    .pp-sec__list { grid-template-columns: 1fr; }
+    .pp-sec__content { font-size: 1rem; }
+    .pp-contact__link { gap: 14px; padding: 16px 6px; }
 }
 </style>

@@ -1,9 +1,8 @@
 <script setup>
 import { usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
-import { useScrollAnimation } from '@/Composables/useScrollAnimation';
-
-useScrollAnimation();
+import MaskText from '@/Components/Site/MaskText.vue';
+import Icon from '@/Components/Site/Icon.vue';
 
 const props = defineProps({
     services: {
@@ -27,68 +26,39 @@ const getTitle = (service) => {
 const getDescription = (service) => {
     return locale.value === 'mk' && service.description_mk ? service.description_mk : service.description;
 };
+
+const iconFor = (icon) => (['face', 'laser', 'body', 'product'].includes(icon) ? icon : 'star');
+const pad = (n) => String(n).padStart(2, '0');
 </script>
 
 <template>
-    <section class="services-section">
-        <div class="services-bg"></div>
-        <div class="container">
-            <div class="section-header fade-in-up">
-                <span class="section-badge">{{ locale === 'mk' ? 'НАШИТЕ УСЛУГИ' : 'OUR SERVICES' }}</span>
-                <h2 class="section-title">{{ sectionTitle }}</h2>
-                <p class="section-subtitle">{{ sectionSubtitle }}</p>
+    <section class="services-section bm-services bm-dark bm-section bm-grain">
+        <div class="bm-container">
+            <div class="section-header bm-services__head">
+                <div>
+                    <span class="section-badge bm-eyebrow" data-reveal>{{ locale === 'mk' ? 'НАШИТЕ УСЛУГИ' : 'OUR SERVICES' }}</span>
+                    <h2 class="section-title bm-h1 bm-services__title"><MaskText :text="sectionTitle" /></h2>
+                </div>
+                <p class="section-subtitle bm-services__sub" data-reveal style="--d: 0.2s">{{ sectionSubtitle }}</p>
             </div>
 
-            <div class="services-grid">
-                <a 
-                    v-for="(service, index) in activeServices" 
+            <div class="services-grid bm-services__grid">
+                <a
+                    v-for="(service, index) in activeServices"
                     :key="index"
                     :href="service.link || '#'"
-                    class="service-card fade-in-up"
-                    :class="[`card-${index + 1}`, `stagger-${index + 1}`]"
+                    class="service-card bm-svc"
+                    data-reveal
+                    :style="{ '--d': `${index * 0.1}s` }"
                 >
-                    <div class="card-glow"></div>
-                    <div class="card-content">
-                        <div class="icon-container">
-                            <svg v-if="service.icon === 'face'" class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M12 3c4.97 0 9 4.03 9 9s-4.03 9-9 9-9-4.03-9-9 4.03-9 9-9z"/>
-                                <path d="M9 10h.01M15 10h.01"/>
-                                <path d="M9.5 15a3.5 3.5 0 0 0 5 0"/>
-                                <path d="M7 3.34V6a1 1 0 0 0 1 1h1"/>
-                                <path d="M17 3.34V6a1 1 0 0 1-1 1h-1"/>
-                            </svg>
-                            <svg v-else-if="service.icon === 'laser'" class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="12" cy="5" r="3"/>
-                                <path d="M12 8v4"/>
-                                <path d="M8 12l4 10 4-10"/>
-                                <path d="M6 4l2 2M18 4l-2 2M4 8l3 1M20 8l-3 1"/>
-                            </svg>
-                            <svg v-else-if="service.icon === 'body'" class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M12 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/>
-                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                                <path d="M12 8v6"/>
-                                <path d="M9 11l3 3 3-3"/>
-                            </svg>
-                            <svg v-else-if="service.icon === 'product'" class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M9 3h6v4H9z"/>
-                                <path d="M7 7h10v14H7z"/>
-                                <path d="M10 11h4"/>
-                                <path d="M12 11v4"/>
-                                <circle cx="12" cy="18" r="1"/>
-                            </svg>
-                            <svg v-else class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-                            </svg>
-                        </div>
-                        <h3 class="service-title">{{ getTitle(service) }}</h3>
-                        <p class="service-description">{{ getDescription(service) }}</p>
-                        <span class="service-link" :aria-label="locale === 'mk' ? `Дознај повеќе за ${getTitle(service)}` : `Learn more about ${getTitle(service)}`">
-                            {{ locale === 'mk' ? 'Дознај повеќе' : 'Learn more' }}
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M5 12h14M12 5l7 7-7 7"/>
-                            </svg>
-                        </span>
-                    </div>
+                    <span class="bm-svc__num bm-numeral" aria-hidden="true">{{ pad(index + 1) }}</span>
+                    <span class="bm-svc__icon"><Icon :name="iconFor(service.icon)" :size="26" :stroke="1.4" /></span>
+                    <h3 class="service-title bm-svc__title">{{ getTitle(service) }}</h3>
+                    <p class="service-description bm-svc__desc">{{ getDescription(service) }}</p>
+                    <span class="service-link bm-svc__link" :aria-label="locale === 'mk' ? `Дознај повеќе за ${getTitle(service)}` : `Learn more about ${getTitle(service)}`">
+                        {{ locale === 'mk' ? 'Дознај повеќе' : 'Learn more' }}
+                        <span class="bm-svc__arrow"><Icon name="arrow-up-right" :size="16" :stroke="1.8" /></span>
+                    </span>
                 </a>
             </div>
         </div>
@@ -96,226 +66,114 @@ const getDescription = (service) => {
 </template>
 
 <style scoped>
-.services-section {
-    padding: 80px 0 120px;
-    background: transparent;
+.bm-services { overflow: hidden; }
+.bm-services__head {
     position: relative;
-    overflow: visible;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px 48px;
+    margin-bottom: clamp(48px, 6vw, 88px);
+}
+.bm-services__title { margin-top: 22px; }
+.bm-services__sub {
+    max-width: 340px;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(1.25rem, 1.8vw, 1.6rem);
+    line-height: 1.35;
+    color: var(--on-dark-muted);
 }
 
-.services-bg {
-    display: none;
-}
-
-.section-header {
-    text-align: center;
-    margin-bottom: 80px;
+.bm-services__grid {
     position: relative;
-    z-index: 1;
-}
-
-.section-badge {
-    display: inline-block;
-    padding: 8px 20px;
-    background: linear-gradient(135deg, rgba(201, 168, 124, 0.2), rgba(201, 168, 124, 0.1));
-    border: 1px solid rgba(201, 168, 124, 0.3);
-    border-radius: 30px;
-    color: #c9a87c;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 3px;
-    margin-bottom: 24px;
-}
-
-.section-title {
-    font-size: 3.2rem;
-    font-weight: 600;
-    color: #ffffff;
-    margin-bottom: 20px;
-    letter-spacing: -0.5px;
-}
-
-.section-subtitle {
-    font-size: 1.2rem;
-    color: rgba(255, 255, 255, 0.6);
-    max-width: 500px;
-    margin: 0 auto;
-    line-height: 1.7;
-}
-
-.services-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 28px;
-    position: relative;
-    z-index: 1;
+    border-top: 1px solid var(--line-dark);
+    border-bottom: 1px solid var(--line-dark);
 }
 
-.service-card {
+.bm-svc {
     position: relative;
-    text-decoration: none;
-    border-radius: 24px;
-    overflow: hidden;
-    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-}
-
-.card-glow {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    transition: opacity 0.5s ease;
-}
-
-.card-1 .card-glow { background: linear-gradient(135deg, #c9a87c 0%, #e8d5c4 100%); }
-.card-2 .card-glow { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-.card-3 .card-glow { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
-.card-4 .card-glow { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
-
-.card-content {
-    position: relative;
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 24px;
-    padding: 50px 32px 40px;
-    text-align: center;
-    height: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    transition: all 0.5s ease;
+    min-height: 480px;
+    padding: 36px 30px 34px;
+    border-left: 1px solid var(--line-dark);
+    color: var(--on-dark);
+    isolation: isolate;
+    overflow: hidden;
 }
-
-.service-card:hover {
-    transform: translateY(-10px) scale(1.02);
+.bm-svc:last-child { border-right: 1px solid var(--line-dark); }
+.bm-svc::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+        radial-gradient(120% 70% at 50% 0%, rgba(217, 185, 149, 0.18), transparent 60%),
+        linear-gradient(180deg, var(--wine-700), var(--wine-800));
+    transform: translateY(101%);
+    transition: transform 0.8s var(--ease-out);
 }
+.bm-svc:hover::before, .bm-svc:focus-visible::before { transform: translateY(0); }
 
-.service-card:hover .card-glow {
-    opacity: 1;
+.bm-svc__num {
+    font-size: clamp(4rem, 6vw, 6.2rem);
+    transition: color 0.6s, -webkit-text-stroke-color 0.6s;
 }
+.bm-svc:hover .bm-svc__num { color: rgba(217, 185, 149, 0.16); }
 
-.service-card:hover .card-content {
-    background: rgba(255, 255, 255, 0.95);
-    border-color: transparent;
+.bm-svc__icon {
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    margin-top: auto;
+    border-radius: 50%;
+    border: 1px solid rgba(217, 185, 149, 0.35);
+    color: var(--gold-300);
+    transition: background 0.6s, color 0.6s, transform 0.8s var(--ease-out);
 }
+.bm-svc:hover .bm-svc__icon { background: var(--beige-200); color: var(--wine-800); transform: rotate(-10deg); }
 
-.icon-container {
-    width: 70px;
-    height: 70px;
-    margin-bottom: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.4s ease;
-}
-
-.service-icon {
-    width: 50px;
-    height: 50px;
-    color: #c9a87c;
-    transition: all 0.4s ease;
-}
-
-.service-card:hover .service-icon {
-    color: #3D4F5F;
-    transform: scale(1.1);
-}
-
-.service-card:hover .icon-container {
-    transform: scale(1.1);
-}
-
-.service-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #ffffff;
-    margin-bottom: 14px;
-    transition: color 0.4s ease;
-}
-
-.service-card:hover .service-title {
-    color: #1a1a2e;
-}
-
-.service-description {
-    font-size: 0.95rem;
-    color: rgba(255, 255, 255, 0.5);
-    line-height: 1.7;
-    margin: 0 0 24px 0;
-    flex-grow: 1;
-    transition: color 0.4s ease;
-}
-
-.service-card:hover .service-description {
-    color: #666;
-}
-
-.service-link {
+.bm-svc__title { margin-top: 26px; font-size: clamp(1.45rem, 1.9vw, 1.85rem); font-weight: 400; }
+.bm-svc__desc { margin-top: 12px; font-size: 0.95rem; line-height: 1.7; color: var(--on-dark-muted); min-height: 4.8em; }
+.bm-svc__link {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    color: #c9a87c;
-    font-size: 0.9rem;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    transition: all 0.3s ease;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 26px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line-dark);
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
 }
-
-.service-link svg {
-    transition: transform 0.3s ease;
+.bm-svc__arrow {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1px solid var(--line-dark);
+    transition: background 0.5s, color 0.5s, transform 0.6s var(--ease-out), border-color 0.5s;
 }
-
-.service-card:hover .service-link {
-    color: #1a1a2e;
-}
-
-.service-card:hover .service-link svg {
-    transform: translateX(5px);
-}
+.bm-svc:hover .bm-svc__arrow { background: var(--beige-200); color: var(--wine-800); border-color: var(--beige-200); transform: rotate(45deg); }
 
 @media (max-width: 1199.98px) {
-    .services-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    
-    .section-title {
-        font-size: 2.5rem;
-    }
+    .bm-services__grid { grid-template-columns: repeat(2, 1fr); }
+    .bm-svc { min-height: 400px; border-bottom: 1px solid var(--line-dark); }
+    .bm-svc:nth-child(2n) { border-right: 1px solid var(--line-dark); }
 }
-
-@media (max-width: 767.98px) {
-    .services-section {
-        padding: 80px 0;
-    }
-    
-    .section-title {
-        font-size: 2rem;
-    }
-    
-    .section-badge {
-        font-size: 0.7rem;
-        letter-spacing: 2px;
-    }
-    
-    .services-grid {
-        grid-template-columns: 1fr;
-        max-width: 380px;
-        margin: 0 auto;
-        gap: 20px;
-    }
-    
-    .card-content {
-        padding: 40px 28px 35px;
-    }
-    
-    .icon-container {
-        width: 70px;
-        height: 70px;
-    }
-    
-    .service-img, .icon-fallback {
-        width: 55px;
-        height: 55px;
-    }
+@media (max-width: 575.98px) {
+    .bm-services__grid { grid-template-columns: 1fr; border-bottom: 0; }
+    .bm-svc { min-height: 0; padding: 30px 24px; border-right: 1px solid var(--line-dark); }
+    .bm-svc__num { font-size: 3.6rem; }
+    .bm-svc__icon { margin-top: 18px; }
+    .bm-svc__desc { min-height: 0; }
 }
 </style>

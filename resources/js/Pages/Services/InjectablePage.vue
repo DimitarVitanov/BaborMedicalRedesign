@@ -1,11 +1,14 @@
 <script setup>
 import { Head, usePage } from '@inertiajs/vue3';
-import { computed } from 'vue';
-import Navbar from '@/Components/Navbar.vue';
-import Footer from '@/Components/Footer.vue';
-import { useScrollAnimation } from '@/Composables/useScrollAnimation';
-
-useScrollAnimation();
+import { computed, ref, useId } from 'vue';
+import SiteLayout from '@/Layouts/SiteLayout.vue';
+import PageHero from '@/Components/Site/PageHero.vue';
+import MaskText from '@/Components/Site/MaskText.vue';
+import ScrollWords from '@/Components/Site/ScrollWords.vue';
+import Counter from '@/Components/Site/Counter.vue';
+import Marquee from '@/Components/Site/Marquee.vue';
+import RotatingBadge from '@/Components/Site/RotatingBadge.vue';
+import Icon from '@/Components/Site/Icon.vue';
 
 const props = defineProps({
     categories: Array,
@@ -135,6 +138,19 @@ const treatments = computed(() => {
 const protocolAreas = computed(() => props.extraData?.protocol_areas || []);
 const combinedStrategies = computed(() => props.extraData?.combined_strategies || []);
 const assessmentPoints = computed(() => props.extraData?.assessment_points || []);
+
+// ---- UI-only helpers (presentation) ----
+const pad = (n) => String(n).padStart(2, '0');
+const heroTitle = computed(() => {
+    const words = String(props.pageTitle || '').trim().split(/\s+/);
+    return words.length > 1
+        ? { main: words.slice(0, -1).join(' '), accent: words[words.length - 1] }
+        : { main: words[0] || '', accent: '' };
+});
+const methodAnchor = (item, i) => `method-${item.id ?? i + 1}`;
+const openFaq = ref(0);
+const toggleFaq = (i) => { openFaq.value = openFaq.value === i ? -1 : i; };
+const faqId = useId();
 </script>
 
 <template>
@@ -162,729 +178,879 @@ const assessmentPoints = computed(() => props.extraData?.assessment_points || []
         <component is="script" type="application/ld+json" v-html="jsonLd" />
     </Head>
 
-    <div class="injectable-page">
-        <Navbar />
+    <SiteLayout>
+        <div class="injectable-page">
+            <!-- Hero -->
+            <PageHero
+                :eyebrow="t('ИНЈЕКТБИЛНИ МЕТОДИ', 'INJECTABLE METHODS')"
+                :title="heroTitle.main"
+                :accent="heroTitle.accent"
+                :subtitle="pageSubtitle"
+                :crumb="pageTitle"
+            >
+                <div class="ij-stats">
+                    <div class="ij-stat">
+                        <span class="ij-stat__num"><Counter :value="treatments.length" /></span>
+                        <span class="ij-stat__label">{{ t('Методи', 'Methods') }}</span>
+                    </div>
+                    <span class="ij-stat__div" aria-hidden="true"></span>
+                    <div class="ij-stat">
+                        <span class="ij-stat__num"><Counter value="6+" /></span>
+                        <span class="ij-stat__label">{{ t('Протоколи', 'Protocols') }}</span>
+                    </div>
+                    <span class="ij-stat__div" aria-hidden="true"></span>
+                    <div class="ij-stat">
+                        <span class="ij-stat__num"><Counter value="10+" /></span>
+                        <span class="ij-stat__label">{{ t('Години', 'Years') }}</span>
+                    </div>
+                </div>
 
-        <!-- Hero -->
-        <section class="injectable-hero">
-            <div class="hero-bg">
-                <div class="gradient-orb orb-1"></div>
-                <div class="gradient-orb orb-2"></div>
-                <div class="gradient-orb orb-3"></div>
-            </div>
-            <div class="container">
-                <div class="hero-content">
-                    <span class="hero-badge fade-in-up">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <path d="M12 2v6M12 16v6"/>
-                            <path d="M9 8h6l-1 8H10L9 8z"/>
-                            <circle cx="12" cy="5" r="1"/>
-                        </svg>
-                        {{ t('ИНЈЕКТБИЛНИ МЕТОДИ', 'INJECTABLE METHODS') }}
-                    </span>
-                    <h1 class="hero-title fade-in-up">{{ pageTitle }}</h1>
-                    <p class="hero-subtitle fade-in-up">{{ pageSubtitle }}</p>
+                <a href="/services/cosmetology" class="bm-btn bm-btn--ghost ij-hero__link">
+                    {{ t('Погледни', 'View') }} {{ t('Козметологија', 'Cosmetology') }}
+                    <Icon name="arrow-right" :size="16" :stroke="1.8" />
+                </a>
 
-                    <div class="hero-stats fade-in-up">
-                        <div class="stat">
-                            <span class="stat-number">{{ treatments.length }}</span>
-                            <span class="stat-label">{{ t('Методи', 'Methods') }}</span>
+                <template v-if="treatments.length" #aside>
+                    <div class="ij-menu">
+                        <div class="ij-menu__arch">
+                            <span class="ij-menu__ring" aria-hidden="true"></span>
+                            <span class="ij-menu__icon" aria-hidden="true"><Icon name="injectable" :size="28" :stroke="1.2" /></span>
+                            <span class="ij-menu__eyebrow">{{ t('Наши методи', 'Our Methods') }}</span>
+                            <ol class="ij-menu__list">
+                                <li v-for="(item, i) in treatments" :key="`menu-${item.id}`">
+                                    <a :href="`#${methodAnchor(item, i)}`">
+                                        <span class="ij-menu__n">{{ pad(i + 1) }}</span>
+                                        <span class="ij-menu__t">{{ item.name }}</span>
+                                    </a>
+                                </li>
+                            </ol>
                         </div>
-                        <div class="stat-divider"></div>
-                        <div class="stat">
-                            <span class="stat-number">6+</span>
-                            <span class="stat-label">{{ t('Протоколи', 'Protocols') }}</span>
-                        </div>
-                        <div class="stat-divider"></div>
-                        <div class="stat">
-                            <span class="stat-number">10+</span>
-                            <span class="stat-label">{{ t('Години', 'Years') }}</span>
-                        </div>
+                        <RotatingBadge class="ij-menu__seal" :size="124" />
+                    </div>
+                </template>
+            </PageHero>
+
+            <!-- Intro + what the protocols cover -->
+            <section class="ij-intro bm-cream bm-sheet bm-section">
+                <div class="bm-container">
+                    <div v-if="categoryDescription" class="ij-intro__lead">
+                        <span class="ij-intro__mark" aria-hidden="true">&ldquo;</span>
+                        <ScrollWords :text="categoryDescription" tag="p" class="ij-intro__statement" />
                     </div>
 
-                    <a href="/services/cosmetology" class="other-category-link fade-in-up">
-                        {{ t('Погледни', 'View') }} {{ t('Козметологија', 'Cosmetology') }}
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                    </a>
+                    <div class="ij-split">
+                        <div class="ij-split__head">
+                            <span class="ij-split__num bm-numeral" aria-hidden="true">01</span>
+                            <h2 class="bm-h2 ij-split__title">
+                                <MaskText :text="t('Што опфаќаат инјектбилните протоколи?', 'What do injectable protocols cover?')" />
+                            </h2>
+                        </div>
+                        <div class="ij-split__body">
+                            <ul class="ij-areas">
+                                <li
+                                    v-for="(area, i) in protocolAreas"
+                                    :key="area"
+                                    class="ij-areas__item"
+                                    data-reveal
+                                    :style="{ '--d': `${i * 0.06}s` }"
+                                >
+                                    <span class="ij-areas__n" aria-hidden="true">{{ pad(i + 1) }}</span>
+                                    <span class="ij-areas__t">{{ area }}</span>
+                                    <span class="ij-areas__icon" aria-hidden="true"><Icon name="arrow-up-right" :size="16" :stroke="1.6" /></span>
+                                </li>
+                            </ul>
+                            <p class="ij-note" data-reveal>{{ t('Секоја од овие категории има различна биолошка улога и различна индикација.', 'Each of these categories has a different biological role and different indication.') }}</p>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="scroll-indicator">
-                <div class="mouse">
-                    <div class="wheel"></div>
+            </section>
+
+            <!-- Treatments -->
+            <section id="methods" class="ij-methods bm-dark bm-section bm-grain">
+                <div class="bm-aura" aria-hidden="true"><span></span><span></span><span></span></div>
+                <div class="bm-container ij-methods__inner">
+                    <div class="ij-methods__head">
+                        <div>
+                            <span class="ij-split__num bm-numeral" aria-hidden="true">02</span>
+                            <h2 class="bm-h1 ij-methods__title"><MaskText :text="t('Наши методи', 'Our Methods')" /></h2>
+                        </div>
+                        <span class="ij-methods__count" aria-hidden="true">
+                            <Counter :value="pad(treatments.length)" />
+                        </span>
+                    </div>
+
+                    <div class="ij-methods__list">
+                        <article
+                            v-for="(item, i) in treatments"
+                            :id="methodAnchor(item, i)"
+                            :key="item.id"
+                            class="ij-method"
+                            data-reveal
+                            :style="{ '--d': `${i * 0.06}s` }"
+                        >
+                            <span class="ij-method__num bm-numeral" aria-hidden="true">{{ pad(i + 1) }}</span>
+                            <h3 class="ij-method__name">{{ item.name }}</h3>
+                            <div class="ij-method__body">
+                                <div v-if="item.description" class="ij-method__desc bm-prose" v-html="item.description"></div>
+                                <a v-if="item.url" :href="item.url" class="bm-link ij-method__link">
+                                    {{ t('Прочитај повеќе', 'Learn more') }}
+                                    <Icon name="arrow-right" />
+                                </a>
+                            </div>
+                            <span class="ij-method__arrow" aria-hidden="true"><Icon name="arrow-up-right" :size="18" :stroke="1.6" /></span>
+                        </article>
+                    </div>
                 </div>
-            </div>
-        </section>
 
-        <!-- Main Content -->
-        <section class="injectable-content">
-            <div class="container">
-
-                <!-- Intro -->
-                <div class="content-block fade-in-up" v-if="categoryDescription">
-                    <p class="intro-text">{{ categoryDescription }}</p>
+                <div v-if="protocolAreas.length" class="ij-methods__ribbon" aria-hidden="true">
+                    <Marquee :items="protocolAreas" variant="wine" :tilt="-2" :duration="46" />
                 </div>
+            </section>
 
-                <!-- What do protocols cover -->
-                <div class="content-block fade-in-up">
-                    <h2 class="block-title">{{ t('Што опфаќаат инјектбилните протоколи?', 'What do injectable protocols cover?') }}</h2>
-                    <ul class="styled-list">
-                        <li v-for="area in protocolAreas" :key="area">{{ area }}</li>
+            <!-- Protocol approach -->
+            <section class="ij-protocol bm-paper bm-sheet bm-section">
+                <div class="bm-container ij-split">
+                    <div class="ij-split__head">
+                        <span class="ij-split__num bm-numeral" aria-hidden="true">03</span>
+                        <h2 class="bm-h2 ij-split__title">
+                            <MaskText :text="t('Протокол наместо изолирана процедура', 'Protocol instead of isolated procedure')" />
+                        </h2>
+                        <p class="bm-lead bm-muted ij-protocol__lead" data-reveal style="--d: 0.2s">{{ t('Во Babor Medical развиваме комбинирани стратегии како:', 'At Babor Medical we develop combined strategies such as:') }}</p>
+                    </div>
+                    <div class="ij-split__body">
+                        <ul class="ij-combos">
+                            <li
+                                v-for="(strategy, i) in combinedStrategies"
+                                :key="strategy"
+                                class="ij-combo"
+                                data-reveal
+                                :style="{ '--d': `${i * 0.08}s` }"
+                            >
+                                <span class="ij-combo__top" aria-hidden="true">
+                                    <span class="ij-combo__n">{{ pad(i + 1) }}</span>
+                                    <span class="ij-combo__icon"><Icon name="plus" :size="16" :stroke="1.6" /></span>
+                                </span>
+                                <span class="ij-combo__t">{{ strategy }}</span>
+                            </li>
+                        </ul>
+                        <p class="ij-quote" data-reveal>{{ t('Целта е долгорочна стабилност, природен изглед и постепена регенерација.', 'The goal is long-term stability, natural look and gradual regeneration.') }}</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Individual assessment -->
+            <section class="ij-assess bm-wine bm-section bm-grain">
+                <div class="bm-aura" aria-hidden="true"><span></span><span></span><span></span></div>
+                <div class="bm-container ij-assess__inner">
+                    <div class="ij-assess__head">
+                        <div>
+                            <span class="ij-split__num bm-numeral" aria-hidden="true">04</span>
+                            <h2 class="bm-h1 ij-assess__title"><MaskText :text="t('Индивидуална проценка', 'Individual Assessment')" /></h2>
+                        </div>
+                        <p class="bm-lead ij-assess__lead" data-reveal style="--d: 0.2s">{{ t('Секој третман започнува со детална анализа на:', 'Every treatment starts with a detailed analysis of:') }}</p>
+                    </div>
+
+                    <ul class="ij-steps">
+                        <li
+                            v-for="(point, i) in assessmentPoints"
+                            :key="point"
+                            class="ij-step"
+                            data-reveal
+                            :style="{ '--d': `${i * 0.1}s` }"
+                        >
+                            <span class="ij-step__n bm-numeral" aria-hidden="true">{{ pad(i + 1) }}</span>
+                            <span class="ij-step__dot" aria-hidden="true"></span>
+                            <span class="ij-step__t">{{ point }}</span>
+                        </li>
                     </ul>
-                    <p class="block-note">{{ t('Секоја од овие категории има различна биолошка улога и различна индикација.', 'Each of these categories has a different biological role and different indication.') }}</p>
-                </div>
 
-                <!-- Treatment Cards -->
-                <div class="content-block fade-in-up">
-                    <h2 class="block-title">{{ t('Наши методи', 'Our Methods') }}</h2>
-                    <div class="tech-grid">
-                        <div v-for="item in treatments" :key="item.id" class="tech-card fade-in-up">
-                            <h3 class="tech-name">{{ item.name }}</h3>
-                            <div v-if="item.description" class="tech-desc" v-html="item.description"></div>
-                            <a v-if="item.url" :href="item.url" class="tech-link">
-                                {{ t('Прочитај повеќе', 'Learn more') }}
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M5 12h14M12 5l7 7-7 7"/>
-                                </svg>
+                    <p class="ij-assess__note" data-reveal>
+                        <span class="ij-assess__check" aria-hidden="true"><Icon name="check" :size="16" :stroke="2" /></span>
+                        <span>{{ t('Врз основа на тоа се креира персонализиран план.', 'Based on this, a personalized plan is created.') }}</span>
+                    </p>
+                </div>
+            </section>
+
+            <!-- Pricing / PDF -->
+            <section v-if="priceListPdf" class="ij-pricing bm-dark bm-section--tight">
+                <div class="bm-container">
+                    <div class="ij-price" data-reveal="scale">
+                        <div class="ij-price__visual" aria-hidden="true">
+                            <span class="ij-price__arch">
+                                <Icon name="file" :size="40" :stroke="1.1" />
+                                <span class="ij-price__pdf">PDF</span>
+                            </span>
+                        </div>
+                        <div class="ij-price__copy">
+                            <h2 class="bm-h2 ij-price__title"><MaskText :text="t('Ценовник', 'Pricing')" /></h2>
+                            <p class="ij-price__text">{{ t('Погледнете го нашиот комплетен ценовник за инјектибилни третмани.', 'View our complete price list for injectable treatments.') }}</p>
+                        </div>
+                        <div class="ij-price__actions">
+                            <a :href="priceListPdf" target="_blank" class="bm-btn">
+                                <span>{{ t('Отвори ценовник (PDF)', 'View Price List (PDF)') }}</span>
+                                <span class="bm-btn__icon"><Icon name="arrow-up-right" :stroke="2" /></span>
+                            </a>
+                            <a :href="priceListPdf" download class="bm-btn bm-btn--ghost ij-price__dl">
+                                <Icon name="download" :size="17" :stroke="1.8" />
+                                {{ t('Преземи ценовник', 'Download Price List') }}
                             </a>
                         </div>
                     </div>
                 </div>
+            </section>
 
-                <!-- Protocol approach -->
-                <div class="content-block fade-in-up">
-                    <h2 class="block-title">{{ t('Протокол наместо изолирана процедура', 'Protocol instead of isolated procedure') }}</h2>
-                    <p class="block-text">{{ t('Во Babor Medical развиваме комбинирани стратегии како:', 'At Babor Medical we develop combined strategies such as:') }}</p>
-                    <ul class="styled-list">
-                        <li v-for="strategy in combinedStrategies" :key="strategy">{{ strategy }}</li>
-                    </ul>
-                    <p class="block-note">{{ t('Целта е долгорочна стабилност, природен изглед и постепена регенерација.', 'The goal is long-term stability, natural look and gradual regeneration.') }}</p>
-                </div>
-
-                <!-- Individual Assessment -->
-                <div class="content-block fade-in-up">
-                    <h2 class="block-title">{{ t('Индивидуална проценка', 'Individual Assessment') }}</h2>
-                    <p class="block-text">{{ t('Секој третман започнува со детална анализа на:', 'Every treatment starts with a detailed analysis of:') }}</p>
-                    <ul class="styled-list">
-                        <li v-for="point in assessmentPoints" :key="point">{{ point }}</li>
-                    </ul>
-                    <p class="block-note">{{ t('Врз основа на тоа се креира персонализиран план.', 'Based on this, a personalized plan is created.') }}</p>
-                </div>
-
-                <!-- Pricing / PDF -->
-                <div v-if="priceListPdf" class="content-block fade-in-up pricing-block">
-                    <h2 class="block-title">{{ t('Ценовник', 'Pricing') }}</h2>
-                    <p class="block-text">{{ t('Погледнете го нашиот комплетен ценовник за инјектибилни третмани.', 'View our complete price list for injectable treatments.') }}</p>
-                    <div class="pdf-actions">
-                        <a :href="priceListPdf" target="_blank" class="pdf-btn">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                <polyline points="14 2 14 8 20 8"/>
-                                <line x1="16" y1="13" x2="8" y2="13"/>
-                                <line x1="16" y1="17" x2="8" y2="17"/>
-                                <polyline points="10 9 9 9 8 9"/>
-                            </svg>
-                            {{ t('Отвори ценовник (PDF)', 'View Price List (PDF)') }}
-                        </a>
-                        <a :href="priceListPdf" download class="pdf-btn pdf-btn-secondary">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                                <polyline points="7 10 12 15 17 10"/>
-                                <line x1="12" y1="15" x2="12" y2="3"/>
-                            </svg>
-                            {{ t('Преземи ценовник', 'Download Price List') }}
-                        </a>
+            <!-- FAQ -->
+            <section class="ij-faq bm-cream bm-sheet bm-section">
+                <div class="bm-container ij-split">
+                    <div class="ij-split__head">
+                        <span class="ij-faq__mark bm-numeral" aria-hidden="true">?</span>
+                        <h2 class="bm-h2 ij-split__title">
+                            <MaskText :text="t('Најчесто поставувани прашања', 'Frequently Asked Questions')" />
+                        </h2>
+                    </div>
+                    <div class="bm-faq ij-faq__list" data-reveal style="--d: 0.15s">
+                        <div class="bm-faq__item" :class="{ 'is-open': openFaq === 0 }">
+                            <h3 class="ij-faq__h">
+                                <button type="button" class="bm-faq__q" :aria-expanded="openFaq === 0 ? 'true' : 'false'" :aria-controls="`${faqId}-0`" @click="toggleFaq(0)">
+                                    <span>{{ t('Кои инјектибилни третмани ги нудите во Скопје?', 'What injectable treatments do you offer in Skopje?') }}</span>
+                                    <span class="bm-faq__icon" aria-hidden="true"></span>
+                                </button>
+                            </h3>
+                            <div :id="`${faqId}-0`" class="bm-faq__a" role="region">
+                                <div><p>{{ t('Во Babor Medical нудиме филери (хијалуронски), ботокс (ботулинска терапија), колаген стимулатори, мезотерапија, биоревитализација и PRP третмани. Сите процедури се изведуваат од стручен медицински тим.', 'At Babor Medical we offer fillers (hyaluronic), botox (botulinum therapy), collagen stimulators, mesotherapy, biorevitalization and PRP treatments. All procedures are performed by an expert medical team.') }}</p></div>
+                            </div>
+                        </div>
+                        <div class="bm-faq__item" :class="{ 'is-open': openFaq === 1 }">
+                            <h3 class="ij-faq__h">
+                                <button type="button" class="bm-faq__q" :aria-expanded="openFaq === 1 ? 'true' : 'false'" :aria-controls="`${faqId}-1`" @click="toggleFaq(1)">
+                                    <span>{{ t('Дали филерите и ботоксот се безбедни?', 'Are fillers and botox safe?') }}</span>
+                                    <span class="bm-faq__icon" aria-hidden="true"></span>
+                                </button>
+                            </h3>
+                            <div :id="`${faqId}-1`" class="bm-faq__a" role="region">
+                                <div><p>{{ t('Да, кога се аплицираат од обучен медицински персонал, филерите и ботоксот се безбедни процедури. Во Babor Medical користиме само сертифицирани препарати и следиме строги медицински протоколи за безбедност.', 'Yes, when applied by trained medical staff, fillers and botox are safe procedures. At Babor Medical we use only certified products and follow strict medical safety protocols.') }}</p></div>
+                            </div>
+                        </div>
+                        <div class="bm-faq__item" :class="{ 'is-open': openFaq === 2 }">
+                            <h3 class="ij-faq__h">
+                                <button type="button" class="bm-faq__q" :aria-expanded="openFaq === 2 ? 'true' : 'false'" :aria-controls="`${faqId}-2`" @click="toggleFaq(2)">
+                                    <span>{{ t('Колку трае ефектот од филери и ботокс?', 'How long do fillers and botox last?') }}</span>
+                                    <span class="bm-faq__icon" aria-hidden="true"></span>
+                                </button>
+                            </h3>
+                            <div :id="`${faqId}-2`" class="bm-faq__a" role="region">
+                                <div><p>{{ t('Ефектот од хијалуронски филери трае 6-18 месеци, а ботоксот 3-6 месеци, зависно од зоната и индивидуалниот метаболизам. Колаген стимулаторите имаат постепен ефект кој трае до 2 години.', 'Hyaluronic fillers last 6-18 months, and botox 3-6 months, depending on the area and individual metabolism. Collagen stimulators have a gradual effect lasting up to 2 years.') }}</p></div>
+                            </div>
+                        </div>
+                        <div class="bm-faq__item" :class="{ 'is-open': openFaq === 3 }">
+                            <h3 class="ij-faq__h">
+                                <button type="button" class="bm-faq__q" :aria-expanded="openFaq === 3 ? 'true' : 'false'" :aria-controls="`${faqId}-3`" @click="toggleFaq(3)">
+                                    <span>{{ t('Колку чини ботокс и филери во Скопје?', 'How much do botox and fillers cost in Skopje?') }}</span>
+                                    <span class="bm-faq__icon" aria-hidden="true"></span>
+                                </button>
+                            </h3>
+                            <div :id="`${faqId}-3`" class="bm-faq__a" role="region">
+                                <div><p>{{ t('Цените за инјектибилни третмани во Babor Medical зависат од типот на препарат и зоната на третман. За детален ценовник контактирајте нè на +389 75 340 933.', 'Injectable treatment prices at Babor Medical depend on the product type and treatment area. For a detailed price list, contact us at +389 75 340 933.') }}</p></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
+            </section>
 
-                <!-- Closing -->
-                <div class="closing-block fade-in-up">
-                    <h2 class="closing-title">{{ t('Природноста е наш приоритет', 'Naturalness is our priority') }}</h2>
-                    <p class="closing-text">{{ t('Инјектбилните методи се моќна алатка кога се применуваат со клиничка логика и мерка.', 'Injectable methods are a powerful tool when applied with clinical logic and measure.') }}</p>
-                    <p class="closing-tagline">
+            <!-- Closing -->
+            <section class="ij-closing bm-wine bm-section bm-grain">
+                <div class="bm-aura" aria-hidden="true"><span></span><span></span><span></span></div>
+                <span class="ij-closing__arcs" aria-hidden="true"><span></span><span></span><span></span></span>
+                <div class="bm-container ij-closing__inner">
+                    <h2 class="bm-display ij-closing__title"><MaskText :text="t('Природноста е наш приоритет', 'Naturalness is our priority')" /></h2>
+                    <p class="bm-lead ij-closing__text" data-reveal style="--d: 0.2s">{{ t('Инјектбилните методи се моќна алатка кога се применуваат со клиничка логика и мерка.', 'Injectable methods are a powerful tool when applied with clinical logic and measure.') }}</p>
+                    <p class="ij-closing__tagline" data-reveal style="--d: 0.3s">
                         {{ t('Нашата стратегија е стабилизација, не претерување.', 'Our strategy is stabilization, not excess.') }}<br/>
                         {{ t('Регенерација, не маскирање.', 'Regeneration, not masking.') }}
                     </p>
-                    <a href="/contact" class="cta-btn">
-                        {{ t('Закажи консултација', 'Book a consultation') }}
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                    </a>
-                </div>
-
-            </div>
-        </section>
-
-        <!-- FAQ Section -->
-        <section class="faq-section">
-            <div class="container">
-                <div class="faq-header fade-in-up">
-                    <h2 class="faq-title">{{ t('Најчесто поставувани прашања', 'Frequently Asked Questions') }}</h2>
-                </div>
-                <div class="faq-grid">
-                    <div class="faq-item fade-in-up">
-                        <h3 class="faq-question">{{ t('Кои инјектибилни третмани ги нудите во Скопје?', 'What injectable treatments do you offer in Skopje?') }}</h3>
-                        <p class="faq-answer">{{ t('Во Babor Medical нудиме филери (хијалуронски), ботокс (ботулинска терапија), колаген стимулатори, мезотерапија, биоревитализација и PRP третмани. Сите процедури се изведуваат од стручен медицински тим.', 'At Babor Medical we offer fillers (hyaluronic), botox (botulinum therapy), collagen stimulators, mesotherapy, biorevitalization and PRP treatments. All procedures are performed by an expert medical team.') }}</p>
-                    </div>
-                    <div class="faq-item fade-in-up">
-                        <h3 class="faq-question">{{ t('Дали филерите и ботоксот се безбедни?', 'Are fillers and botox safe?') }}</h3>
-                        <p class="faq-answer">{{ t('Да, кога се аплицираат од обучен медицински персонал, филерите и ботоксот се безбедни процедури. Во Babor Medical користиме само сертифицирани препарати и следиме строги медицински протоколи за безбедност.', 'Yes, when applied by trained medical staff, fillers and botox are safe procedures. At Babor Medical we use only certified products and follow strict medical safety protocols.') }}</p>
-                    </div>
-                    <div class="faq-item fade-in-up">
-                        <h3 class="faq-question">{{ t('Колку трае ефектот од филери и ботокс?', 'How long do fillers and botox last?') }}</h3>
-                        <p class="faq-answer">{{ t('Ефектот од хијалуронски филери трае 6-18 месеци, а ботоксот 3-6 месеци, зависно од зоната и индивидуалниот метаболизам. Колаген стимулаторите имаат постепен ефект кој трае до 2 години.', 'Hyaluronic fillers last 6-18 months, and botox 3-6 months, depending on the area and individual metabolism. Collagen stimulators have a gradual effect lasting up to 2 years.') }}</p>
-                    </div>
-                    <div class="faq-item fade-in-up">
-                        <h3 class="faq-question">{{ t('Колку чини ботокс и филери во Скопје?', 'How much do botox and fillers cost in Skopje?') }}</h3>
-                        <p class="faq-answer">{{ t('Цените за инјектибилни третмани во Babor Medical зависат од типот на препарат и зоната на третман. За детален ценовник контактирајте нè на +389 75 340 933.', 'Injectable treatment prices at Babor Medical depend on the product type and treatment area. For a detailed price list, contact us at +389 75 340 933.') }}</p>
+                    <div class="ij-closing__actions" data-reveal style="--d: 0.4s">
+                        <a href="/contact" class="bm-btn">
+                            <span>{{ t('Закажи консултација', 'Book a consultation') }}</span>
+                            <span class="bm-btn__icon"><Icon name="arrow-right" :stroke="2" /></span>
+                        </a>
                     </div>
                 </div>
-            </div>
-        </section>
-
-        <Footer />
-    </div>
+            </section>
+        </div>
+    </SiteLayout>
 </template>
 
 <style scoped>
-.injectable-page {
-    min-height: 100vh;
-    background: #0a0f14;
-    overflow-x: hidden;
+/* ---------- Hero ---------- */
+.ij-stats {
+    display: inline-flex;
+    align-items: stretch;
+    flex-wrap: wrap;
+    gap: 18px clamp(22px, 3vw, 40px);
+    padding: 22px 0;
+    border-top: 1px solid var(--line-dark);
+    border-bottom: 1px solid var(--line-dark);
 }
+.ij-stat { display: grid; gap: 6px; }
+.ij-stat__num {
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: clamp(2.4rem, 3.6vw, 3.4rem);
+    line-height: 1;
+    color: var(--gold-300);
+}
+.ij-stat__label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--on-dark-muted);
+}
+.ij-stat__div { width: 1px; background: var(--line-dark); }
+.ij-hero__link { display: flex; width: max-content; max-width: 100%; margin-top: 30px; gap: 12px; }
+.ij-hero__link svg { transition: transform 0.5s var(--ease-out); }
+.ij-hero__link:hover svg { transform: translateX(4px); }
 
-/* Hero */
-.injectable-hero {
+/* Arched "menu" card */
+.ij-menu { position: relative; width: min(100%, 440px); margin-inline: auto 0; }
+.ij-menu__arch {
     position: relative;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 120px 0 80px;
-    overflow: hidden;
-}
-
-.hero-bg {
-    position: absolute;
-    inset: 0;
-    overflow: hidden;
-}
-
-.gradient-orb {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(80px);
-}
-
-.orb-1 {
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, rgba(201, 168, 124, 0.15), transparent 70%);
-    top: -200px;
-    right: -100px;
-    animation: float1 8s ease-in-out infinite;
-}
-
-.orb-2 {
-    width: 400px;
-    height: 400px;
-    background: radial-gradient(circle, rgba(30, 45, 61, 0.4), transparent 70%);
-    bottom: -100px;
-    left: -100px;
-    animation: float2 10s ease-in-out infinite;
-}
-
-.orb-3 {
-    width: 300px;
-    height: 300px;
-    background: radial-gradient(circle, rgba(201, 168, 124, 0.08), transparent 70%);
-    top: 50%;
-    left: 50%;
-    animation: float3 12s ease-in-out infinite;
-}
-
-@keyframes float1 {
-    0%, 100% { transform: translate(0, 0); }
-    50% { transform: translate(-30px, 20px); }
-}
-
-@keyframes float2 {
-    0%, 100% { transform: translate(0, 0); }
-    50% { transform: translate(20px, -30px); }
-}
-
-@keyframes float3 {
-    0%, 100% { transform: translate(-50%, -50%); }
-    50% { transform: translate(-50%, -45%); }
-}
-
-.hero-content {
     display: flex;
     flex-direction: column;
     align-items: center;
-    text-align: center;
-    position: relative;
-    z-index: 1;
+    padding: clamp(64px, 7vw, 92px) clamp(26px, 3vw, 40px) clamp(28px, 3vw, 40px);
+    border-radius: 999px 999px var(--radius-lg) var(--radius-lg);
+    background:
+        radial-gradient(80% 50% at 50% 0%, rgba(217, 185, 149, 0.35), transparent 70%),
+        linear-gradient(180deg, var(--cream-50), var(--cream-100));
+    color: var(--ink);
+    box-shadow: 0 60px 120px -50px rgba(0, 0, 0, 0.85);
 }
-
-.hero-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 24px;
-    background: rgba(201, 168, 124, 0.1);
-    border: 1px solid rgba(201, 168, 124, 0.2);
-    border-radius: 50px;
-    color: #c9a87c;
-    font-size: 0.75rem;
+.ij-menu__ring {
+    position: absolute;
+    inset: 12px;
+    border-radius: 999px 999px calc(var(--radius-lg) - 8px) calc(var(--radius-lg) - 8px);
+    border: 1px solid rgba(110, 32, 57, 0.18);
+    pointer-events: none;
+}
+.ij-menu__icon {
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--wine-600);
+    color: var(--cream-50);
+}
+.ij-menu__eyebrow {
+    margin-top: 18px;
+    font-size: 0.7rem;
     font-weight: 700;
-    letter-spacing: 3px;
-    margin-bottom: 32px;
-}
-
-.hero-badge svg {
-    width: 16px;
-    height: 16px;
-}
-
-.hero-title {
-    font-size: 4rem;
-    font-weight: 800;
-    color: #fff;
-    margin: 0 0 20px;
-    letter-spacing: -2px;
-    line-height: 1.1;
-}
-
-.hero-subtitle {
-    font-size: 1.2rem;
-    color: rgba(255, 255, 255, 0.6);
-    max-width: 600px;
-    margin: 0 auto 48px;
-    line-height: 1.7;
-}
-
-.hero-stats {
-    display: inline-flex;
-    align-items: center;
-    gap: 32px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 20px;
-    padding: 24px 48px;
-    margin-bottom: 40px;
-}
-
-.stat {
-    text-align: center;
-}
-
-.stat-number {
-    display: block;
-    font-size: 2rem;
-    font-weight: 800;
-    color: #c9a87c;
-    line-height: 1;
-}
-
-.stat-label {
-    font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.5);
-    margin-top: 6px;
-    display: block;
+    letter-spacing: 0.3em;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    color: var(--wine-600);
 }
-
-.stat-divider {
-    width: 1px;
-    height: 40px;
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.other-category-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    color: rgba(255, 255, 255, 0.6);
-    text-decoration: none;
-    font-size: 0.95rem;
-    font-weight: 500;
-    padding: 12px 24px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 50px;
-    transition: all 0.3s ease;
-}
-
-.other-category-link:hover {
-    color: #c9a87c;
-    border-color: rgba(201, 168, 124, 0.3);
-    background: rgba(201, 168, 124, 0.05);
-}
-
-.other-category-link svg {
-    width: 16px;
-    height: 16px;
-    transition: transform 0.3s ease;
-}
-
-.other-category-link:hover svg {
-    transform: translateX(4px);
-}
-
-.scroll-indicator {
-    position: absolute;
-    bottom: 40px;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-.mouse {
-    width: 24px;
-    height: 38px;
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    border-radius: 12px;
+.ij-menu__list {
     position: relative;
-}
-
-.wheel {
-    width: 4px;
-    height: 8px;
-    background: rgba(255, 255, 255, 0.4);
-    border-radius: 2px;
-    position: absolute;
-    top: 8px;
-    left: 50%;
-    transform: translateX(-50%);
-    animation: scroll 2s ease infinite;
-}
-
-@keyframes scroll {
-    0%, 100% { opacity: 1; top: 8px; }
-    50% { opacity: 0.3; top: 20px; }
-}
-
-/* Main Content */
-.injectable-content {
-    padding: 80px 0 120px;
-}
-
-.injectable-content .container {
-    max-width: 820px;
-}
-
-/* Content Blocks */
-.content-block {
-    margin-bottom: 64px;
-}
-
-.intro-text {
-    font-size: 1.05rem;
-    color: rgba(255, 255, 255, 0.7);
-    line-height: 1.8;
-    margin: 0;
-}
-
-.block-title {
-    font-size: 1.4rem;
-    font-weight: 700;
-    color: #fff;
-    margin: 0 0 24px;
-    letter-spacing: 0.3px;
-}
-
-.block-text {
-    font-size: 0.95rem;
-    color: rgba(255, 255, 255, 0.7);
-    line-height: 1.8;
-    margin: 0 0 16px;
-}
-
-.block-note {
-    font-size: 0.93rem;
-    color: rgba(255, 255, 255, 0.5);
-    font-style: italic;
-    margin: 20px 0 0;
-    padding-top: 16px;
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
-    line-height: 1.7;
-}
-
-/* Styled List */
-.styled-list {
-    list-style: none;
+    width: 100%;
+    margin: 22px 0 0;
     padding: 0;
-    margin: 0;
+    list-style: none;
+    border-top: 1px solid var(--line-light);
 }
+.ij-menu__list li { border-bottom: 1px solid var(--line-light); }
+.ij-menu__list a {
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr);
+    align-items: baseline;
+    gap: 8px;
+    padding: 13px 4px;
+    font-family: var(--font-display);
+    font-size: clamp(1.02rem, 1.3vw, 1.15rem);
+    line-height: 1.3;
+    color: var(--ink);
+    transition: color 0.4s, padding 0.5s var(--ease-out);
+}
+.ij-menu__n {
+    font-style: italic;
+    font-size: 0.9rem;
+    color: var(--wine-500);
+}
+.ij-menu__list a:hover { color: var(--wine-600); padding-left: 10px; }
+.ij-menu__seal { position: absolute; left: -54px; top: 18%; z-index: 2; }
 
-.styled-list li {
+/* ---------- Shared editorial split ---------- */
+.ij-split {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: clamp(40px, 7vw, 120px);
+    align-items: start;
+}
+.ij-split__head { position: sticky; top: calc(var(--header-h) + 36px); }
+.ij-split__num { display: block; font-size: clamp(4.6rem, 7vw, 6.6rem); margin-bottom: 10px; }
+.ij-split__title { max-width: 14ch; }
+
+/* ---------- Intro ---------- */
+.ij-intro { overflow: hidden; }
+.ij-intro__lead {
     position: relative;
-    padding-left: 20px;
-    margin-bottom: 10px;
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 0.95rem;
-    line-height: 1.6;
+    max-width: 1120px;
+    margin-bottom: clamp(96px, 12vw, 180px);
+    padding-left: clamp(0px, 6vw, 96px);
+}
+.ij-intro__mark {
+    position: absolute;
+    left: -0.06em;
+    top: -0.28em;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(6rem, 12vw, 11rem);
+    line-height: 1;
+    color: rgba(110, 32, 57, 0.18);
+}
+.ij-intro__statement {
+    position: relative;
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: clamp(1.55rem, 2.7vw, 2.55rem);
+    line-height: 1.38;
+    letter-spacing: -0.01em;
+    color: var(--ink);
 }
 
-.styled-list li::before {
+.ij-areas { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line-light); }
+.ij-areas__item {
+    position: relative;
+    display: grid;
+    grid-template-columns: 56px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 16px;
+    padding: 24px 6px;
+    border-bottom: 1px solid var(--line-light);
+    isolation: isolate;
+}
+.ij-areas__item::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(90deg, rgba(110, 32, 57, 0.07), transparent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.8s var(--ease-out);
+}
+.ij-areas__item:hover::before { transform: scaleX(1); }
+.ij-areas__n {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.05rem;
+    color: var(--wine-500);
+}
+.ij-areas__t {
+    font-family: var(--font-display);
+    font-size: clamp(1.3rem, 2vw, 1.75rem);
+    font-weight: 300;
+    line-height: 1.25;
+    transition: transform 0.6s var(--ease-out), color 0.4s;
+}
+.ij-areas__item:hover .ij-areas__t { transform: translateX(8px); color: var(--wine-600); }
+.ij-areas__icon {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--line-light);
+    color: var(--wine-600);
+    transition: background 0.5s, color 0.5s, transform 0.6s var(--ease-out), border-color 0.5s;
+}
+.ij-areas__item:hover .ij-areas__icon { background: var(--wine-600); border-color: var(--wine-600); color: var(--cream-50); transform: rotate(45deg); }
+
+.ij-note {
+    display: flex;
+    gap: 16px;
+    margin-top: 32px;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(1.1rem, 1.4vw, 1.3rem);
+    line-height: 1.5;
+    color: var(--ink-soft);
+}
+.ij-note::before {
+    content: '';
+    flex: none;
+    width: 36px;
+    height: 1px;
+    margin-top: 0.78em;
+    background: var(--wine-500);
+}
+
+/* ---------- Treatments ---------- */
+.ij-methods { overflow: hidden; }
+.ij-methods__inner { position: relative; z-index: 1; }
+.ij-methods__head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 32px;
+    margin-bottom: clamp(48px, 6vw, 88px);
+}
+.ij-methods__count {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(5rem, 11vw, 10rem);
+    line-height: 0.85;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(217, 185, 149, 0.45);
+}
+.ij-methods__list { border-top: 1px solid var(--line-dark); }
+.ij-method {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(90px, 1.2fr) minmax(0, 4fr) minmax(0, 5fr) 48px;
+    gap: clamp(20px, 3vw, 48px);
+    align-items: start;
+    padding: clamp(32px, 4vw, 52px) clamp(12px, 2vw, 28px);
+    border-bottom: 1px solid var(--line-dark);
+    isolation: isolate;
+    scroll-margin-top: calc(var(--header-h) + 24px);
+}
+.ij-method::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+        radial-gradient(80% 120% at 0% 0%, rgba(217, 185, 149, 0.14), transparent 60%),
+        linear-gradient(120deg, var(--wine-700), var(--wine-800));
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.8s var(--ease-out);
+}
+.ij-method:hover::before { transform: scaleY(1); }
+.ij-method__num { font-size: clamp(3.4rem, 5vw, 4.8rem); transition: color 0.6s; }
+.ij-method:hover .ij-method__num { color: rgba(217, 185, 149, 0.18); }
+.ij-method__name {
+    padding-top: 0.35em;
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: clamp(1.6rem, 2.4vw, 2.3rem);
+    line-height: 1.12;
+}
+.ij-method__body { padding-top: 0.6em; }
+.ij-method__desc { font-size: 1rem; line-height: 1.8; color: var(--on-dark-muted); }
+.ij-method:hover .ij-method__desc { color: rgba(246, 238, 230, 0.82); }
+.ij-method__link { margin-top: 18px; color: var(--gold-300); }
+.ij-method__arrow {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    margin-top: 0.3em;
+    border-radius: 50%;
+    border: 1px solid var(--line-dark);
+    color: var(--gold-300);
+    transition: background 0.5s, color 0.5s, transform 0.6s var(--ease-out), border-color 0.5s;
+}
+.ij-method:hover .ij-method__arrow { background: var(--beige-200); border-color: var(--beige-200); color: var(--wine-800); transform: rotate(45deg); }
+.ij-methods__ribbon { position: relative; z-index: 1; margin-top: clamp(80px, 10vw, 140px); }
+
+/* ---------- Protocol approach ---------- */
+.ij-protocol__lead { margin-top: 28px; max-width: 420px; }
+.ij-combos {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+.ij-combo {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 40px;
+    min-height: 230px;
+    padding: clamp(24px, 2.6vw, 34px);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--line-light);
+    background: #fff;
+    box-shadow: 0 30px 60px -45px rgba(82, 26, 47, 0.35);
+    overflow: hidden;
+    isolation: isolate;
+    transition: color 0.6s, transform 0.8s var(--ease-out), box-shadow 0.8s var(--ease-out);
+}
+.ij-combo::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+        radial-gradient(90% 80% at 100% 0%, rgba(217, 185, 149, 0.25), transparent 60%),
+        linear-gradient(150deg, var(--wine-600), var(--wine-800));
+    opacity: 0;
+    transition: opacity 0.6s var(--ease-out);
+}
+.ij-combo:hover { color: var(--cream-50); transform: translateY(-6px); box-shadow: 0 40px 70px -40px rgba(82, 26, 47, 0.6); }
+.ij-combo:hover::before { opacity: 1; }
+.ij-combo__top { display: flex; align-items: center; justify-content: space-between; }
+.ij-combo__n {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 2.6rem;
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(110, 32, 57, 0.45);
+    transition: -webkit-text-stroke-color 0.6s;
+}
+.ij-combo:hover .ij-combo__n { -webkit-text-stroke-color: rgba(217, 185, 149, 0.7); }
+.ij-combo__icon {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--cream-100);
+    color: var(--wine-600);
+    transition: background 0.6s, color 0.6s, transform 0.8s var(--ease-out);
+}
+.ij-combo:hover .ij-combo__icon { background: var(--beige-200); color: var(--wine-800); transform: rotate(90deg); }
+.ij-combo__t {
+    font-family: var(--font-display);
+    font-size: clamp(1.3rem, 1.8vw, 1.6rem);
+    font-weight: 400;
+    line-height: 1.25;
+}
+.ij-quote {
+    position: relative;
+    margin-top: clamp(40px, 5vw, 64px);
+    padding-left: clamp(24px, 3vw, 40px);
+    border-left: 1px solid var(--wine-500);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(1.4rem, 2.3vw, 2.1rem);
+    line-height: 1.35;
+    color: var(--wine-700);
+}
+
+/* ---------- Assessment ---------- */
+.ij-assess { overflow: hidden; }
+.ij-assess__inner { position: relative; z-index: 1; }
+.ij-assess__head {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    align-items: end;
+    gap: 24px clamp(40px, 6vw, 96px);
+    margin-bottom: clamp(56px, 7vw, 100px);
+}
+.ij-assess__title { max-width: 12ch; }
+.ij-assess__lead { color: var(--on-dark-muted); max-width: 420px; }
+.ij-steps {
+    position: relative;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 24px;
+}
+.ij-steps::before {
     content: '';
     position: absolute;
     left: 0;
-    top: 10px;
-    width: 6px;
-    height: 6px;
-    background: #c9a87c;
+    right: 0;
+    top: calc(clamp(3.6rem, 5vw, 4.6rem) + 26px);
+    height: 1px;
+    background: linear-gradient(90deg, rgba(217, 185, 149, 0.5), rgba(217, 185, 149, 0.08));
+}
+.ij-step { position: relative; display: flex; flex-direction: column; }
+.ij-step__n { font-size: clamp(3.6rem, 5vw, 4.6rem); }
+.ij-step__dot {
+    position: relative;
+    width: 13px;
+    height: 13px;
+    margin: 20px 0 26px;
     border-radius: 50%;
+    background: var(--gold-300);
+    box-shadow: 0 0 0 6px rgba(217, 185, 149, 0.15);
 }
-
-/* Technology/Treatment Grid */
-.tech-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
+.ij-step__t {
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 1.7vw, 1.55rem);
+    font-weight: 300;
+    line-height: 1.25;
 }
-
-.tech-card {
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 16px;
-    padding: 28px;
-    transition: all 0.3s ease;
-}
-
-.tech-card:hover {
-    border-color: rgba(201, 168, 124, 0.15);
-    background: rgba(255, 255, 255, 0.03);
-}
-
-.tech-name {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #c9a87c;
-    margin: 0 0 12px;
-}
-
-.tech-desc {
-    font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.6);
-    line-height: 1.7;
-    margin: 0;
-}
-
-.tech-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    margin-top: 16px;
-    color: #c9a87c;
-    text-decoration: none;
-    font-size: 0.85rem;
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
-
-.tech-link:hover {
-    color: #dfc09e;
-}
-
-.tech-link svg {
-    width: 14px;
-    height: 14px;
-    transition: transform 0.3s ease;
-}
-
-.tech-link:hover svg {
-    transform: translateX(4px);
-}
-
-/* Closing Block */
-.closing-block {
-    text-align: center;
-    padding: 60px 40px;
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 24px;
-}
-
-.closing-title {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #fff;
-    margin: 0 0 16px;
-}
-
-.closing-text {
-    font-size: 1rem;
-    color: rgba(255, 255, 255, 0.6);
-    max-width: 550px;
-    margin: 0 auto 12px;
-    line-height: 1.7;
-}
-
-.closing-tagline {
-    font-size: 0.95rem;
-    color: #c9a87c;
-    font-style: italic;
-    margin: 0 auto 32px;
-    line-height: 1.8;
-}
-
-.cta-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    padding: 16px 36px;
-    background: linear-gradient(135deg, #c9a87c, #a88a5c);
-    border-radius: 100px;
-    color: #0a0f14;
-    font-size: 0.95rem;
-    font-weight: 600;
-    text-decoration: none;
-    transition: all 0.3s ease;
-}
-
-.cta-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 30px rgba(201, 168, 124, 0.35);
-}
-
-.cta-btn svg {
-    width: 16px;
-    height: 16px;
-    transition: transform 0.3s ease;
-}
-
-.cta-btn:hover svg {
-    transform: translateX(4px);
-}
-
-/* Responsive */
-@media (max-width: 991.98px) {
-    .scroll-indicator {
-        display: none;
-    }
-
-    .hero-stats {
-        flex-direction: column;
-        gap: 24px;
-        padding: 32px;
-    }
-
-    .stat-divider {
-        width: 60px;
-        height: 1px;
-    }
-
-    .tech-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 575.98px) {
-    .injectable-hero {
-        padding: 100px 0 60px;
-        min-height: auto;
-    }
-
-    .hero-badge {
-        padding: 10px 20px;
-        font-size: 0.7rem;
-    }
-
-    .hero-title {
-        font-size: 2.5rem;
-        letter-spacing: -1px;
-    }
-
-    .hero-subtitle {
-        font-size: 1rem;
-        margin-bottom: 32px;
-    }
-
-    .injectable-content {
-        padding: 60px 0 80px;
-    }
-
-    .block-title {
-        font-size: 1.2rem;
-    }
-
-    .closing-block {
-        padding: 40px 24px;
-    }
-
-    .closing-title {
-        font-size: 1.25rem;
-    }
-
-    .pdf-actions {
-        flex-direction: column;
-    }
-
-    .pdf-btn {
-        justify-content: center;
-    }
-}
-
-/* Pricing / PDF Section */
-.pricing-block {
-    border: 1px solid rgba(201, 168, 124, 0.15);
-    border-radius: 16px;
-    padding: 40px;
-    background: rgba(201, 168, 124, 0.03);
-}
-
-.pdf-actions {
+.ij-step__t::first-letter { text-transform: uppercase; }
+.ij-assess__note {
     display: flex;
-    gap: 16px;
-    margin-top: 24px;
-    flex-wrap: wrap;
-}
-
-.pdf-btn {
-    display: inline-flex;
     align-items: center;
+    gap: 16px;
+    width: fit-content;
+    max-width: 100%;
+    margin-top: clamp(56px, 7vw, 96px);
+    padding: 14px 26px 14px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--line-dark);
+    background: rgba(22, 10, 14, 0.25);
+    font-size: 1.02rem;
+    line-height: 1.5;
+}
+.ij-assess__check {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--beige-200);
+    color: var(--wine-800);
+}
+
+/* ---------- Pricing ---------- */
+.ij-pricing { position: relative; }
+.ij-price {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: clamp(28px, 4vw, 64px);
+    padding: clamp(28px, 4vw, 56px);
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(217, 185, 149, 0.22);
+    background:
+        radial-gradient(60% 120% at 0% 50%, rgba(140, 42, 72, 0.45), transparent 70%),
+        radial-gradient(40% 80% at 100% 0%, rgba(217, 185, 149, 0.12), transparent 70%),
+        linear-gradient(135deg, var(--wine-850), var(--wine-900));
+    box-shadow: 0 50px 100px -60px rgba(0, 0, 0, 0.9);
+    overflow: hidden;
+}
+.ij-price::after {
+    content: '';
+    position: absolute;
+    inset: 10px;
+    border-radius: calc(var(--radius-lg) - 8px);
+    border: 1px solid rgba(217, 185, 149, 0.08);
+    pointer-events: none;
+}
+.ij-price__arch {
+    position: relative;
+    display: grid;
+    place-items: center;
+    align-content: center;
     gap: 10px;
-    padding: 14px 28px;
-    background: rgba(201, 168, 124, 0.1);
-    border: 1px solid rgba(201, 168, 124, 0.3);
-    border-radius: 100px;
-    color: #c9a87c;
-    font-size: 0.9rem;
-    font-weight: 600;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    letter-spacing: 0.5px;
+    width: 128px;
+    height: 164px;
+    border-radius: 999px 999px 16px 16px;
+    background:
+        radial-gradient(70% 60% at 50% 30%, rgba(217, 185, 149, 0.3), transparent 70%),
+        linear-gradient(180deg, var(--wine-700), var(--wine-800));
+    border: 1px solid rgba(217, 185, 149, 0.3);
+    color: var(--gold-300);
 }
-
-.pdf-btn:hover {
-    background: rgba(201, 168, 124, 0.2);
-    border-color: rgba(201, 168, 124, 0.5);
-    color: #c9a87c;
-    transform: translateY(-2px);
+.ij-price__pdf {
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    padding-left: 0.3em;
 }
+.ij-price__text { margin-top: 14px; max-width: 460px; color: var(--on-dark-muted); font-size: 1.05rem; }
+.ij-price__actions { display: flex; flex-direction: column; align-items: stretch; gap: 12px; }
+.ij-price__actions .bm-btn { justify-content: space-between; }
+.ij-price__dl { justify-content: center !important; gap: 12px; }
 
-.pdf-btn-secondary {
-    background: transparent;
-    border-color: rgba(201, 168, 124, 0.15);
-    color: rgba(201, 168, 124, 0.7);
+/* ---------- FAQ ---------- */
+.ij-faq__mark { display: block; font-size: clamp(6rem, 11vw, 10rem); margin-bottom: -0.05em; }
+.ij-faq__h { margin: 0; font: inherit; letter-spacing: normal; line-height: inherit; }
+.ij-faq__list .bm-faq__a p { color: var(--ink-soft); }
+
+/* ---------- Closing ---------- */
+.ij-closing { overflow: hidden; text-align: center; }
+.ij-closing__inner { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; }
+.ij-closing__title { max-width: 13ch; }
+.ij-closing__text { margin-top: 30px; max-width: 600px; color: var(--on-dark-muted); }
+.ij-closing__tagline {
+    margin-top: 22px;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(1.25rem, 1.9vw, 1.65rem);
+    line-height: 1.5;
+    color: var(--gold-300);
 }
-
-.pdf-btn-secondary:hover {
-    background: rgba(201, 168, 124, 0.08);
-    color: #c9a87c;
+.ij-closing__actions { margin-top: 44px; }
+.ij-closing__arcs {
+    position: absolute;
+    left: 50%;
+    bottom: -2px;
+    width: min(1180px, 140vw);
+    aspect-ratio: 2 / 1;
+    transform: translateX(-50%);
+    pointer-events: none;
 }
+.ij-closing__arcs span {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    border: 1px solid rgba(217, 185, 149, 0.14);
+    border-bottom: 0;
+    border-radius: 999px 999px 0 0;
+    transform: translateX(-50%);
+}
+.ij-closing__arcs span:nth-child(1) { width: 100%; height: 100%; }
+.ij-closing__arcs span:nth-child(2) { width: 76%; height: 76%; }
+.ij-closing__arcs span:nth-child(3) { width: 52%; height: 52%; border-color: rgba(217, 185, 149, 0.22); }
 
-/* FAQ Section */
-.faq-section { padding: 100px 0; border-top: 1px solid rgba(255,255,255,0.06); }
-.faq-header { text-align: center; margin-bottom: 60px; }
-.faq-title { font-size: clamp(1.75rem,4vw,2.5rem); font-weight: 700; color: #fff; }
-.faq-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 24px; max-width: 1000px; margin: 0 auto; }
-.faq-item { padding: 32px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; transition: all 0.3s ease; }
-.faq-item:hover { border-color: rgba(201,168,124,0.2); background: rgba(201,168,124,0.03); }
-.faq-question { font-size: 1.05rem; font-weight: 600; color: #c9a87c; margin: 0 0 12px; line-height: 1.4; }
-.faq-answer { font-size: 0.95rem; color: rgba(255,255,255,0.6); line-height: 1.7; margin: 0; }
-@media (max-width: 767.98px) { .faq-section { padding: 60px 0; } .faq-grid { grid-template-columns: 1fr; } .faq-item { padding: 24px; } }
+/* ---------- Responsive ---------- */
+@media (max-width: 1199.98px) {
+    .ij-method { grid-template-columns: minmax(70px, 1fr) minmax(0, 4fr) minmax(0, 5fr); }
+    .ij-method__arrow { display: none; }
+    .ij-steps { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 48px; }
+    .ij-steps::before { display: none; }
+    .ij-menu__seal { left: -30px; }
+}
+@media (max-width: 991.98px) {
+    .ij-menu { margin-inline: auto; width: min(100%, 420px); }
+    .ij-split { grid-template-columns: 1fr; }
+    .ij-split__head { position: static; }
+    .ij-split__title { max-width: none; }
+    .ij-method { grid-template-columns: 1fr; gap: 10px; }
+    .ij-method__num { font-size: 3.2rem; }
+    .ij-method__name { padding-top: 0; }
+    .ij-method__body { padding-top: 6px; }
+    .ij-assess__head { grid-template-columns: 1fr; }
+    .ij-price { grid-template-columns: 1fr; justify-items: start; }
+    .ij-price__actions { width: 100%; max-width: 420px; }
+}
+@media (max-width: 575.98px) {
+    .ij-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; gap: 12px; }
+    .ij-stat__div { display: none; }
+    .ij-stat__label { font-size: 0.62rem; letter-spacing: 0.16em; }
+    .ij-hero__link { width: 100%; justify-content: space-between; }
+    .ij-menu__seal { width: 96px !important; height: 96px !important; left: -8px; top: 4%; }
+    .ij-intro__lead { padding-left: 0; padding-top: 40px; }
+    .ij-intro__mark { top: -0.2em; font-size: 6rem; }
+    .ij-areas__item { grid-template-columns: 38px minmax(0, 1fr) auto; padding: 20px 2px; gap: 10px; }
+    .ij-areas__icon { width: 34px; height: 34px; }
+    .ij-methods__head { align-items: flex-start; }
+    .ij-methods__count { font-size: 4.2rem; }
+    .ij-method { padding-inline: 4px; }
+    .ij-combos { grid-template-columns: 1fr; }
+    .ij-combo { min-height: 0; gap: 28px; }
+    .ij-steps { grid-template-columns: 1fr; row-gap: 0; }
+    .ij-step {
+        display: grid;
+        grid-template-columns: 70px 1fr;
+        align-items: center;
+        padding: 16px 0;
+        border-bottom: 1px solid var(--line-dark);
+    }
+    .ij-step:first-child { border-top: 1px solid var(--line-dark); }
+    .ij-step__n { font-size: 2.8rem; }
+    .ij-step__dot { display: none; }
+    .ij-assess__note { border-radius: var(--radius-md); align-items: flex-start; }
+    .ij-price__arch { width: 100px; height: 128px; }
+    .ij-price__actions .bm-btn { width: 100%; }
+}
 </style>

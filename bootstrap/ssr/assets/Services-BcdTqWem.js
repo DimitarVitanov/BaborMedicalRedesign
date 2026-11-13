@@ -1,8 +1,49 @@
-import { computed, ref, unref, withCtx, createVNode, toDisplayString, useSSRContext } from "vue";
+import { onMounted, nextTick, onUnmounted, computed, ref, unref, withCtx, createVNode, toDisplayString, useSSRContext } from "vue";
 import { ssrRenderComponent, ssrInterpolate, ssrRenderAttr, ssrRenderList, ssrRenderClass, ssrRenderStyle } from "vue/server-renderer";
 import { usePage, Head } from "@inertiajs/vue3";
-import { u as useScrollAnimation, N as Navbar, F as Footer } from "./useScrollAnimation-6nhil2vG.js";
+import { N as Navbar, F as Footer } from "./Footer-CNheNTSo.js";
 import { _ as _export_sfc } from "./_plugin-vue_export-helper-1tPrXgE0.js";
+function useScrollAnimation() {
+  let observer = null;
+  const initScrollAnimation = () => {
+    if (typeof window === "undefined" || typeof document === "undefined") return;
+    const options = {
+      root: null,
+      rootMargin: "0px 0px -50px 0px",
+      threshold: 0.05
+    };
+    observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+        }
+      });
+    }, options);
+    const elements = document.querySelectorAll(".fade-in-up, .fade-in-left, .fade-in-right, .fade-in");
+    elements.forEach((el) => observer.observe(el));
+    setTimeout(() => {
+      elements.forEach((el) => {
+        const rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+          el.classList.add("is-visible");
+        }
+      });
+    }, 100);
+  };
+  onMounted(() => {
+    nextTick(() => {
+      initScrollAnimation();
+    });
+  });
+  onUnmounted(() => {
+    if (observer) {
+      observer.disconnect();
+    }
+  });
+  return {
+    initScrollAnimation
+  };
+}
 const _sfc_main = {
   __name: "Services",
   __ssrInlineRender: true,

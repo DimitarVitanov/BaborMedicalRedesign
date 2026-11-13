@@ -1,11 +1,11 @@
 <script setup>
 import { Head, usePage, Link } from '@inertiajs/vue3';
-import { computed } from 'vue';
-import Navbar from '@/Components/Navbar.vue';
-import Footer from '@/Components/Footer.vue';
-import { useScrollAnimation } from '@/Composables/useScrollAnimation';
-
-useScrollAnimation();
+import { computed, onMounted, onUnmounted, ref } from 'vue';
+import SiteLayout from '@/Layouts/SiteLayout.vue';
+import PageHero from '@/Components/Site/PageHero.vue';
+import MaskText from '@/Components/Site/MaskText.vue';
+import RotatingBadge from '@/Components/Site/RotatingBadge.vue';
+import Icon from '@/Components/Site/Icon.vue';
 
 const props = defineProps({
     equipment: {
@@ -196,6 +196,69 @@ const content = computed(() => ({
         ? 'Заинтересирани сте за овој третман? Контактирајте нè за консултација.'
         : 'Interested in this treatment? Contact us for a consultation.',
 }));
+
+// ---- UI-only helpers (presentation) ----
+const pad = (n) => String(n).padStart(2, '0');
+const heroTitle = computed(() => {
+    const words = String(props.equipment.title || '').trim().split(/\s+/);
+    return words.length > 1
+        ? { main: words.slice(0, -1).join(' '), accent: words[words.length - 1] }
+        : { main: words[0] || '', accent: '' };
+});
+
+// Section index for the long description: anchors are added to the
+// top-level headings (h2, or h4 when the CMS text has no h2s) so a sticky
+// "contents" column can link to them. The text itself is untouched.
+const decode = (s) => s
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&#0?39;|&apos;/g, "'")
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(Number(n)))
+    .replace(/\s+/g, ' ')
+    .trim();
+const proseTag = computed(() => (/<h2[\s>]/i.test(props.equipment.detailed_description || '') ? 'h2' : 'h4'));
+const anchorBase = computed(() => `sec-${props.equipment.slug || props.equipment.id || 'laser'}`);
+const proseSections = computed(() => {
+    const html = props.equipment.detailed_description || '';
+    const re = new RegExp(`<${proseTag.value}(?:\\s[^>]*)?>([\\s\\S]*?)</${proseTag.value}>`, 'gi');
+    const list = [];
+    let m;
+    while ((m = re.exec(html))) {
+        list.push({ id: `${anchorBase.value}-${list.length + 1}`, title: decode(m[1]) });
+    }
+    return list;
+});
+const hasToc = computed(() => proseSections.value.length >= 3);
+const proseHtml = computed(() => {
+    const html = props.equipment.detailed_description || '';
+    if (!hasToc.value) return html;
+    let i = 0;
+    const re = new RegExp(`<${proseTag.value}(?=[\\s>])`, 'gi');
+    return html.replace(re, (tag) => {
+        i += 1;
+        return `${tag} id="${anchorBase.value}-${i}" data-sec="${pad(i)}"`;
+    });
+});
+
+// Highlight the contents entry of the section currently being read
+const activeSec = ref('');
+let spy = null;
+onMounted(() => {
+    if (!hasToc.value || !('IntersectionObserver' in window)) return;
+    spy = new IntersectionObserver(
+        (entries) => entries.forEach((e) => { if (e.isIntersecting) activeSec.value = e.target.id; }),
+        { rootMargin: '-18% 0px -72% 0px' },
+    );
+    proseSections.value.forEach((sec) => {
+        const el = document.getElementById(sec.id);
+        if (el) spy.observe(el);
+    });
+});
+onUnmounted(() => spy?.disconnect());
 </script>
 
 <template>
@@ -222,468 +285,551 @@ const content = computed(() => ({
         <link rel="alternate" hreflang="x-default" :href="`https://babormedical.com/lasers/${equipment.slug}`" />
     </Head>
 
-    <Navbar />
-
-    <main class="laser-detail-page">
-        <!-- Hero Section -->
-        <section class="detail-hero">
-            <div class="container">
-                <Link href="/lasers" class="back-link fade-in-up">
+    <SiteLayout>
+        <div class="laser-detail-page">
+            <!-- Hero -->
+            <PageHero
+                :eyebrow="equipment.category"
+                :title="heroTitle.main"
+                :accent="heroTitle.accent"
+                :subtitle="equipment.description"
+                :crumb="equipment.title"
+            >
+                <div class="ld-actions">
+                    <a
+                        v-if="equipment.link"
+                        :href="equipment.link"
+                        target="_blank"
+                        class="bm-btn"
+                    >
+                        <span>{{ content.learnMore }}</span>
+                        <span class="bm-btn__icon"><Icon name="arrow-up-right" :stroke="2" /></span>
+                    </a>
+                    <Link href="/contact" class="bm-btn bm-btn--ghost">
+                        {{ content.contactUs }}
+                    </Link>
+                </div>
+                <Link href="/lasers" class="ld-back">
                     {{ content.backToLasers }}
                 </Link>
-                
-                <div class="hero-grid">
-                    <div class="hero-content fade-in-up">
-                        <span class="equipment-category">{{ equipment.category }}</span>
-                        <h1 class="hero-title">{{ equipment.title }}</h1>
-                        <p class="hero-description">{{ equipment.description }}</p>
-                        
-                        <div class="hero-actions">
-                            <a 
-                                v-if="equipment.link" 
-                                :href="equipment.link" 
-                                target="_blank" 
-                                class="btn-primary"
-                            >
-                                {{ content.learnMore }}
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-                                    <polyline points="15 3 21 3 21 9"/>
-                                    <line x1="10" y1="14" x2="21" y2="3"/>
-                                </svg>
-                            </a>
-                            <Link href="/contact" class="btn-secondary">
-                                {{ content.contactUs }}
-                            </Link>
+
+                <template #aside>
+                    <div class="ld-visual">
+                        <div class="ld-stage bm-stage">
+                            <span class="ld-stage__ring" aria-hidden="true"></span>
+                            <span class="ld-stage__beam" aria-hidden="true"></span>
+                            <div class="ld-stage__float">
+                                <picture>
+                                    <source
+                                        v-if="equipment.image_mobile_webp"
+                                        :srcset="'/storage/' + equipment.image_mobile_webp"
+                                        media="(max-width: 768px)"
+                                        type="image/webp"
+                                    />
+                                    <source
+                                        v-if="equipment.image_desktop_webp"
+                                        :srcset="'/storage/' + equipment.image_desktop_webp"
+                                        media="(min-width: 769px)"
+                                        type="image/webp"
+                                    />
+                                    <img
+                                        :src="equipment.image ? '/storage/' + equipment.image : '/images/placeholder.webp'"
+                                        :alt="equipment.title"
+                                        width="800"
+                                        height="1000"
+                                        fetchpriority="high"
+                                        decoding="async"
+                                    />
+                                </picture>
+                            </div>
                         </div>
+                        <RotatingBadge class="ld-seal" :size="136" />
+                        <span class="ld-caption" aria-hidden="true">
+                            <span>{{ equipment.category }}</span>
+                            <span class="ld-caption__line"></span>
+                            <span>{{ heroTitle.accent || heroTitle.main }}</span>
+                        </span>
                     </div>
-                    
-                    <div class="hero-image fade-in-up" style="--delay: 0.2s">
-                        <picture>
-                            <source 
-                                v-if="equipment.image_mobile_webp" 
-                                :srcset="'/storage/' + equipment.image_mobile_webp" 
-                                media="(max-width: 768px)" 
-                                type="image/webp"
-                            />
-                            <source 
-                                v-if="equipment.image_desktop_webp" 
-                                :srcset="'/storage/' + equipment.image_desktop_webp" 
-                                media="(min-width: 769px)" 
-                                type="image/webp"
-                            />
-                            <img 
-                                :src="equipment.image ? '/storage/' + equipment.image : '/images/placeholder.webp'" 
-                                :alt="equipment.title"
-                            />
-                        </picture>
-                        <div class="image-glow"></div>
+                </template>
+            </PageHero>
+
+            <!-- Detailed content -->
+            <section v-if="equipment.detailed_description" class="ld-body bm-cream bm-sheet bm-section">
+                <div class="bm-container ld-body__grid" :class="{ 'has-toc': hasToc }">
+                    <aside v-if="hasToc" class="ld-toc" data-reveal>
+                        <span class="bm-eyebrow ld-toc__eyebrow">{{ equipment.title }}</span>
+                        <ol class="ld-toc__list">
+                            <li v-for="(sec, i) in proseSections" :key="sec.id">
+                                <a :href="`#${sec.id}`" :class="{ 'is-active': activeSec === sec.id }">
+                                    <span class="ld-toc__n">{{ pad(i + 1) }}</span>
+                                    <span class="ld-toc__t">{{ sec.title }}</span>
+                                </a>
+                            </li>
+                        </ol>
+                        <Link href="/contact" class="bm-btn bm-btn--wine bm-btn--sm ld-toc__cta">
+                            <span>{{ content.contactUs }}</span>
+                            <span class="bm-btn__icon"><Icon name="arrow-right" :stroke="2" /></span>
+                        </Link>
+                    </aside>
+
+                    <article class="ld-sheet">
+                        <span class="ld-sheet__mark" aria-hidden="true">
+                            <img src="/logo.webp" alt="" width="64" height="64" loading="lazy" decoding="async" />
+                        </span>
+                        <div
+                            class="ld-prose bm-prose"
+                            v-html="proseHtml"
+                        ></div>
+                    </article>
+                </div>
+            </section>
+
+            <!-- Cross-link to Laser Treatments -->
+            <section
+                v-if="equipment.slug === 'alma-soprano-titanium'"
+                class="ld-cross bm-cream"
+                :class="{ 'bm-sheet': !equipment.detailed_description }"
+            >
+                <div class="bm-container">
+                    <div class="ld-cross__card bm-grain" data-reveal>
+                        <span class="ld-cross__arch" aria-hidden="true"></span>
+                        <Icon class="ld-cross__icon" name="laser" :size="40" :stroke="1.1" />
+                        <p class="ld-cross__text">{{ locale === 'mk' ? 'Видете ги сите наши ласерски третмани и цени за ласерска епилација во Скопје' : 'See all our laser treatments and laser hair removal prices in Skopje' }}</p>
+                        <Link href="/services/laser-aesthetic" class="bm-btn ld-cross__btn">
+                            <span>{{ locale === 'mk' ? 'Ласерски третмани и ценовник →' : 'Laser Treatments & Pricing →' }}</span>
+                        </Link>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <!-- Detailed Content Section -->
-        <section v-if="equipment.detailed_description" class="detail-content">
-            <div class="container">
-                <div class="content-wrapper fade-in-up">
-                    <div 
-                        class="prose-content"
-                        v-html="equipment.detailed_description"
-                    ></div>
+            <!-- CTA -->
+            <section class="ld-cta bm-wine bm-section bm-grain">
+                <div class="bm-aura" aria-hidden="true"><span></span><span></span><span></span></div>
+                <span class="ld-cta__arcs" aria-hidden="true"><span></span><span></span><span></span></span>
+                <div class="bm-container ld-cta__inner">
+                    <h2 class="bm-display ld-cta__title"><MaskText :text="content.contactUs" /></h2>
+                    <p class="bm-lead ld-cta__desc" data-reveal style="--d: 0.2s">{{ content.contactDesc }}</p>
+                    <div class="ld-cta__actions" data-reveal style="--d: 0.35s">
+                        <Link href="/contact" class="bm-btn">
+                            <span>{{ content.contactUs }}</span>
+                            <span class="bm-btn__icon"><Icon name="arrow-right" :stroke="2" /></span>
+                        </Link>
+                    </div>
                 </div>
-            </div>
-        </section>
-
-        <!-- Cross-link to Laser Treatments -->
-        <section v-if="equipment.slug === 'alma-soprano-titanium'" class="cross-link-section">
-            <div class="container">
-                <div class="cross-link-card fade-in-up">
-                    <p class="cross-link-text">{{ locale === 'mk' ? 'Видете ги сите наши ласерски третмани и цени за ласерска епилација во Скопје' : 'See all our laser treatments and laser hair removal prices in Skopje' }}</p>
-                    <Link href="/services/laser-aesthetic" class="cross-link-btn">
-                        {{ locale === 'mk' ? 'Ласерски третмани и ценовник →' : 'Laser Treatments & Pricing →' }}
-                    </Link>
-                </div>
-            </div>
-        </section>
-
-        <!-- CTA Section -->
-        <section class="detail-cta">
-            <div class="container">
-                <div class="cta-card fade-in-up">
-                    <h2>{{ content.contactUs }}</h2>
-                    <p>{{ content.contactDesc }}</p>
-                    <Link href="/contact" class="btn-primary">
-                        {{ content.contactUs }}
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                    </Link>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <Footer />
+            </section>
+        </div>
+    </SiteLayout>
 </template>
 
 <style scoped>
-.laser-detail-page {
-    min-height: 100vh;
-}
-
-/* Hero Section */
-.detail-hero {
-    padding: 140px 0 80px;
-    position: relative;
-}
-
-.back-link {
+/* ---------- Hero ---------- */
+.ld-actions { display: flex; flex-wrap: wrap; gap: 14px; }
+.ld-back {
     display: inline-flex;
     align-items: center;
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 0.95rem;
-    text-decoration: none;
-    margin-bottom: 40px;
-    transition: color 0.3s ease;
-}
-
-.back-link:hover {
-    color: #c9a87c;
-}
-
-.hero-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 80px;
-    align-items: center;
-}
-
-.equipment-category {
-    display: inline-block;
-    padding: 6px 16px;
-    background: rgba(201, 168, 124, 0.15);
-    border: 1px solid rgba(201, 168, 124, 0.3);
-    border-radius: 20px;
-    color: #c9a87c;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 2px;
+    gap: 10px;
+    margin-top: 34px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--line-dark);
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
-    margin-bottom: 20px;
+    color: var(--on-dark-muted);
+    transition: color 0.4s, border-color 0.4s;
 }
+.ld-back:hover { color: var(--gold-300); border-color: var(--gold-300); }
 
-.hero-title {
-    font-size: 3rem;
-    font-weight: 600;
-    color: #fff;
-    margin-bottom: 20px;
-    line-height: 1.2;
-}
-
-.hero-description {
-    font-size: 1.15rem;
-    color: rgba(255, 255, 255, 0.7);
-    line-height: 1.8;
-    margin-bottom: 32px;
-}
-
-.hero-actions {
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
-}
-
-.btn-primary {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: linear-gradient(135deg, #c9a87c 0%, #b8956a 100%);
-    color: #1e2d3d;
-    padding: 14px 28px;
-    border-radius: 30px;
-    font-weight: 600;
-    font-size: 0.95rem;
-    text-decoration: none;
-    transition: all 0.3s ease;
-}
-
-.btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 30px rgba(201, 168, 124, 0.3);
-}
-
-.btn-secondary {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    color: #fff;
-    padding: 14px 28px;
-    border-radius: 30px;
-    font-weight: 600;
-    font-size: 0.95rem;
-    text-decoration: none;
-    transition: all 0.3s ease;
-}
-
-.btn-secondary:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.5);
-}
-
-.hero-image {
+.ld-visual {
     position: relative;
-    text-align: center;
+    width: min(100%, 470px);
+    margin-inline: auto 0;
 }
-
-.hero-image img {
-    max-width: 100%;
-    max-height: 500px;
-    object-fit: contain;
-    position: relative;
-    z-index: 2;
+.ld-stage {
+    aspect-ratio: 4 / 5.2;
+    width: 100%;
+    border-radius: 999px 999px var(--radius-md) var(--radius-md);
+    border: 1px solid rgba(217, 185, 149, 0.24);
+    box-shadow: 0 60px 120px -50px rgba(0, 0, 0, 0.8);
 }
-
-.image-glow {
+.ld-stage__ring {
     position: absolute;
-    top: 50%;
+    inset: 6%;
+    border-radius: 999px 999px 14px 14px;
+    border: 1px solid rgba(217, 185, 149, 0.18);
+    pointer-events: none;
+}
+.ld-stage__beam {
+    position: absolute;
     left: 50%;
-    transform: translate(-50%, -50%);
+    top: -10%;
+    width: 46%;
+    height: 80%;
+    transform: translateX(-50%);
+    background: radial-gradient(50% 60% at 50% 0%, rgba(246, 238, 230, 0.16), transparent 70%);
+    filter: blur(6px);
+    animation: ld-breathe 6s var(--ease-in-out) infinite alternate;
+    pointer-events: none;
+}
+.ld-stage__float {
+    position: relative;
+    z-index: 1;
     width: 80%;
     height: 80%;
-    background: radial-gradient(circle, rgba(201, 168, 124, 0.2) 0%, transparent 70%);
-    filter: blur(60px);
-    z-index: 1;
+    margin-top: 12%;
+    animation: ld-float 8s var(--ease-in-out) infinite alternate;
 }
-
-/* Detail Content Section */
-.detail-content {
-    padding: 80px 0;
-    background: rgba(255, 255, 255, 0.02);
+.ld-stage__float picture { display: contents; }
+.ld-stage__float img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 40px 50px rgba(0, 0, 0, 0.55));
 }
-
-.content-wrapper {
-    max-width: 900px;
-    margin: 0 auto;
-}
-
-.prose-content {
-    color: rgba(255, 255, 255, 0.85);
-    font-size: 1.05rem;
-    line-height: 1.9;
-}
-
-.prose-content :deep(h2) {
-    font-size: 1.8rem;
-    font-weight: 600;
-    color: #fff;
-    margin: 48px 0 20px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid rgba(201, 168, 124, 0.3);
-}
-
-.prose-content :deep(h2):first-child {
-    margin-top: 0;
-}
-
-.prose-content :deep(h3) {
-    font-size: 1.4rem;
-    font-weight: 600;
-    color: #fff;
-    margin: 36px 0 16px;
-}
-
-.prose-content :deep(h4) {
-    font-size: 1.15rem;
-    font-weight: 600;
-    color: #c9a87c;
-    margin: 28px 0 12px;
-}
-
-.prose-content :deep(p) {
-    margin: 16px 0;
-}
-
-.prose-content :deep(ul),
-.prose-content :deep(ol) {
-    margin: 20px 0;
-    padding-left: 28px;
-}
-
-.prose-content :deep(li) {
-    margin: 10px 0;
-}
-
-.prose-content :deep(strong) {
-    color: #c9a87c;
-    font-weight: 600;
-}
-
-.prose-content :deep(a) {
-    color: #c9a87c;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-}
-
-.prose-content :deep(a:hover) {
-    color: #fff;
-}
-
-.prose-content :deep(blockquote) {
-    margin: 24px 0;
-    padding: 20px 24px;
-    background: rgba(201, 168, 124, 0.1);
-    border-left: 4px solid #c9a87c;
-    border-radius: 0 8px 8px 0;
-    font-style: italic;
-}
-
-/* Cross-link Section */
-.cross-link-section {
-    padding: 60px 0 40px;
-}
-
-.cross-link-card {
-    padding: 32px 40px;
-    background: rgba(201, 168, 124, 0.08);
-    border: 1px solid rgba(201, 168, 124, 0.15);
-    border-radius: 16px;
-    display: flex;
+.ld-seal { position: absolute; left: -58px; top: 16%; z-index: 2; }
+.ld-caption {
+    position: absolute;
+    right: -14px;
+    bottom: 34px;
+    z-index: 2;
+    display: inline-flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 24px;
-    max-width: 900px;
-    margin: 0 auto;
+    gap: 12px;
+    padding: 10px 18px;
+    border-radius: 999px;
+    background: rgba(22, 10, 14, 0.72);
+    border: 1px solid var(--line-dark);
+    backdrop-filter: blur(10px);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--on-dark-muted);
+}
+.ld-caption span:first-child { color: var(--gold-300); }
+.ld-caption__line { width: 26px; height: 1px; background: var(--line-dark); }
+
+@keyframes ld-float {
+    from { transform: translate3d(0, 0, 0); }
+    to { transform: translate3d(0, -12px, 0); }
+}
+@keyframes ld-breathe {
+    from { opacity: 0.55; }
+    to { opacity: 1; }
 }
 
-.cross-link-text {
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 1rem;
-    margin: 0;
+/* ---------- Long description ---------- */
+.ld-body__grid { display: block; }
+.ld-body__grid:not(.has-toc) .ld-sheet { max-width: 900px; margin-inline: auto; }
+.ld-body__grid.has-toc {
+    display: grid;
+    grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
+    gap: clamp(40px, 6vw, 96px);
+    align-items: start;
 }
 
-.cross-link-btn {
-    white-space: nowrap;
-    color: #c9a87c;
-    font-weight: 600;
+.ld-toc {
+    position: sticky;
+    top: calc(var(--header-h) + 32px);
+    max-height: calc(100vh - var(--header-h) - 64px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+    padding-bottom: 8px;
+}
+.ld-toc::-webkit-scrollbar { display: none; }
+.ld-toc__list {
+    list-style: none;
+    margin: 26px 0 0;
+    padding: 0;
+    border-top: 1px solid var(--line-light);
+}
+.ld-toc__list li { border-bottom: 1px solid var(--line-light); }
+.ld-toc__list a {
+    position: relative;
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr);
+    gap: 10px;
+    padding: 14px 0;
+    font-size: 0.9rem;
+    line-height: 1.45;
+    color: var(--ink-soft);
+    transition: color 0.4s, padding 0.5s var(--ease-out);
+}
+.ld-toc__list a::before {
+    content: '';
+    position: absolute;
+    left: -16px;
+    top: 50%;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--wine-600);
+    transform: translateY(-50%) scale(0);
+    transition: transform 0.5s var(--ease-out);
+}
+.ld-toc__n {
+    font-family: var(--font-display);
+    font-style: italic;
     font-size: 0.95rem;
-    text-decoration: none;
-    padding: 10px 24px;
-    border: 1px solid rgba(201, 168, 124, 0.3);
-    border-radius: 24px;
-    transition: all 0.3s ease;
+    color: var(--wine-500);
+    opacity: 0.7;
 }
+.ld-toc__list a:hover,
+.ld-toc__list a.is-active { color: var(--ink); padding-left: 6px; }
+.ld-toc__list a.is-active::before { transform: translateY(-50%) scale(1); }
+.ld-toc__list a.is-active .ld-toc__n { opacity: 1; }
+.ld-toc__cta { margin-top: 28px; }
 
-.cross-link-btn:hover {
-    background: rgba(201, 168, 124, 0.15);
-    border-color: rgba(201, 168, 124, 0.5);
+.ld-sheet {
+    position: relative;
+    min-width: 0;
+    padding: clamp(32px, 6vw, 88px) clamp(24px, 6vw, 92px);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--line-light);
+    background: #fffaf5;
+    box-shadow: 0 60px 100px -70px rgba(82, 26, 47, 0.35);
 }
-
-/* CTA Section */
-.detail-cta {
-    padding: 40px 0 120px;
+.ld-sheet__mark {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 1px solid var(--line-light);
+    background: var(--cream-100);
+    transform: translate(-50%, -50%);
 }
+.ld-sheet__mark img { width: 60%; height: auto; }
 
-.cta-card {
-    text-align: center;
-    padding: 60px 40px;
-    background: linear-gradient(135deg, rgba(201, 168, 124, 0.15) 0%, rgba(201, 168, 124, 0.05) 100%);
-    border: 1px solid rgba(201, 168, 124, 0.2);
-    border-radius: 24px;
+/* CMS rich text */
+.ld-prose {
+    color: #4a3138;
+    font-size: 1.06rem;
+    line-height: 1.9;
+    counter-reset: ld-ol;
 }
-
-.cta-card h2 {
-    font-size: 2rem;
-    font-weight: 600;
-    color: #fff;
-    margin-bottom: 12px;
+.ld-prose > :deep(* + *) { margin-top: 1.15em; }
+.ld-prose > :deep(:first-child) { margin-top: 0; }
+.ld-prose :deep(p:empty) { display: none; }
+.ld-prose :deep(h2),
+.ld-prose :deep(h4) {
+    margin-top: 2.3em;
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: clamp(1.8rem, 2.9vw, 2.6rem);
+    line-height: 1.14;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+    scroll-margin-top: calc(var(--header-h) + 32px);
 }
-
-.cta-card p {
-    font-size: 1.1rem;
-    color: rgba(255, 255, 255, 0.7);
-    margin-bottom: 28px;
+.ld-prose :deep(h4 strong),
+.ld-prose :deep(h2 strong) { font-weight: inherit; color: inherit; }
+.ld-prose :deep([data-sec]::before) {
+    content: attr(data-sec);
+    display: block;
+    width: max-content;
+    margin-bottom: 18px;
+    padding-left: 50px;
+    background: linear-gradient(var(--wine-500), var(--wine-500)) left center / 36px 1px no-repeat;
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    line-height: 1.4;
+    color: var(--wine-600);
 }
+.ld-prose :deep(h3) {
+    margin-top: 1.9em;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(1.3rem, 1.8vw, 1.6rem);
+    line-height: 1.3;
+    color: var(--wine-600);
+}
+.ld-prose :deep(h2 + p),
+.ld-prose :deep(h3 + p),
+.ld-prose :deep(h4 + p) { margin-top: 0.9em; }
+.ld-prose :deep(strong) { font-weight: 700; color: var(--ink); }
+.ld-prose :deep(a) { color: var(--wine-600); text-decoration: underline; text-underline-offset: 3px; }
+.ld-prose :deep(a:hover) { color: var(--wine-800); }
+.ld-prose :deep(ul),
+.ld-prose :deep(ol) {
+    list-style: none;
+    margin-block: 1.2em 0;
+    padding: 0;
+    display: grid;
+    gap: 0.6em;
+}
+.ld-prose :deep(li) { position: relative; padding-left: 34px; margin: 0; }
+.ld-prose :deep(li + li) { margin-top: 0; }
+.ld-prose :deep(li > p) { margin: 0; }
+.ld-prose :deep(ul > li::before) {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.95em;
+    width: 16px;
+    height: 1px;
+    background: var(--wine-500);
+    opacity: 0.6;
+}
+.ld-prose :deep(ul > li::after) {
+    content: '';
+    position: absolute;
+    left: 14px;
+    top: calc(0.95em - 2px);
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--wine-600);
+}
+.ld-prose :deep(ol) { counter-reset: ld-ol; }
+.ld-prose :deep(ol > li) { counter-increment: ld-ol; padding-left: 44px; }
+.ld-prose :deep(ol > li::before) {
+    content: counter(ld-ol, decimal-leading-zero);
+    position: absolute;
+    left: 0;
+    top: 0.1em;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.15rem;
+    line-height: 1.6;
+    color: var(--wine-500);
+}
+.ld-prose :deep(hr) {
+    position: relative;
+    height: 14px;
+    margin: 3.2em 0;
+    border: 0;
+    opacity: 1;
+    color: inherit;
+    background: linear-gradient(var(--line-light), var(--line-light)) center / 100% 1px no-repeat;
+}
+.ld-prose :deep(hr::after) {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 9px;
+    height: 9px;
+    border: 1px solid var(--wine-500);
+    background: #fffaf5;
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+.ld-prose :deep(hr + h2),
+.ld-prose :deep(hr + h4) { margin-top: 0; }
+.ld-prose :deep(blockquote) {
+    margin: 1.6em 0 0;
+    padding: 6px 0 6px 28px;
+    border-left: 1px solid var(--wine-500);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.3rem;
+    line-height: 1.5;
+    color: var(--ink);
+}
+.ld-prose :deep(table) {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+}
+.ld-prose :deep(th),
+.ld-prose :deep(td) { padding: 12px 14px; border-bottom: 1px solid var(--line-light); text-align: left; vertical-align: top; }
+.ld-prose :deep(th) { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--wine-600); }
+.ld-prose :deep(img) { max-width: 100%; height: auto; border-radius: var(--radius-md); }
 
-/* Responsive */
+/* ---------- Cross-link ---------- */
+.ld-cross { padding-bottom: clamp(84px, 10vw, 150px); }
+.ld-cross.bm-sheet { padding-top: clamp(84px, 10vw, 150px); }
+.ld-body:has(+ .ld-cross) { padding-bottom: clamp(48px, 6vw, 80px); }
+.ld-cross__card {
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: clamp(20px, 3vw, 40px);
+    padding: clamp(30px, 4vw, 52px) clamp(26px, 4vw, 56px);
+    border-radius: var(--radius-lg);
+    background:
+        radial-gradient(90% 120% at 100% 0%, rgba(140, 42, 72, 0.6), transparent 60%),
+        linear-gradient(135deg, var(--wine-800), var(--wine-700));
+    color: var(--on-dark);
+    box-shadow: 0 50px 90px -50px rgba(56, 19, 34, 0.7);
+}
+.ld-cross__arch {
+    position: absolute;
+    right: 8%;
+    top: 30%;
+    width: 280px;
+    height: 360px;
+    border-radius: 999px 999px 0 0;
+    border: 1px solid rgba(217, 185, 149, 0.16);
+    pointer-events: none;
+}
+.ld-cross__icon { position: relative; color: var(--gold-300); }
+.ld-cross__text {
+    position: relative;
+    font-family: var(--font-display);
+    font-size: clamp(1.3rem, 2vw, 1.75rem);
+    font-weight: 300;
+    line-height: 1.35;
+}
+.ld-cross__btn { position: relative; padding: 0 28px; }
+
+/* ---------- CTA ---------- */
+.ld-cta { overflow: hidden; text-align: center; }
+.ld-cta__inner { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; }
+.ld-cta__title { max-width: 14ch; }
+.ld-cta__desc { margin-top: 28px; max-width: 560px; color: var(--on-dark-muted); }
+.ld-cta__actions { margin-top: 42px; }
+.ld-cta__arcs {
+    position: absolute;
+    left: 50%;
+    bottom: -2px;
+    width: min(1100px, 130vw);
+    aspect-ratio: 2 / 1;
+    transform: translateX(-50%);
+    pointer-events: none;
+}
+.ld-cta__arcs span {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    border: 1px solid rgba(217, 185, 149, 0.14);
+    border-bottom: 0;
+    border-radius: 999px 999px 0 0;
+    transform: translateX(-50%);
+}
+.ld-cta__arcs span:nth-child(1) { width: 100%; height: 100%; }
+.ld-cta__arcs span:nth-child(2) { width: 76%; height: 76%; }
+.ld-cta__arcs span:nth-child(3) { width: 52%; height: 52%; border-color: rgba(217, 185, 149, 0.22); }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1199.98px) {
+    .ld-seal { left: -30px; }
+}
 @media (max-width: 991.98px) {
-    .detail-hero {
-        padding: 120px 0 60px;
-    }
-    
-    .hero-grid {
-        grid-template-columns: 1fr;
-        gap: 40px;
-    }
-    
-    .hero-title {
-        font-size: 2.2rem;
-    }
-    
-    .hero-image {
-        order: -1;
-    }
-    
-    .hero-image img {
-        max-height: 350px;
-    }
+    .ld-visual { margin-inline: auto; width: min(100%, 420px); }
+    .ld-body__grid.has-toc { grid-template-columns: 1fr; }
+    .ld-toc { position: static; max-height: none; overflow: visible; }
+    .ld-toc__cta { display: none; }
+    .ld-cross__card { grid-template-columns: 1fr; justify-items: start; }
 }
-
-@media (max-width: 767.98px) {
-    .cross-link-card {
-        flex-direction: column;
-        text-align: center;
-        padding: 24px;
-        gap: 16px;
-    }
-}
-
 @media (max-width: 575.98px) {
-    .detail-hero {
-        padding: 100px 0 40px;
-    }
-    
-    .hero-title {
-        font-size: 1.8rem;
-    }
-    
-    .hero-description {
-        font-size: 1rem;
-    }
-    
-    .hero-actions {
-        flex-direction: column;
-    }
-    
-    .btn-primary,
-    .btn-secondary {
-        justify-content: center;
-    }
-    
-    .detail-content {
-        padding: 60px 0;
-    }
-    
-    .prose-content {
-        font-size: 1rem;
-    }
-    
-    .prose-content :deep(h2) {
-        font-size: 1.5rem;
-    }
-    
-    .prose-content :deep(h3) {
-        font-size: 1.2rem;
-    }
-    
-    .cta-card {
-        padding: 40px 24px;
-    }
-    
-    .cta-card h2 {
-        font-size: 1.5rem;
-    }
+    .ld-actions .bm-btn { flex: 1 1 100%; }
+    .ld-seal { width: 104px !important; height: 104px !important; left: -10px; top: 6%; }
+    .ld-caption { right: 8px; bottom: 22px; }
+    .ld-sheet { border-radius: var(--radius-md); }
+    .ld-prose { font-size: 1rem; line-height: 1.85; }
+    .ld-cross__btn { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .ld-stage__float, .ld-stage__beam { animation: none; }
 }
 </style>

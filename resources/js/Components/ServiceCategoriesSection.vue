@@ -1,9 +1,8 @@
 <script setup>
 import { usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
-import { useScrollAnimation } from '@/Composables/useScrollAnimation';
-
-useScrollAnimation();
+import MaskText from '@/Components/Site/MaskText.vue';
+import Icon from '@/Components/Site/Icon.vue';
 
 const page = usePage();
 const locale = computed(() => page.props.locale || 'en');
@@ -15,16 +14,16 @@ const categories = computed(() => [
     {
         id: 'cosmetology',
         name: locale.value === 'mk' ? 'Козметологија' : 'Cosmetology',
-        description: locale.value === 'mk' 
+        description: locale.value === 'mk'
             ? 'Професионални козметички третмани за совршена кожа и природна убавина'
             : 'Professional cosmetic treatments for perfect skin and natural beauty',
         href: '/services/cosmetology',
-        icon: 'sparkles',
+        icon: 'sparkle',
     },
     {
         id: 'laser',
         name: locale.value === 'mk' ? 'Ласерско Естетски Третмани' : 'Laser Aesthetic Treatments',
-        description: locale.value === 'mk' 
+        description: locale.value === 'mk'
             ? 'Напредни ласерски третмани за подмладување, ласерска епилација и корекција на кожата'
             : 'Advanced laser treatments for rejuvenation, hair removal and skin correction',
         href: '/services/laser-aesthetic',
@@ -33,7 +32,7 @@ const categories = computed(() => [
     {
         id: 'injectable',
         name: locale.value === 'mk' ? 'Инјектибилни методи' : 'Injectable Methods',
-        description: locale.value === 'mk' 
+        description: locale.value === 'mk'
             ? 'Прецизна апликација, биолошка регенерација и контролирана естетика'
             : 'Precise application, biological regeneration and controlled aesthetics',
         href: '/services/injectable-methods',
@@ -42,7 +41,7 @@ const categories = computed(() => [
     {
         id: 'body',
         name: locale.value === 'mk' ? 'Третмани на тело' : 'Body Treatments',
-        description: locale.value === 'mk' 
+        description: locale.value === 'mk'
             ? 'Апаратурна естетика за обликување на телото и подобрување на квалитетот на кожата'
             : 'Advanced aesthetics for body contouring and skin quality improvement',
         href: '/services/body-treatments',
@@ -51,54 +50,34 @@ const categories = computed(() => [
 ]);
 
 const ctaLabel = computed(() => locale.value === 'mk' ? 'Погледни Третмани' : 'View Treatments');
+const pad = (n) => String(n).padStart(2, '0');
 </script>
 
 <template>
-    <section class="service-categories-section">
-        <div class="container">
-            <div class="section-header fade-in-up">
-              
-                <h2 class="section-title">{{ sectionSubtitle }}</h2>
+    <section class="service-categories-section bm-cats bm-paper bm-sheet bm-section">
+        <div class="bm-container">
+            <div class="section-header bm-cats__head">
+                <span class="bm-eyebrow" data-reveal>{{ sectionTitle }}</span>
+                <h2 class="section-title bm-h2 bm-cats__title"><MaskText :text="sectionSubtitle" /></h2>
             </div>
 
-            <div class="categories-grid">
-                <a 
-                    v-for="category in categories" 
+            <div class="categories-grid bm-cats__list">
+                <a
+                    v-for="(category, index) in categories"
                     :key="category.id"
                     :href="category.href"
-                    class="category-box fade-in-up"
+                    class="category-box bm-cat"
+                    data-reveal
+                    :style="{ '--d': `${index * 0.08}s` }"
                 >
-                    <div class="box-icon">
-                        <svg v-if="category.icon === 'sparkles'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <path d="M12 3L13.5 8.5L19 10L13.5 11.5L12 17L10.5 11.5L5 10L10.5 8.5L12 3Z"/>
-                            <path d="M19 15L20 17L22 18L20 19L19 21L18 19L16 18L18 17L19 15Z"/>
-                            <path d="M5 17L6 19L8 20L6 21L5 23L4 21L2 20L4 19L5 17Z"/>
-                        </svg>
-                        <svg v-else-if="category.icon === 'laser'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <path d="M12 2C12 2 14 6 14 10C14 14 12 18 12 22"/>
-                            <path d="M12 2C12 2 10 6 10 10C10 14 12 18 12 22"/>
-                            <path d="M4 12H20"/>
-                            <circle cx="12" cy="12" r="10"/>
-                        </svg>
-                        <svg v-else-if="category.icon === 'injectable'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <path d="M12 2v6M12 16v6"/>
-                            <path d="M9 8h6l-1 8H10L9 8z"/>
-                            <circle cx="12" cy="5" r="1"/>
-                        </svg>
-                        <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <path d="M12 2a4 4 0 0 1 4 4c0 2-1.5 3.5-4 5-2.5-1.5-4-3-4-5a4 4 0 0 1 4-4z"/>
-                            <path d="M8 11c-2 1-4 3-4 6 0 2.5 3 5 8 5s8-2.5 8-5c0-3-2-5-4-6"/>
-                            <path d="M9 16h6"/>
-                        </svg>
-                    </div>
-                    <h3 class="box-title">{{ category.name }}</h3>
-                    <p class="box-description">{{ category.description }}</p>
-                    <div class="box-cta">
-                        <span>{{ ctaLabel }}</span>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                    </div>
+                    <span class="bm-cat__idx">{{ pad(index + 1) }}</span>
+                    <span class="bm-cat__icon"><Icon :name="category.icon" :size="24" :stroke="1.4" /></span>
+                    <h3 class="box-title bm-cat__name">{{ category.name }}</h3>
+                    <p class="box-description bm-cat__desc">{{ category.description }}</p>
+                    <span class="box-cta bm-cat__cta">
+                        <span class="bm-cat__cta-label">{{ ctaLabel }}</span>
+                        <span class="bm-cat__cta-icon"><Icon name="arrow-right" :size="18" :stroke="1.8" /></span>
+                    </span>
                 </a>
             </div>
         </div>
@@ -106,194 +85,109 @@ const ctaLabel = computed(() => locale.value === 'mk' ? 'Погледни Тре
 </template>
 
 <style scoped>
-.service-categories-section {
-    padding: 100px 0;
-    position: relative;
-}
-
-.section-header {
-    text-align: center;
-    margin-bottom: 60px;
-}
-
-.section-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 24px;
-    background: rgba(201, 168, 124, 0.1);
-    border: 1px solid rgba(201, 168, 124, 0.2);
-    border-radius: 100px;
-    color: #c9a87c;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    margin-bottom: 24px;
-}
-
-.section-badge svg {
-    width: 16px;
-    height: 16px;
-}
-
-.section-title {
-    font-size: clamp(1.75rem, 4vw, 2.5rem);
-    font-weight: 700;
-    color: #fff;
-    margin: 0;
-}
-
-.categories-grid {
+.bm-cats__head {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 24px;
+    grid-template-columns: minmax(180px, 0.42fr) 1fr;
+    gap: 32px;
+    align-items: baseline;
+    margin-bottom: clamp(44px, 6vw, 80px);
 }
 
-.category-box {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding: 50px 36px;
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 28px;
-    text-decoration: none;
-    transition: all 0.4s ease;
+.bm-cats__list { border-top: 1px solid var(--line-light); }
+
+.bm-cat {
     position: relative;
+    display: grid;
+    grid-template-columns: 60px 64px minmax(0, 1.25fr) minmax(0, 1fr) auto;
+    gap: clamp(16px, 2.5vw, 36px);
+    align-items: center;
+    padding: clamp(26px, 3vw, 40px) clamp(8px, 2vw, 28px);
+    border-bottom: 1px solid var(--line-light);
+    color: var(--ink);
+    isolation: isolate;
     overflow: hidden;
+    transition: color 0.6s var(--ease-out);
 }
-
-.category-box::before {
+.bm-cat::before {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, rgba(201, 168, 124, 0.1), transparent 60%);
-    opacity: 0;
-    transition: opacity 0.4s ease;
+    z-index: -1;
+    background:
+        radial-gradient(80% 140% at 100% 50%, rgba(140, 42, 72, 0.6), transparent 60%),
+        linear-gradient(90deg, var(--wine-800), var(--wine-700));
+    clip-path: inset(0 100% 0 0);
+    transition: clip-path 0.8s var(--ease-out);
 }
+.bm-cat:hover, .bm-cat:focus-visible { color: var(--cream-50); }
+.bm-cat:hover::before, .bm-cat:focus-visible::before { clip-path: inset(0 0 0 0); }
 
-.category-box:hover {
-    border-color: rgba(201, 168, 124, 0.3);
-    transform: translateY(-6px);
-    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.25);
-}
-
-.category-box:hover::before {
-    opacity: 1;
-}
-
-.box-icon {
-    position: relative;
-    z-index: 1;
-    width: 88px;
-    height: 88px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, rgba(201, 168, 124, 0.15), rgba(201, 168, 124, 0.05));
-    border: 1px solid rgba(201, 168, 124, 0.2);
-    border-radius: 50%;
-    margin-bottom: 28px;
-    transition: all 0.4s ease;
-}
-
-.category-box:hover .box-icon {
-    transform: scale(1.08);
-    background: linear-gradient(135deg, rgba(201, 168, 124, 0.25), rgba(201, 168, 124, 0.1));
-}
-
-.box-icon svg {
-    width: 40px;
-    height: 40px;
-    color: #c9a87c;
-}
-
-.box-title {
-    position: relative;
-    z-index: 1;
-    font-size: 1.5rem;
+.bm-cat__idx {
+    font-size: 0.78rem;
     font-weight: 700;
-    color: #fff;
-    margin: 0 0 14px;
-    transition: color 0.3s ease;
+    letter-spacing: 0.18em;
+    color: var(--wine-600);
+    transition: color 0.6s;
 }
+.bm-cat:hover .bm-cat__idx { color: var(--gold-300); }
 
-.category-box:hover .box-title {
-    color: #c9a87c;
+.bm-cat__icon {
+    display: grid;
+    place-items: center;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 1px solid var(--line-light);
+    color: var(--wine-600);
+    transition: border-color 0.6s, color 0.6s, transform 0.8s var(--ease-out);
 }
+.bm-cat:hover .bm-cat__icon { border-color: rgba(217, 185, 149, 0.45); color: var(--gold-300); transform: rotate(-12deg) scale(1.05); }
 
-.box-description {
-    position: relative;
-    z-index: 1;
-    font-size: 0.95rem;
-    color: rgba(255, 255, 255, 0.5);
-    line-height: 1.7;
-    margin: 0 0 28px;
-    max-width: 280px;
+.bm-cat__name {
+    font-size: clamp(1.6rem, 2.9vw, 2.75rem);
+    font-weight: 300;
+    line-height: 1.1;
+    transition: transform 0.8s var(--ease-out);
 }
+.bm-cat:hover .bm-cat__name { transform: translateX(10px); }
 
-.box-cta {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 24px;
-    background: rgba(201, 168, 124, 0.1);
-    border: 1px solid rgba(201, 168, 124, 0.2);
-    border-radius: 100px;
-    color: #c9a87c;
-    font-size: 0.85rem;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    margin-top: auto;
+.bm-cat__desc { font-size: 0.98rem; line-height: 1.65; color: var(--ink-soft); transition: color 0.6s; }
+.bm-cat:hover .bm-cat__desc { color: rgba(246, 238, 230, 0.75); }
+
+.bm-cat__cta { display: inline-flex; align-items: center; gap: 14px; }
+.bm-cat__cta-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    white-space: nowrap;
 }
-
-.category-box:hover .box-cta {
-    background: #c9a87c;
-    color: #0a0f14;
-    border-color: #c9a87c;
+.bm-cat__cta-icon {
+    display: grid;
+    place-items: center;
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: var(--wine-600);
+    color: var(--cream-50);
+    transition: background 0.6s, color 0.6s, transform 0.8s var(--ease-out);
 }
+.bm-cat:hover .bm-cat__cta-icon { background: var(--beige-200); color: var(--wine-800); transform: rotate(-45deg); }
 
-.box-cta svg {
-    width: 16px;
-    height: 16px;
-    transition: transform 0.3s ease;
+@media (max-width: 1199.98px) {
+    .bm-cat { grid-template-columns: 44px 60px minmax(0, 1fr) auto; }
+    .bm-cat__desc { grid-column: 3 / 4; grid-row: 2; }
+    .bm-cat__cta { grid-row: 1 / span 2; grid-column: 4; }
+    .bm-cat__cta-label { display: none; }
 }
-
-.category-box:hover .box-cta svg {
-    transform: translateX(4px);
-}
-
 @media (max-width: 767.98px) {
-    .service-categories-section {
-        padding: 60px 0;
-    }
-    
-    .categories-grid {
-        grid-template-columns: 1fr;
-        max-width: 400px;
-        margin: 0 auto;
-    }
-    
-    .category-box {
-        padding: 36px 24px;
-    }
-    
-    .box-icon {
-        width: 72px;
-        height: 72px;
-    }
-    
-    .box-icon svg {
-        width: 32px;
-        height: 32px;
-    }
-    
-    .box-title {
-        font-size: 1.3rem;
-    }
+    .bm-cats__head { grid-template-columns: 1fr; gap: 18px; }
+    .bm-cat { grid-template-columns: 1fr auto; gap: 12px 16px; padding-inline: 4px; }
+    .bm-cat__idx { grid-column: 1; grid-row: 1; }
+    .bm-cat__icon { display: none; }
+    .bm-cat__name { grid-column: 1; grid-row: 2; }
+    .bm-cat__desc { grid-column: 1 / -1; grid-row: 3; }
+    .bm-cat__cta { grid-column: 2; grid-row: 1 / span 2; align-self: center; }
+    .bm-cat__cta-icon { width: 48px; height: 48px; }
 }
 </style>

@@ -1,9 +1,10 @@
 <script setup>
 import { usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
-import { useScrollAnimation } from '@/Composables/useScrollAnimation';
-
-useScrollAnimation();
+import MaskText from '@/Components/Site/MaskText.vue';
+import ScrollWords from '@/Components/Site/ScrollWords.vue';
+import Counter from '@/Components/Site/Counter.vue';
+import Icon from '@/Components/Site/Icon.vue';
 
 const props = defineProps({
     about: {
@@ -18,7 +19,7 @@ const locale = computed(() => page.props.locale || 'en');
 const content = computed(() => ({
     badge: locale.value === 'mk' ? 'ЗА НАС' : 'ABOUT US',
     title: props.about?.title || (locale.value === 'mk' ? 'Вашиот партнер за убавина и здравје' : 'Your Partner in Beauty & Wellness'),
-    subtitle: props.about?.subtitle || (locale.value === 'mk' 
+    subtitle: props.about?.subtitle || (locale.value === 'mk'
         ? 'Со повеќе од 25 години искуство, Babor Medical е водечки центар за дерматологија и спа третмани во Македонија.'
         : 'With over 25 years of experience, Babor Medical is the leading dermatology and spa center in Macedonia.'),
     description: props.about?.short_description || (locale.value === 'mk'
@@ -31,6 +32,7 @@ const content = computed(() => ({
         { number: '50+', label: locale.value === 'mk' ? 'Третмани' : 'Treatments' },
         { number: '15+', label: locale.value === 'mk' ? 'Експерти' : 'Experts' },
     ],
+    // Kept for content parity — this list was hidden (d-none) in the previous design too.
     features: [
         {
             icon: 'certified',
@@ -52,67 +54,33 @@ const content = computed(() => ({
     ctaAriaLabel: locale.value === 'mk' ? 'Прочитај повеќе за Babor Medical' : 'Read more about Babor Medical',
     ctaContact: locale.value === 'mk' ? 'Закажи консултација' : 'Book Consultation'
 }));
+
+// The scroll-lit statement needs plain text; fall back to v-html if the CMS ever stores markup.
+const subtitleIsPlain = computed(() => !/<[a-z!/][\s\S]*>/i.test(content.value.subtitle || ''));
 </script>
 
 <template>
-    <section class="about-section mt-4">
-        <div class="container">
-            <div class="about-grid">
-                <div class="about-content fade-in-left">
-                    <span class="section-badge">{{ content.badge }}</span>
-                    <h2 class="about-title">{{ content.title }}</h2>
-                    <div class="about-subtitle" v-html="content.subtitle"></div>
-                    <div class="about-description" v-html="content.description"></div>
-                    
-                    <div class="features-list d-none">
-                        <div v-for="(feature, index) in content.features" :key="index" class="feature-item">
-                            <div class="feature-icon">
-                                <svg v-if="feature.icon === 'certified'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M12 15l-2 5l1.5-1l1.5 1l1.5-1l1.5 1l-2-5"/>
-                                    <circle cx="12" cy="9" r="6"/>
-                                    <path d="M9 9l2 2l4-4"/>
-                                </svg>
-                                <svg v-else-if="feature.icon === 'technology'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <rect x="2" y="3" width="20" height="14" rx="2"/>
-                                    <path d="M8 21h8"/>
-                                    <path d="M12 17v4"/>
-                                    <path d="M7 8h2m2 0h2m2 0h2"/>
-                                    <path d="M7 11h10"/>
-                                </svg>
-                                <svg v-else-if="feature.icon === 'products'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M12 2L2 7l10 5l10-5l-10-5z"/>
-                                    <path d="M2 17l10 5l10-5"/>
-                                    <path d="M2 12l10 5l10-5"/>
-                                </svg>
-                            </div>
-                            <div class="feature-text">
-                                <h4>{{ feature.title }}</h4>
-                                <p>{{ feature.desc }}</p>
-                            </div>
-                        </div>
-                    </div>
+    <section class="about-section bm-about bm-cream bm-sheet bm-section">
+        <div class="bm-container">
+            <div class="bm-about__head">
+                <span class="section-badge bm-eyebrow" data-reveal>{{ content.badge }}</span>
+                <h2 class="about-title bm-h2 bm-about__title">
+                    <MaskText :text="content.title" />
+                </h2>
+            </div>
 
-                    <div class="about-cta-group">
-                        <a href="/about" class="btn-cta about-cta">
-                            {{ content.cta }}<span class="visually-hidden"> about Babor Medical</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M5 12h14M12 5l7 7-7 7"/>
-                            </svg>
-                        </a>
-                        <a href="/contact" class="btn-outline about-cta-secondary" :aria-label="locale === 'mk' ? 'Закажи консултација во Babor Medical' : 'Book a consultation at Babor Medical'">
-                            {{ content.ctaContact }}
-                        </a>
-                    </div>
-                </div>
+            <ScrollWords v-if="subtitleIsPlain" :text="content.subtitle" tag="p" class="about-subtitle bm-about__statement" />
+            <div v-else class="about-subtitle bm-about__statement" v-html="content.subtitle"></div>
 
-                <div class="about-visual fade-in-right">
-                    <div class="visual-wrapper">
+            <div class="bm-about__grid">
+                <div class="bm-about__visual">
+                    <div class="bm-about__frame" data-reveal="mask">
                         <picture class="about-image-wrapper">
                             <source media="(max-width: 575px)" srcset="/images/about-mobile.webp" type="image/webp">
                             <source srcset="/images/about.webp" type="image/webp">
-                            <img 
-                                src="/images/about.webp" 
-                                alt="Babor Medical Team" 
+                            <img
+                                src="/images/about.webp"
+                                alt="Babor Medical Team"
                                 class="about-image"
                                 loading="lazy"
                                 decoding="async"
@@ -120,35 +88,54 @@ const content = computed(() => ({
                                 height="534"
                             >
                         </picture>
-                        <div class="floating-card card-1">
-                            <div class="card-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                                    <polyline points="22 4 12 14.01 9 11.01"/>
-                                </svg>
-                            </div>
-                            <div class="card-text">
-                                <span class="card-number">100%</span>
-                                <span class="card-label">{{ locale === 'mk' ? 'Задоволство' : 'Satisfaction' }}</span>
-                            </div>
-                        </div>
-                        <div class="floating-card card-2">
-                            <div class="card-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                                </svg>
-                            </div>
-                            <div class="card-text">
-                                <span class="card-number">5.0</span>
-                                <span class="card-label">{{ locale === 'mk' ? 'Рејтинг' : 'Rating' }}</span>
-                            </div>
+                    </div>
+                    <div class="bm-about__float bm-about__float--a" data-reveal style="--d: 0.35s">
+                        <span class="bm-about__float-icon"><Icon name="check" :size="18" :stroke="2" /></span>
+                        <span class="bm-about__float-text">
+                            <strong>100%</strong>
+                            <span>{{ locale === 'mk' ? 'Задоволство' : 'Satisfaction' }}</span>
+                        </span>
+                    </div>
+                    <div class="bm-about__float bm-about__float--b" data-reveal style="--d: 0.5s">
+                        <span class="bm-about__float-icon"><Icon name="star" :size="18" :stroke="1.8" /></span>
+                        <span class="bm-about__float-text">
+                            <strong>5.0</strong>
+                            <span>{{ locale === 'mk' ? 'Рејтинг' : 'Rating' }}</span>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="bm-about__content">
+                    <div class="about-description bm-about__desc bm-prose" data-reveal v-html="content.description"></div>
+
+                    <!-- Hidden in the previous design as well (d-none); kept so no content is dropped -->
+                    <div class="features-list d-none">
+                        <div v-for="(feature, index) in content.features" :key="index" class="feature-item">
+                            <h4>{{ feature.title }}</h4>
+                            <p>{{ feature.desc }}</p>
                         </div>
                     </div>
 
-                    <div class="stats-grid">
-                        <div v-for="(stat, index) in content.stats" :key="index" class="stat-box fade-in-up" :class="`stagger-${index + 1}`">
-                            <span class="stat-number">{{ stat.number }}</span>
-                            <span class="stat-label">{{ stat.label }}</span>
+                    <div class="about-cta-group bm-about__actions" data-reveal style="--d: 0.15s">
+                        <a href="/about" class="bm-btn bm-btn--wine">
+                            <span>{{ content.cta }}<span class="visually-hidden"> about Babor Medical</span></span>
+                            <span class="bm-btn__icon"><Icon name="arrow-right" :stroke="2" /></span>
+                        </a>
+                        <a href="/contact" class="bm-btn bm-btn--ghost" :aria-label="locale === 'mk' ? 'Закажи консултација во Babor Medical' : 'Book a consultation at Babor Medical'">
+                            {{ content.ctaContact }}
+                        </a>
+                    </div>
+
+                    <div class="stats-grid bm-about__stats">
+                        <div
+                            v-for="(stat, index) in content.stats"
+                            :key="index"
+                            class="stat-box bm-about__stat"
+                            data-reveal
+                            :style="{ '--d': `${0.1 * index}s` }"
+                        >
+                            <span class="stat-number bm-about__stat-num"><Counter :value="stat.number" /></span>
+                            <span class="stat-label bm-about__stat-label">{{ stat.label }}</span>
                         </div>
                     </div>
                 </div>
@@ -158,327 +145,113 @@ const content = computed(() => ({
 </template>
 
 <style scoped>
-.about-section {
-    padding: 0px 0px;
-    background: transparent;
-    position: relative;
-    z-index: 1;
-}
-
-.about-grid {
+.bm-about__head {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 80px;
+    grid-template-columns: minmax(180px, 0.42fr) 1fr;
+    gap: 32px;
+    align-items: baseline;
+}
+.bm-about__title { max-width: 900px; }
+
+.bm-about__statement {
+    margin-top: clamp(48px, 7vw, 96px);
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: clamp(1.9rem, 3.9vw, 3.6rem);
+    line-height: 1.18;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    max-width: 1180px;
+}
+
+.bm-about__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: clamp(40px, 6vw, 100px);
     align-items: center;
+    margin-top: clamp(64px, 9vw, 128px);
 }
 
-.section-badge {
-    display: inline-block;
-    padding: 8px 20px;
-    background: linear-gradient(135deg, rgba(201, 168, 124, 0.2), rgba(201, 168, 124, 0.1));
-    border: 1px solid rgba(201, 168, 124, 0.3);
-    border-radius: 30px;
-    color: #c9a87c;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 3px;
-    margin-bottom: 24px;
-}
-
-.about-title {
-    font-size: 2.8rem;
-    font-weight: 600;
-    color: #fff;
-    line-height: 1.2;
-    margin-bottom: 20px;
-}
-
-.about-subtitle {
-    font-size: 1.15rem;
-    color: rgba(255, 255, 255, 0.8);
-    line-height: 1.7;
-    margin-bottom: 16px;
-}
-
-.about-description {
-    font-size: 1rem;
-    color: rgba(255, 255, 255, 0.6);
-    line-height: 1.8;
-    margin-bottom: 40px;
-}
-
-.features-list {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-    margin-bottom: 40px;
-}
-
-.feature-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 16px;
-}
-
-.feature-icon {
-    width: 48px;
-    height: 48px;
-    min-width: 48px;
-    background: rgba(201, 168, 124, 0.15);
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #c9a87c;
-}
-
-.feature-icon svg {
-    width: 24px;
-    height: 24px;
-}
-
-.feature-text h4 {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #fff;
-    margin: 0 0 4px 0;
-}
-
-.feature-text p {
-    font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.5);
-    margin: 0;
-}
-
-.about-cta-group {
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
-}
-
-.about-cta {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.btn-outline {
-    background: transparent;
-    border: 2px solid rgba(201, 168, 124, 0.5);
-    color: #c9a87c;
-    padding: 12px 28px;
-    border-radius: 50px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    text-decoration: none;
-}
-
-.btn-outline:hover {
-    background: rgba(201, 168, 124, 0.1);
-    border-color: #c9a87c;
-    color: #c9a87c;
-}
-
-.about-visual {
+.bm-about__visual { position: relative; }
+.bm-about__frame {
     position: relative;
-}
-
-.visual-wrapper {
-    position: relative;
-    margin-bottom: 30px;
-}
-
-.about-image-wrapper {
-    display: block;
-    width: 100%;
-    border-radius: 24px;
     overflow: hidden;
+    border-radius: 999px 999px var(--radius-lg) var(--radius-lg);
+    aspect-ratio: 4 / 4.6;
+    box-shadow: 0 50px 90px -50px rgba(82, 26, 47, 0.55);
 }
-
-.about-image {
-    width: 100%;
-    height: auto;
-    display: block;
-    border-radius: 24px;
-    object-fit: cover;
-}
-
-.floating-card {
+.bm-about__frame picture, .bm-about__frame img { width: 100%; height: 100%; }
+.bm-about__frame img { object-fit: cover; }
+.bm-about__frame::after {
+    content: '';
     position: absolute;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    border-radius: 16px;
-    padding: 16px 20px;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 55%, rgba(56, 19, 34, 0.45));
+    pointer-events: none;
+}
+
+.bm-about__float {
+    position: absolute;
     display: flex;
     align-items: center;
-    gap: 12px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    gap: 14px;
+    padding: 14px 22px 14px 14px;
+    border-radius: 999px;
+    background: #fffaf5;
+    box-shadow: 0 24px 50px -24px rgba(82, 26, 47, 0.45);
+    color: var(--ink);
 }
-
-.card-1 {
-    bottom: 60px;
-    left: -30px;
-    animation: float 4s ease-in-out infinite;
-}
-
-.card-2 {
-    top: 40px;
-    right: -20px;
-    animation: float 4s ease-in-out infinite 1s;
-}
-
-@keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-}
-
-.card-icon {
-    width: 40px;
-    height: 40px;
-    background: linear-gradient(135deg, #c9a87c, #e8d5c4);
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-}
-
-.card-icon svg {
-    width: 20px;
-    height: 20px;
-}
-
-.card-text {
-    display: flex;
-    flex-direction: column;
-}
-
-.card-number {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #1a1a2e;
-}
-
-.card-label {
-    font-size: 0.75rem;
-    color: #666;
-}
-
-.stats-grid {
+.bm-about__float--a { left: -24px; bottom: 16%; }
+.bm-about__float--b { right: -18px; top: 18%; }
+.bm-about__float-icon {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--wine-600);
+    color: var(--cream-50);
 }
+.bm-about__float-text { display: grid; line-height: 1.15; }
+.bm-about__float-text strong { font-family: var(--font-display); font-size: 1.5rem; font-weight: 400; }
+.bm-about__float-text span { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-soft); }
 
-.stat-box {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 16px;
-    padding: 20px 16px;
-    text-align: center;
-    transition: all 0.3s ease;
-}
+.bm-about__desc { color: var(--ink-soft); font-size: 1.08rem; }
+.bm-about__actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 36px; }
 
-.stat-box:hover {
-    background: rgba(201, 168, 124, 0.1);
-    border-color: rgba(201, 168, 124, 0.3);
+.bm-about__stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    margin-top: clamp(44px, 5vw, 64px);
+    border-top: 1px solid var(--line-light);
 }
-
-.stat-number {
-    display: block;
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #c9a87c;
-    margin-bottom: 4px;
+.bm-about__stat {
+    display: grid;
+    gap: 6px;
+    padding: 26px 0 22px;
+    border-bottom: 1px solid var(--line-light);
 }
-
-.stat-label {
-    display: block;
-    font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.5);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+.bm-about__stat:nth-child(odd) { padding-right: 24px; border-right: 1px solid var(--line-light); }
+.bm-about__stat:nth-child(even) { padding-left: 28px; }
+.bm-about__stat-num {
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: clamp(2.6rem, 4.2vw, 3.9rem);
+    line-height: 1;
+    color: var(--wine-600);
 }
-
-@media (max-width: 1199.98px) {
-    .about-grid {
-        gap: 50px;
-    }
-    
-    .about-title {
-        font-size: 2.2rem;
-    }
-    
-    .floating-card.card-1 {
-        left: 10px;
-    }
-    
-    .floating-card.card-2 {
-        right: 10px;
-    }
-}
+.bm-about__stat-label { font-size: 0.74rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-soft); }
 
 @media (max-width: 991.98px) {
-    .about-grid {
-        grid-template-columns: 1fr;
-        gap: 60px;
-    }
-    
-    .about-content {
-        text-align: center;
-    }
-    
-    .features-list {
-        align-items: center;
-    }
-    
-    .feature-item {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-    }
-    
-    .about-visual {
-        max-width: 500px;
-        margin: 0 auto;
-    }
-    
-    .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
+    .bm-about__head { grid-template-columns: 1fr; gap: 18px; }
+    .bm-about__grid { grid-template-columns: 1fr; }
+    .bm-about__visual { max-width: 520px; width: 100%; margin-inline: auto; }
 }
-
 @media (max-width: 575.98px) {
-    .about-section {
-        padding: 0;
-    }
-    
-    .about-title {
-        font-size: 1.8rem;
-    }
-    
-    .about-cta-group {
-        justify-content: center;
-    }
-    
-    .floating-card {
-        padding: 12px 16px;
-    }
-    
-    .card-number {
-        font-size: 1rem;
-    }
-    
-    .stats-grid {
-        gap: 12px;
-    }
-    
-    .stat-box {
-        padding: 16px 12px;
-    }
-    
-    .stat-number {
-        font-size: 1.25rem;
-    }
+    .bm-about__float { padding: 10px 16px 10px 10px; }
+    .bm-about__float-icon { width: 36px; height: 36px; }
+    .bm-about__float--a { left: -6px; }
+    .bm-about__float--b { right: -6px; }
+    .bm-about__actions .bm-btn { flex: 1 1 auto; }
 }
 </style>

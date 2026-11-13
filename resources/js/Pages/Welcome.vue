@@ -1,14 +1,14 @@
 <script setup>
 import { Head, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
-import Navbar from '@/Components/Navbar.vue';
+import SiteLayout from '@/Layouts/SiteLayout.vue';
+import Marquee from '@/Components/Site/Marquee.vue';
 import HeroSection from '@/Components/HeroSection.vue';
 import ServiceCategoriesSection from '@/Components/ServiceCategoriesSection.vue';
 import ServicesSection from '@/Components/ServicesSection.vue';
 import AboutSection from '@/Components/AboutSection.vue';
 import EquipmentSection from '@/Components/EquipmentSection.vue';
 import NewsletterSection from '@/Components/NewsletterSection.vue';
-import Footer from '@/Components/Footer.vue';
 
 const page = usePage();
 const locale = computed(() => page.props.locale || 'en');
@@ -48,6 +48,15 @@ const seoKeywords = computed(() => {
     return locale.value === 'mk'
         ? 'ласерски центар, laserski centar, естетски центар, estetski centar, ласерско естетски центар, lasersko estetski centar, најдобар спа центар, najdobar spa center, најдобар ласерски центар, najdobar laserski centar, најдобар дерматолошки центар, najdobar dermatoloski centar, babor medical, нега на кожа'
         : 'laser center, aesthetic center, laser aesthetic center, babor medical, skincare, dermatology, spa center, laser treatments, skin care, premium skincare, beauty treatments';
+});
+
+const ribbonTreatments = computed(() => locale.value === 'mk'
+    ? ['Ласерска естетика', 'Козметологија', 'Инјектибилни методи', 'Третмани на тело', 'BABOR нега на кожа']
+    : ['Laser Aesthetics', 'Cosmetology', 'Injectable Methods', 'Body Treatments', 'BABOR Skincare']);
+
+const ribbonDevices = computed(() => {
+    const names = (props.equipment || []).map((item) => item.title).filter(Boolean);
+    return names.length ? [...names, 'BABOR'] : ['Alma Soprano Titanium', 'Alma Hybrid', 'Alma Accent Prime', 'Alma Q', 'BABOR'];
 });
 
 const ogLocale = computed(() => locale.value === 'mk' ? 'mk_MK' : 'en_US');
@@ -144,16 +153,31 @@ const jsonLd = computed(() => {
         <component is="script" type="application/ld+json" v-html="jsonLd" />
     </Head>
 
-    <div class="main-wrapper">
-        <Navbar />
-        <main>
-            <HeroSection :slides="slides" />
-            <AboutSection :about="about" />
-            <ServicesSection :services="services" />
-            <ServiceCategoriesSection />
-            <EquipmentSection :equipment="equipment" />
-            <NewsletterSection />
-        </main>
-        <Footer />
-    </div>
+    <SiteLayout>
+        <HeroSection :slides="slides" />
+        <!-- One calm, straight ribbon (treatments + devices) instead of the two
+             crossing tilted bands — same words, quieter and ours. -->
+        <div class="bm-ribbons" aria-label="Babor Medical">
+            <Marquee :items="[...ribbonTreatments, ...ribbonDevices]" variant="wine" :duration="74" />
+        </div>
+        <AboutSection :about="about" />
+        <ServicesSection :services="services" />
+        <ServiceCategoriesSection />
+        <EquipmentSection :equipment="equipment" />
+        <NewsletterSection />
+    </SiteLayout>
 </template>
+
+<style scoped>
+.bm-ribbons {
+    position: relative;
+    z-index: 3;
+    background: var(--wine-950);
+    padding: clamp(36px, 5vw, 64px) 0 clamp(72px, 8vw, 112px);
+    overflow: hidden;
+}
+.bm-ribbons :deep(.bm-marquee) {
+    width: 100%;
+    margin-left: 0;
+}
+</style>

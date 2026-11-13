@@ -1,11 +1,13 @@
 <script setup>
 import { Head, usePage } from '@inertiajs/vue3';
 import { computed, ref, reactive } from 'vue';
-import Navbar from '@/Components/Navbar.vue';
-import Footer from '@/Components/Footer.vue';
-import { useScrollAnimation } from '@/Composables/useScrollAnimation';
-
-useScrollAnimation();
+import SiteLayout from '@/Layouts/SiteLayout.vue';
+import PageHero from '@/Components/Site/PageHero.vue';
+import MaskText from '@/Components/Site/MaskText.vue';
+import Marquee from '@/Components/Site/Marquee.vue';
+import Counter from '@/Components/Site/Counter.vue';
+import RotatingBadge from '@/Components/Site/RotatingBadge.vue';
+import Icon from '@/Components/Site/Icon.vue';
 
 const props = defineProps({
     postings: Array,
@@ -151,6 +153,16 @@ const submitApplication = async (postingId) => {
         isSubmitting.value = false;
     }
 };
+
+// ---- Presentation-only helpers (redesign) ----
+const pad = (n) => String(n).padStart(2, '0');
+// Requirements are entered "one per line" in the admin; show each line as a bullet.
+const requirementLines = (text) => String(text || '').split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+const dragOver = ref(false);
+const ribbonItems = computed(() => {
+    const items = [content.value.title, ...(props.postings || []).map((p) => p.title), content.value.openPositions];
+    return items.length < 5 ? [...items, ...items] : items;
+});
 </script>
 
 <template>
@@ -168,550 +180,635 @@ const submitApplication = async (postingId) => {
         <link rel="alternate" hreflang="mk" href="https://babormedical.com/careers?lang=mk" />
         <link rel="alternate" hreflang="x-default" href="https://babormedical.com/careers" />
     </Head>
-
-    <div class="main-wrapper">
-        <Navbar />
-
-        <section class="careers-hero">
-            <div class="container">
-                <div class="hero-content fade-in-up">
-                    <span class="section-badge">{{ content.badge }}</span>
-                    <h1 class="hero-title">{{ content.title }}</h1>
-                    <p class="hero-subtitle">{{ content.subtitle }}</p>
+    <SiteLayout>
+        <PageHero
+            :eyebrow="content.badge"
+            :title="content.title"
+            :subtitle="content.subtitle"
+            :crumb="locale === 'mk' ? 'Кариера' : 'Careers'"
+            class="cr-hero"
+        >
+            <template v-if="postings.length > 0" #default>
+                <a href="#open-positions" class="bm-btn">
+                    <span>{{ content.openPositions }}</span>
+                    <span class="bm-btn__icon"><Icon name="arrow-down" :stroke="2" /></span>
+                </a>
+            </template>
+            <template #aside>
+                <div class="cr-art" aria-hidden="true">
+                    <div class="cr-art__arch">
+                        <span class="cr-art__line cr-art__line--1"></span>
+                        <span class="cr-art__line cr-art__line--2"></span>
+                        <template v-if="postings.length > 0">
+                            <span class="cr-art__count"><Counter :value="pad(postings.length)" /></span>
+                            <span class="cr-art__label">{{ content.openPositions }}</span>
+                        </template>
+                        <span v-else class="cr-art__icon"><Icon name="briefcase" :size="44" :stroke="1.2" /></span>
+                    </div>
+                    <RotatingBadge :size="150" class="cr-art__seal" />
                 </div>
-            </div>
-        </section>
+            </template>
+        </PageHero>
 
-        <section class="careers-section">
-            <div class="container">
+        <section id="open-positions" class="cr-main bm-cream bm-sheet bm-section">
+            <div class="bm-container">
                 <template v-if="postings.length > 0">
-                    <h2 class="section-title fade-in-up">{{ content.openPositions }}</h2>
+                    <div class="cr-head">
+                        <h2 class="bm-h2 cr-head__title"><MaskText :text="content.openPositions" /></h2>
+                    </div>
 
-                    <div class="postings-list">
-                        <div
-                            v-for="posting in postings"
+                    <div class="cr-list">
+                        <article
+                            v-for="(posting, index) in postings"
                             :key="posting.id"
-                            class="posting-card fade-in-up"
+                            class="cr-role"
+                            :class="{ 'is-open': activeFormId === posting.id, 'is-sent': submittedId === posting.id }"
+                            data-reveal
+                            :style="{ '--d': `${index * 0.08}s` }"
                         >
-                            <div class="posting-header">
-                                <div class="posting-info">
-                                    <h3 class="posting-title">{{ posting.title }}</h3>
-                                    <div class="posting-meta">
-                                        <span v-if="posting.location" class="meta-item">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                                                <circle cx="12" cy="10" r="3"/>
-                                            </svg>
+                            <header class="cr-role__head">
+                                <span class="bm-numeral cr-role__num" aria-hidden="true">{{ pad(index + 1) }}</span>
+                                <div class="cr-role__heading">
+                                    <h3 class="cr-role__title">{{ posting.title }}</h3>
+                                    <div class="cr-role__meta">
+                                        <span v-if="posting.location" class="cr-meta">
+                                            <Icon name="pin" :size="16" :stroke="1.7" />
                                             {{ posting.location }}
                                         </span>
-                                        <span class="meta-item">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <circle cx="12" cy="12" r="10"/>
-                                                <polyline points="12 6 12 12 16 14"/>
-                                            </svg>
+                                        <span class="cr-meta">
+                                            <Icon name="clock" :size="16" :stroke="1.7" />
                                             {{ employmentTypeLabel(posting.employment_type) }}
                                         </span>
                                     </div>
                                 </div>
                                 <button
                                     v-if="submittedId !== posting.id"
-                                    class="btn-cta apply-btn"
+                                    type="button"
+                                    class="bm-btn bm-btn--wine cr-role__apply"
+                                    :class="{ 'is-active': activeFormId === posting.id }"
+                                    :aria-expanded="activeFormId === posting.id ? 'true' : 'false'"
                                     @click="toggleForm(posting.id)"
                                 >
-                                    {{ activeFormId === posting.id ? content.close : content.apply }}
+                                    <span>{{ activeFormId === posting.id ? content.close : content.apply }}</span>
+                                    <span class="bm-btn__icon"><Icon :name="activeFormId === posting.id ? 'close' : 'arrow-right'" :stroke="2" /></span>
                                 </button>
-                            </div>
+                            </header>
 
-                            <div v-if="posting.description" class="posting-description">{{ posting.description }}</div>
+                            <div v-if="posting.description || posting.requirements" class="cr-role__body">
+                                <div v-if="posting.description" class="cr-role__desc">{{ posting.description }}</div>
 
-                            <div v-if="posting.requirements" class="posting-requirements">
-                                <h4>{{ content.requirements }}</h4>
-                                <div class="requirements-text">{{ posting.requirements }}</div>
-                            </div>
-
-                            <!-- Success message -->
-                            <div v-if="submittedId === posting.id" class="success-message">
-                                <div class="success-icon">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                                        <polyline points="22 4 12 14.01 9 11.01"/>
-                                    </svg>
+                                <div v-if="posting.requirements" class="cr-role__req">
+                                    <h4 class="cr-role__req-title">{{ content.requirements }}</h4>
+                                    <ul class="bm-list cr-role__req-list">
+                                        <li v-for="(line, li) in requirementLines(posting.requirements)" :key="li">{{ line }}</li>
+                                    </ul>
                                 </div>
-                                <h3>{{ content.successTitle }}</h3>
-                                <p>{{ content.successText }}</p>
                             </div>
 
-                            <!-- Application form -->
-                            <form
-                                v-else-if="activeFormId === posting.id"
-                                @submit.prevent="submitApplication(posting.id)"
-                                class="application-form"
-                            >
-                                <h4 class="form-heading">{{ content.applyFor }}: {{ posting.title }}</h4>
-
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label :for="`name-${posting.id}`">{{ content.name }} *</label>
-                                        <input
-                                            type="text"
-                                            :id="`name-${posting.id}`"
-                                            v-model="form.name"
-                                            required
-                                            :placeholder="content.name"
-                                        >
-                                        <span v-if="fieldErrors.name" class="field-error">{{ fieldErrors.name }}</span>
+                            <Transition name="cr-unfold" mode="out-in">
+                                <!-- Success message -->
+                                <div v-if="submittedId === posting.id" class="cr-success" role="status">
+                                    <div class="cr-success__icon">
+                                        <Icon name="check" :size="30" :stroke="1.8" />
                                     </div>
-                                    <div class="form-group">
-                                        <label :for="`email-${posting.id}`">{{ content.email }} *</label>
-                                        <input
-                                            type="email"
-                                            :id="`email-${posting.id}`"
-                                            v-model="form.email"
-                                            required
-                                            :placeholder="content.email"
-                                        >
-                                        <span v-if="fieldErrors.email" class="field-error">{{ fieldErrors.email }}</span>
+                                    <h3 class="bm-h3">{{ content.successTitle }}</h3>
+                                    <p>{{ content.successText }}</p>
+                                </div>
+
+                                <!-- Application form -->
+                                <form
+                                    v-else-if="activeFormId === posting.id"
+                                    @submit.prevent="submitApplication(posting.id)"
+                                    class="cr-apply"
+                                >
+                                    <div class="cr-apply__glow" aria-hidden="true"></div>
+                                    <h4 class="cr-apply__title">{{ content.applyFor }}: <em>{{ posting.title }}</em></h4>
+
+                                    <div class="cr-apply__grid">
+                                        <div class="bm-field">
+                                            <label class="bm-label" :for="`name-${posting.id}`">{{ content.name }} *</label>
+                                            <input
+                                                type="text"
+                                                class="bm-input"
+                                                :id="`name-${posting.id}`"
+                                                v-model="form.name"
+                                                required
+                                                :placeholder="content.name"
+                                            >
+                                            <span v-if="fieldErrors.name" class="cr-field-error">{{ fieldErrors.name }}</span>
+                                        </div>
+                                        <div class="bm-field">
+                                            <label class="bm-label" :for="`email-${posting.id}`">{{ content.email }} *</label>
+                                            <input
+                                                type="email"
+                                                class="bm-input"
+                                                :id="`email-${posting.id}`"
+                                                v-model="form.email"
+                                                required
+                                                :placeholder="content.email"
+                                            >
+                                            <span v-if="fieldErrors.email" class="cr-field-error">{{ fieldErrors.email }}</span>
+                                        </div>
+
+                                        <div class="bm-field">
+                                            <label class="bm-label" :for="`phone-${posting.id}`">{{ content.phone }}</label>
+                                            <input
+                                                type="tel"
+                                                class="bm-input"
+                                                :id="`phone-${posting.id}`"
+                                                v-model="form.phone"
+                                                :placeholder="content.phone"
+                                            >
+                                            <span v-if="fieldErrors.phone" class="cr-field-error">{{ fieldErrors.phone }}</span>
+                                        </div>
+
+                                        <div class="bm-field cr-apply__full">
+                                            <label class="bm-label" :for="`message-${posting.id}`">{{ content.message }}</label>
+                                            <textarea
+                                                class="bm-input"
+                                                :id="`message-${posting.id}`"
+                                                v-model="form.message"
+                                                rows="4"
+                                                :placeholder="content.message"
+                                            ></textarea>
+                                            <span v-if="fieldErrors.message" class="cr-field-error">{{ fieldErrors.message }}</span>
+                                        </div>
+
+                                        <div class="bm-field cr-apply__full">
+                                            <label class="bm-label" :for="`cv-${posting.id}`">{{ content.cv }} *</label>
+                                            <label
+                                                class="cr-drop"
+                                                :class="{ 'has-file': cvFileName, 'is-drag': dragOver }"
+                                                :for="`cv-${posting.id}`"
+                                                @dragenter="dragOver = true"
+                                                @dragleave="dragOver = false"
+                                                @drop="dragOver = false"
+                                            >
+                                                <input
+                                                    type="file"
+                                                    :id="`cv-${posting.id}`"
+                                                    @change="handleCvChange"
+                                                    accept=".pdf,.doc,.docx"
+                                                    required
+                                                    class="cr-drop__input"
+                                                >
+                                                <span class="cr-drop__icon">
+                                                    <Icon :name="cvFileName ? 'file' : 'upload'" :size="24" :stroke="1.6" />
+                                                </span>
+                                                <span class="cr-drop__text">
+                                                    <span class="cr-drop__name">{{ cvFileName || content.chooseFile }}</span>
+                                                    <small class="cr-drop__hint">{{ content.cvHint }}</small>
+                                                </span>
+                                                <span class="cr-drop__mark" aria-hidden="true">
+                                                    <Icon :name="cvFileName ? 'check' : 'plus'" :size="18" :stroke="2" />
+                                                </span>
+                                            </label>
+                                            <span v-if="fieldErrors.cv" class="cr-field-error">{{ fieldErrors.cv }}</span>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div class="form-group">
-                                    <label :for="`phone-${posting.id}`">{{ content.phone }}</label>
-                                    <input
-                                        type="tel"
-                                        :id="`phone-${posting.id}`"
-                                        v-model="form.phone"
-                                        :placeholder="content.phone"
-                                    >
-                                    <span v-if="fieldErrors.phone" class="field-error">{{ fieldErrors.phone }}</span>
-                                </div>
+                                    <div v-if="errorMessage" class="cr-error" role="alert">
+                                        <Icon name="info" :size="18" :stroke="1.8" />
+                                        <span>{{ errorMessage }}</span>
+                                    </div>
 
-                                <div class="form-group">
-                                    <label :for="`message-${posting.id}`">{{ content.message }}</label>
-                                    <textarea
-                                        :id="`message-${posting.id}`"
-                                        v-model="form.message"
-                                        rows="4"
-                                        :placeholder="content.message"
-                                    ></textarea>
-                                    <span v-if="fieldErrors.message" class="field-error">{{ fieldErrors.message }}</span>
-                                </div>
-
-                                <div class="form-group">
-                                    <label :for="`cv-${posting.id}`">{{ content.cv }} *</label>
-                                    <label class="file-input-wrapper" :for="`cv-${posting.id}`">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
-                                        </svg>
-                                        <span>{{ cvFileName || content.chooseFile }}</span>
-                                    </label>
-                                    <input
-                                        type="file"
-                                        :id="`cv-${posting.id}`"
-                                        @change="handleCvChange"
-                                        accept=".pdf,.doc,.docx"
-                                        required
-                                        class="file-input-hidden"
-                                    >
-                                    <small class="file-hint">{{ content.cvHint }}</small>
-                                    <span v-if="fieldErrors.cv" class="field-error">{{ fieldErrors.cv }}</span>
-                                </div>
-
-                                <div v-if="errorMessage" class="error-message">
-                                    {{ errorMessage }}
-                                </div>
-
-                                <button type="submit" class="btn-cta submit-btn" :disabled="isSubmitting">
-                                    {{ isSubmitting ? content.submitting : content.submit }}
-                                    <svg v-if="!isSubmitting" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
-                                    </svg>
-                                </button>
-                            </form>
-                        </div>
+                                    <div class="cr-apply__actions">
+                                        <button type="submit" class="bm-btn cr-submit" :disabled="isSubmitting">
+                                            <span>{{ isSubmitting ? content.submitting : content.submit }}</span>
+                                            <span class="bm-btn__icon">
+                                                <Icon v-if="!isSubmitting" name="arrow-up-right" :stroke="2" />
+                                                <span v-else class="cr-spinner" aria-hidden="true"></span>
+                                            </span>
+                                        </button>
+                                    </div>
+                                </form>
+                            </Transition>
+                        </article>
                     </div>
                 </template>
 
-                <div v-else class="no-positions fade-in-up">
-                    <div class="no-positions-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
-                            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
-                        </svg>
+                <div v-else class="cr-empty" data-reveal>
+                    <div class="cr-empty__icon">
+                        <Icon name="briefcase" :size="40" :stroke="1.3" />
                     </div>
-                    <h2>{{ content.noPositionsTitle }}</h2>
-                    <p>{{ content.noPositionsText }}</p>
+                    <h2 class="bm-h2 cr-empty__title">{{ content.noPositionsTitle }}</h2>
+                    <p class="bm-lead bm-muted">{{ content.noPositionsText }}</p>
                 </div>
             </div>
         </section>
 
-        <Footer />
-    </div>
+        <!-- Crossing ribbons (decorative) -->
+        <div class="cr-ribbons" aria-hidden="true">
+            <Marquee :items="ribbonItems" variant="wine" :tilt="-2.4" :duration="46" />
+            <Marquee :items="ribbonItems" variant="outline" :tilt="1.8" :duration="54" reverse />
+        </div>
+    </SiteLayout>
 </template>
 
 <style scoped>
-.careers-hero {
-    padding: 80px 0 60px;
-    text-align: center;
+/* ---------- Hero visual ---------- */
+.cr-art {
+    position: relative;
+    width: min(100%, 420px);
+    margin-left: auto;
+    margin-right: clamp(0px, 3vw, 40px);
 }
-
-.hero-content {
-    max-width: 700px;
-    margin: 0 auto;
-}
-
-.section-badge {
-    display: inline-block;
-    padding: 8px 20px;
-    background: linear-gradient(135deg, rgba(201, 168, 124, 0.2), rgba(201, 168, 124, 0.1));
-    border: 1px solid rgba(201, 168, 124, 0.3);
-    border-radius: 30px;
-    color: #c9a87c;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 3px;
-    margin-bottom: 24px;
-}
-
-.hero-title {
-    font-size: 3rem;
-    font-weight: 600;
-    color: #fff;
-    margin-bottom: 20px;
-    line-height: 1.2;
-}
-
-.hero-subtitle {
-    font-size: 1.15rem;
-    color: rgba(255, 255, 255, 0.7);
-    line-height: 1.8;
-}
-
-.careers-section {
-    padding: 40px 0 100px;
-}
-
-.section-title {
-    font-size: 1.8rem;
-    font-weight: 600;
-    color: #fff;
-    margin-bottom: 30px;
-}
-
-.postings-list {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-}
-
-.posting-card {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 24px;
-    padding: 32px 40px;
-    transition: border-color 0.3s ease;
-}
-
-.posting-card:hover {
-    border-color: rgba(201, 168, 124, 0.3);
-}
-
-.posting-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 20px;
-    flex-wrap: wrap;
-}
-
-.posting-title {
-    font-size: 1.4rem;
-    font-weight: 600;
-    color: #fff;
-    margin-bottom: 10px;
-}
-
-.posting-meta {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-}
-
-.meta-item {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    color: #c9a87c;
-    font-size: 0.9rem;
-}
-
-.meta-item svg {
-    width: 16px;
-    height: 16px;
-}
-
-.apply-btn {
-    flex-shrink: 0;
-}
-
-.posting-description {
-    color: rgba(255, 255, 255, 0.7);
-    line-height: 1.8;
-    margin-top: 20px;
-    white-space: pre-line;
-}
-
-.posting-requirements {
-    margin-top: 20px;
-}
-
-.posting-requirements h4 {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #fff;
-    margin-bottom: 10px;
-}
-
-.requirements-text {
-    color: rgba(255, 255, 255, 0.7);
-    line-height: 1.8;
-    white-space: pre-line;
-}
-
-.application-form {
-    margin-top: 30px;
-    padding-top: 30px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.form-heading {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #c9a87c;
-    margin-bottom: 4px;
-}
-
-.form-row {
+.cr-art__arch {
+    position: relative;
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-}
-
-.form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.form-group label {
-    font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.7);
-    font-weight: 500;
-}
-
-.form-group input,
-.form-group textarea {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    padding: 14px 18px;
-    color: #fff;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-}
-
-.form-group input::placeholder,
-.form-group textarea::placeholder {
-    color: rgba(255, 255, 255, 0.4);
-}
-
-.form-group input:focus,
-.form-group textarea:focus {
-    outline: none;
-    border-color: #c9a87c;
-    background: rgba(201, 168, 124, 0.1);
-}
-
-.form-group textarea {
-    resize: vertical;
-    min-height: 100px;
-}
-
-.file-input-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px dashed rgba(201, 168, 124, 0.4);
-    border-radius: 12px;
-    padding: 14px 18px;
-    color: rgba(255, 255, 255, 0.7);
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.file-input-wrapper:hover {
-    border-color: #c9a87c;
-    background: rgba(201, 168, 124, 0.1);
-}
-
-.file-input-wrapper svg {
-    width: 18px;
-    height: 18px;
-    color: #c9a87c;
-    flex-shrink: 0;
-}
-
-.file-input-wrapper span {
+    place-content: center;
+    justify-items: center;
+    gap: 18px;
+    aspect-ratio: 4 / 5;
+    border-radius: 999px 999px var(--radius-md) var(--radius-md);
+    border: 1px solid rgba(217, 185, 149, 0.28);
     overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    background:
+        radial-gradient(60% 50% at 50% 45%, rgba(217, 185, 149, 0.2) 0%, transparent 70%),
+        radial-gradient(90% 60% at 50% 100%, rgba(140, 42, 72, 0.65) 0%, transparent 70%),
+        linear-gradient(180deg, var(--wine-850) 0%, var(--wine-800) 100%);
 }
-
-.file-input-hidden {
+.cr-art__line {
     position: absolute;
-    width: 1px;
-    height: 1px;
-    opacity: 0;
+    border: 1px solid rgba(217, 185, 149, 0.16);
+    border-radius: 999px 999px 10px 10px;
     pointer-events: none;
 }
-
-.file-hint {
-    color: rgba(255, 255, 255, 0.4);
-    font-size: 0.8rem;
+.cr-art__line--1 { inset: 22px; }
+.cr-art__line--2 { inset: 48px; border-color: rgba(217, 185, 149, 0.1); }
+.cr-art__count {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(7rem, 12vw, 11rem);
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: var(--gold-300);
+}
+.cr-art__label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--on-dark-muted);
+    text-align: center;
+    padding-inline: 60px;
+}
+.cr-art__icon {
+    display: grid;
+    place-items: center;
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    border: 1px solid rgba(217, 185, 149, 0.35);
+    color: var(--gold-300);
+}
+.cr-art__seal {
+    position: absolute;
+    left: -56px;
+    bottom: 36px;
 }
 
-.field-error {
-    color: #ff6b6b;
-    font-size: 0.85rem;
+/* ---------- Section head ---------- */
+.cr-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 32px;
+    padding-bottom: clamp(28px, 3.5vw, 44px);
+    margin-bottom: clamp(36px, 4.5vw, 64px);
+    border-bottom: 1px solid var(--line-light);
 }
 
-.error-message {
-    background: rgba(220, 53, 69, 0.15);
-    border: 1px solid rgba(220, 53, 69, 0.3);
-    color: #ff6b6b;
-    padding: 12px 16px;
-    border-radius: 8px;
-    font-size: 0.9rem;
+/* ---------- Roles ---------- */
+.cr-list { display: grid; gap: clamp(20px, 2.4vw, 32px); }
+
+.cr-role {
+    position: relative;
+    padding: clamp(26px, 3.6vw, 52px);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--line-light);
+    background: #fffaf5;
+    box-shadow: 0 40px 80px -56px rgba(82, 26, 47, 0.4);
+    transition: border-color 0.5s var(--ease-out), box-shadow 0.6s var(--ease-out);
+}
+.cr-role:hover,
+.cr-role.is-open {
+    border-color: rgba(110, 32, 57, 0.3);
+    box-shadow: 0 50px 90px -50px rgba(82, 26, 47, 0.5);
 }
 
-.submit-btn {
+.cr-role__head {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: clamp(18px, 2.6vw, 40px);
+    align-items: center;
+}
+.cr-role__num { font-size: clamp(3.2rem, 5.4vw, 5rem); }
+.cr-role__title {
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: clamp(1.7rem, 3vw, 2.75rem);
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+}
+.cr-role__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 16px;
+}
+.cr-meta {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    gap: 10px;
-    align-self: flex-start;
+    gap: 8px;
+    padding: 7px 14px 7px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--line-light);
+    background: var(--cream-100);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--wine-700);
+    line-height: 1.3;
 }
+.cr-meta svg { flex: none; color: var(--wine-600); }
 
-.submit-btn:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
+.cr-role__apply.is-active { --btn-bg: var(--wine-800); --btn-fill: var(--wine-600); }
+
+.cr-role__body {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    gap: clamp(32px, 5vw, 80px);
+    margin-top: clamp(28px, 3.4vw, 44px);
+    padding-top: clamp(28px, 3.4vw, 44px);
+    border-top: 1px solid var(--line-light);
 }
-
-.success-message {
-    text-align: center;
-    padding: 40px 20px;
-    margin-top: 20px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+.cr-role__body > :only-child { grid-column: 1 / -1; max-width: 860px; }
+.cr-role__desc {
+    color: var(--ink-soft);
+    font-size: 1.05rem;
+    line-height: 1.85;
+    white-space: pre-line;
 }
+.cr-role__req-title {
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--wine-600);
+    margin-bottom: 20px;
+}
+.cr-role__req-list { color: var(--ink); gap: 0; }
+.cr-role__req-list li {
+    padding-block: 12px;
+    border-bottom: 1px solid var(--line-light);
+    font-size: 0.98rem;
+}
+.cr-role__req-list li:first-child { padding-top: 0; }
+.cr-role__req-list li:first-child::before { top: 0.62em; }
+.cr-role__req-list li:first-child::after { top: calc(0.62em - 2px); }
+.cr-role__req-list li:not(:first-child)::before { top: calc(12px + 0.62em); }
+.cr-role__req-list li:not(:first-child)::after { top: calc(12px + 0.62em - 2px); }
+.cr-role__req-list li:last-child { border-bottom: 0; }
 
-.success-icon {
-    width: 80px;
-    height: 80px;
-    margin: 0 auto 24px;
-    background: linear-gradient(135deg, rgba(201, 168, 124, 0.2), rgba(201, 168, 124, 0.1));
+/* ---------- Application form (refined dark panel) ---------- */
+.cr-apply {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    margin-top: clamp(28px, 3.4vw, 44px);
+    padding: clamp(26px, 3.6vw, 52px);
+    border-radius: calc(var(--radius-lg) - 6px);
+    background:
+        radial-gradient(90% 80% at 100% 0%, rgba(140, 42, 72, 0.5) 0%, transparent 60%),
+        linear-gradient(160deg, var(--wine-800) 0%, var(--wine-900) 100%);
+    color: var(--on-dark);
+    display: grid;
+    gap: 26px;
+}
+.cr-apply__glow {
+    position: absolute;
+    width: 420px;
+    height: 420px;
+    left: -140px;
+    bottom: -220px;
     border-radius: 50%;
+    background: radial-gradient(circle, rgba(217, 185, 149, 0.16), transparent 65%);
+    z-index: -1;
+    pointer-events: none;
+}
+.cr-apply__title {
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: clamp(1.4rem, 2.2vw, 2rem);
+    line-height: 1.2;
+}
+.cr-apply__title em { color: var(--gold-300); }
+.cr-apply__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
+}
+.cr-apply__grid > .bm-field { align-content: start; }
+.cr-apply__full { grid-column: 1 / -1; }
+
+.cr-apply .bm-input {
+    border-color: var(--line-dark);
+    background: rgba(246, 238, 230, 0.05);
+    color: var(--on-dark);
+}
+.cr-apply .bm-input::placeholder { color: var(--on-dark-faint); }
+.cr-apply .bm-input:focus {
+    border-color: var(--gold-300);
+    background: rgba(246, 238, 230, 0.08);
+    box-shadow: 0 0 0 4px rgba(217, 185, 149, 0.12);
+}
+.cr-apply textarea.bm-input { min-height: 140px; }
+
+.cr-field-error { color: #f3b5b5; font-size: 0.85rem; line-height: 1.4; }
+
+/* File drop zone — the real <input type=file> covers the whole zone, so
+   clicking, keyboard and native drag-and-drop all work. */
+.cr-drop {
+    position: relative;
     display: flex;
     align-items: center;
-    justify-content: center;
-    color: #c9a87c;
+    gap: 20px;
+    padding: 26px 26px;
+    border-radius: 20px;
+    border: 1px dashed rgba(217, 185, 149, 0.45);
+    background: rgba(22, 10, 14, 0.25);
+    cursor: pointer;
+    transition: border-color 0.4s var(--ease-out), background 0.4s var(--ease-out), box-shadow 0.4s;
 }
-
-.success-icon svg {
+.cr-drop:hover,
+.cr-drop.is-drag {
+    border-color: var(--gold-300);
+    background: rgba(217, 185, 149, 0.08);
+}
+.cr-drop.is-drag { border-style: solid; box-shadow: 0 0 0 6px rgba(217, 185, 149, 0.1); }
+.cr-drop:focus-within { border-color: var(--gold-300); box-shadow: 0 0 0 4px rgba(217, 185, 149, 0.16); }
+.cr-drop.has-file { border-style: solid; border-color: rgba(217, 185, 149, 0.6); }
+.cr-drop__input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 2;
+}
+.cr-drop__icon {
+    display: grid;
+    place-items: center;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    flex: none;
+    background: var(--beige-200);
+    color: var(--wine-700);
+    transition: transform 0.6s var(--ease-out);
+}
+.cr-drop:hover .cr-drop__icon,
+.cr-drop.is-drag .cr-drop__icon { transform: translateY(-4px); }
+.cr-drop__text { display: grid; gap: 4px; min-width: 0; flex: 1; }
+.cr-drop__name {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    line-height: 1.3;
+}
+.cr-drop__hint { color: var(--on-dark-faint); font-size: 0.82rem; letter-spacing: 0.02em; }
+.cr-drop__mark {
+    display: grid;
+    place-items: center;
     width: 40px;
     height: 40px;
-}
-
-.success-message h3 {
-    font-size: 1.5rem;
-    color: #fff;
-    margin-bottom: 12px;
-}
-
-.success-message p {
-    color: rgba(255, 255, 255, 0.7);
-    max-width: 500px;
-    margin: 0 auto;
-}
-
-.no-positions {
-    text-align: center;
-    padding: 60px 20px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 24px;
-    max-width: 600px;
-    margin: 0 auto;
-}
-
-.no-positions-icon {
-    width: 90px;
-    height: 90px;
-    margin: 0 auto 24px;
-    background: linear-gradient(135deg, rgba(201, 168, 124, 0.2), rgba(201, 168, 124, 0.1));
     border-radius: 50%;
+    border: 1px solid var(--line-dark);
+    color: var(--gold-300);
+    flex: none;
+}
+.cr-drop.has-file .cr-drop__mark { background: var(--gold-300); border-color: var(--gold-300); color: var(--wine-800); }
+
+.cr-error {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #c9a87c;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 18px;
+    border-radius: 14px;
+    border: 1px solid rgba(243, 181, 181, 0.35);
+    background: rgba(243, 181, 181, 0.08);
+    color: #f6c6c6;
+    font-size: 0.94rem;
+    line-height: 1.5;
 }
+.cr-error svg { flex: none; margin-top: 1px; }
 
-.no-positions-icon svg {
-    width: 44px;
-    height: 44px;
+.cr-submit { min-width: 260px; justify-content: space-between; }
+.cr-spinner {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid rgba(232, 213, 196, 0.3);
+    border-top-color: var(--beige-200);
+    animation: cr-spin 0.8s linear infinite;
 }
+@keyframes cr-spin { to { transform: rotate(360deg); } }
 
-.no-positions h2 {
-    font-size: 1.5rem;
-    color: #fff;
-    margin-bottom: 12px;
+/* ---------- Success ---------- */
+.cr-success {
+    display: grid;
+    justify-items: center;
+    gap: 12px;
+    text-align: center;
+    margin-top: clamp(28px, 3.4vw, 44px);
+    padding: clamp(36px, 5vw, 64px) clamp(20px, 4vw, 48px);
+    border-radius: calc(var(--radius-lg) - 6px);
+    background:
+        radial-gradient(70% 90% at 50% 0%, rgba(140, 42, 72, 0.45) 0%, transparent 65%),
+        linear-gradient(160deg, var(--wine-800) 0%, var(--wine-900) 100%);
+    color: var(--on-dark);
 }
+.cr-success__icon {
+    display: grid;
+    place-items: center;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: var(--beige-200);
+    color: var(--wine-800);
+    margin-bottom: 8px;
+    box-shadow: 0 0 0 12px rgba(232, 213, 196, 0.08);
+}
+.cr-success p { color: var(--on-dark-muted); max-width: 540px; }
 
-.no-positions p {
-    color: rgba(255, 255, 255, 0.7);
+.cr-unfold-enter-active { transition: opacity 0.6s var(--ease-out), transform 0.8s var(--ease-out), clip-path 0.9s var(--ease-out); }
+.cr-unfold-leave-active { transition: opacity 0.3s ease, transform 0.4s ease; }
+.cr-unfold-enter-from { opacity: 0; transform: translateY(24px); clip-path: inset(0 0 100% 0 round 22px); }
+.cr-unfold-enter-to { clip-path: inset(0 0 0 0 round 22px); }
+.cr-unfold-leave-to { opacity: 0; transform: translateY(-10px); }
+
+/* ---------- Empty state ---------- */
+.cr-empty {
+    display: grid;
+    justify-items: center;
+    gap: 22px;
+    max-width: 720px;
+    margin-inline: auto;
+    text-align: center;
+}
+.cr-empty__icon {
+    display: grid;
+    place-items: center;
+    width: 132px;
+    height: 160px;
+    border-radius: 999px 999px 18px 18px;
+    background: linear-gradient(170deg, var(--wine-700), var(--wine-900));
+    color: var(--gold-300);
+    box-shadow: 0 40px 80px -40px rgba(82, 26, 47, 0.6);
+    margin-bottom: 8px;
+}
+.cr-empty__title { color: var(--ink); }
+
+/* ---------- Ribbons ---------- */
+.cr-ribbons {
+    position: relative;
+    display: grid;
+    background: var(--wine-950);
+    padding: clamp(64px, 8vw, 116px) 0 clamp(40px, 5vw, 72px);
+    overflow: hidden;
+}
+.cr-ribbons > * { grid-area: 1 / 1; align-self: center; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1199.98px) {
+    .cr-apply__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 991.98px) {
-    .hero-title {
-        font-size: 2.2rem;
-    }
+    .cr-hero :deep(.bm-phero__aside) { display: none; }
+    .cr-role__head { grid-template-columns: auto minmax(0, 1fr); }
+    .cr-role__apply { grid-column: 1 / -1; justify-self: start; }
+    .cr-role__body { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 575.98px) {
-    .careers-hero {
-        padding: 60px 0 40px;
-    }
-
-    .hero-title {
-        font-size: 1.8rem;
-    }
-
-    .careers-section {
-        padding: 20px 0 60px;
-    }
-
-    .posting-card {
-        padding: 24px;
-    }
-
-    .form-row {
-        grid-template-columns: 1fr;
-    }
-
-    .submit-btn {
-        align-self: stretch;
-    }
+    .cr-role__head { grid-template-columns: 1fr; gap: 12px; }
+    .cr-role__num { font-size: 2.8rem; }
+    .cr-role__apply { width: 100%; justify-content: space-between; }
+    .cr-apply { margin-inline: -10px; padding: 24px 18px; }
+    .cr-apply__grid { grid-template-columns: 1fr; }
+    .cr-drop { padding: 18px; gap: 14px; }
+    .cr-drop__icon { width: 50px; height: 50px; }
+    .cr-drop__mark { display: none; }
+    .cr-submit { width: 100%; min-width: 0; }
 }
 </style>

@@ -1,11 +1,13 @@
 <script setup>
 import { Head, usePage } from '@inertiajs/vue3';
-import { computed } from 'vue';
-import Navbar from '@/Components/Navbar.vue';
-import Footer from '@/Components/Footer.vue';
-import { useScrollAnimation } from '@/Composables/useScrollAnimation';
-
-useScrollAnimation();
+import { computed, ref, useId } from 'vue';
+import SiteLayout from '@/Layouts/SiteLayout.vue';
+import PageHero from '@/Components/Site/PageHero.vue';
+import MaskText from '@/Components/Site/MaskText.vue';
+import ScrollWords from '@/Components/Site/ScrollWords.vue';
+import Counter from '@/Components/Site/Counter.vue';
+import HorizontalScroll from '@/Components/Site/HorizontalScroll.vue';
+import Icon from '@/Components/Site/Icon.vue';
 
 const props = defineProps({
     categories: Array,
@@ -125,6 +127,25 @@ const treatments = computed(() => {
 const technologies = computed(() => props.extraData?.technologies || []);
 const programs = computed(() => props.extraData?.programs || []);
 const individualPlanPoints = computed(() => props.extraData?.individual_plan_points || []);
+
+// ---- UI-only helpers (presentation) ----
+const pad = (n) => String(n).padStart(2, '0');
+// Splits a text after its first sentence (used to set the opening line larger).
+const sentences = (text) => {
+    const str = String(text || '').trim();
+    const m = str.match(/^(.+?[.!?])\s+(\S[\s\S]*)$/);
+    return m ? [m[1], m[2]] : [str];
+};
+const introParts = computed(() => sentences(categoryDescription.value));
+// Decorative hourglass "body contour" lines for the hero arch (static SVG paths).
+const contourPaths = Array.from({ length: 11 }, (_, i) => {
+    const dx = (i - 5) * 34;
+    const x = (k) => (200 + dx * k).toFixed(1);
+    return `M${x(1)} -10 C${x(1)} 60 ${x(0.96)} 110 ${x(0.9)} 160 S${x(0.66)} 250 ${x(0.7)} 290 S${x(1.14)} 380 ${x(1.08)} 430 S${x(0.98)} 500 ${x(1)} 520`;
+});
+const openFaq = ref(0);
+const toggleFaq = (i) => { openFaq.value = openFaq.value === i ? -1 : i; };
+const faqId = useId();
 </script>
 
 <template>
@@ -151,940 +172,1010 @@ const individualPlanPoints = computed(() => props.extraData?.individual_plan_poi
         <link rel="alternate" hreflang="x-default" href="https://babormedical.com/services/body-treatments" />
     </Head>
 
-    <div class="body-page">
-        <Navbar />
-
+    <SiteLayout>
         <!-- Hero -->
-        <section class="body-hero">
-            <div class="hero-bg">
-                <div class="gradient-orb orb-1"></div>
-                <div class="gradient-orb orb-2"></div>
-                <div class="gradient-orb orb-3"></div>
-            </div>
-            <div class="container">
-                <div class="hero-content">
-                    <span class="hero-badge fade-in-up">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <path d="M12 2C8.13 2 5 5.13 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.87-3.13-7-7-7z"/>
-                            <path d="M9 21h6M10 17v4M14 17v4"/>
-                        </svg>
-                        {{ t('ТРЕТМАНИ НА ТЕЛО', 'BODY TREATMENTS') }}
-                    </span>
-                    <h1 class="hero-title fade-in-up">{{ pageTitle }}</h1>
-                    <p class="hero-subtitle fade-in-up">{{ pageSubtitle }}</p>
-
-                    <div class="hero-stats fade-in-up">
-                        <div class="stat">
-                            <span class="stat-number">5</span>
-                            <span class="stat-label">{{ t('Технологии', 'Technologies') }}</span>
-                        </div>
-                        <div class="stat-divider"></div>
-                        <div class="stat">
-                            <span class="stat-number">3</span>
-                            <span class="stat-label">{{ t('Програми', 'Programs') }}</span>
-                        </div>
-                        <div class="stat-divider"></div>
-                        <div class="stat">
-                            <span class="stat-number">100%</span>
-                            <span class="stat-label">{{ t('Неинвазивно', 'Non-invasive') }}</span>
-                        </div>
-                    </div>
-
-                    <a href="/services/laser-aesthetic" class="other-category-link fade-in-up">
-                        {{ t('Погледни', 'View') }} {{ t('Ласерски третмани', 'Laser Treatments') }}
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                    </a>
+        <PageHero
+            class="bdy-hero"
+            :eyebrow="t('ТРЕТМАНИ НА ТЕЛО', 'BODY TREATMENTS')"
+            :title="pageTitle"
+            :subtitle="pageSubtitle"
+            :crumb="pageTitle"
+        >
+            <div class="bdy-stats">
+                <div class="bdy-stat">
+                    <span class="bdy-stat__num"><Counter value="5" /></span>
+                    <span class="bdy-stat__label">{{ t('Технологии', 'Technologies') }}</span>
+                </div>
+                <div class="bdy-stat">
+                    <span class="bdy-stat__num"><Counter value="3" /></span>
+                    <span class="bdy-stat__label">{{ t('Програми', 'Programs') }}</span>
+                </div>
+                <div class="bdy-stat">
+                    <span class="bdy-stat__num"><Counter value="100%" /></span>
+                    <span class="bdy-stat__label">{{ t('Неинвазивно', 'Non-invasive') }}</span>
                 </div>
             </div>
-            <div class="scroll-indicator">
-                <div class="mouse">
-                    <div class="wheel"></div>
+
+            <a href="/services/laser-aesthetic" class="bm-btn bm-btn--ghost bm-btn--sm bdy-hero__switch">
+                <span>{{ t('Погледни', 'View') }} {{ t('Ласерски третмани', 'Laser Treatments') }}</span>
+                <Icon name="arrow-up-right" :size="16" :stroke="1.8" />
+            </a>
+
+            <template #aside>
+                <div class="bdy-contour" aria-hidden="true">
+                    <div class="bdy-contour__arch">
+                        <svg class="bdy-contour__lines" viewBox="0 0 400 500" preserveAspectRatio="none" focusable="false">
+                            <path
+                                v-for="(d, i) in contourPaths"
+                                :key="i"
+                                :d="d"
+                                :style="{ '--i': i }"
+                            />
+                        </svg>
+                        <span class="bdy-contour__glow"></span>
+                        <span class="bdy-contour__scan"></span>
+                        <span class="bdy-contour__icon"><Icon name="body" :size="34" :stroke="1.1" /></span>
+                    </div>
+                    <span class="bdy-contour__chip bdy-contour__chip--a"><Icon name="sparkle" :size="18" :stroke="1.5" /></span>
+                    <span class="bdy-contour__chip bdy-contour__chip--b"><Icon name="shield" :size="18" :stroke="1.5" /></span>
+                </div>
+            </template>
+        </PageHero>
+
+        <!-- Intro -->
+        <section v-if="categoryDescription" class="bdy-intro bm-cream bm-sheet bm-section">
+            <div class="bm-container">
+                <ScrollWords :text="introParts[0]" tag="p" class="bdy-intro__statement" />
+                <div v-if="introParts[1]" class="bdy-intro__rest">
+                    <span class="bdy-intro__rule" aria-hidden="true"></span>
+                    <p class="bdy-intro__text" data-reveal>{{ introParts[1] }}</p>
                 </div>
             </div>
         </section>
 
-        <!-- Main Content -->
-        <section class="body-content">
-            <div class="container">
+        <!-- Technologies -->
+        <section v-if="technologies.length" class="bdy-tech bm-dark bm-grain" :class="{ 'bdy-tech--first': !categoryDescription }">
+            <div class="bm-aura" aria-hidden="true"><span></span><span></span><span></span></div>
+            <HorizontalScroll>
+                <template #intro>
+                    <div class="bdy-tech__intro">
+                        <span class="bdy-tech__count bm-numeral" aria-hidden="true">{{ String(technologies.length).padStart(2, '0') }}</span>
+                        <h2 class="bm-h2 bdy-ital bdy-tech__title"><MaskText :text="t('Технологии кои ги користиме', 'Technologies We Use')" /></h2>
+                        <span class="bdy-tech__hint" aria-hidden="true">
+                            <span class="bdy-tech__hint-line"></span>
+                            <Icon name="arrow-right" :size="16" />
+                        </span>
+                    </div>
+                </template>
 
-                <!-- Intro -->
-                <div class="content-block fade-in-up" v-if="categoryDescription">
-                    <p class="intro-text">{{ categoryDescription }}</p>
-                </div>
-
-                <!-- Technologies -->
-                <div class="content-block fade-in-up" v-if="technologies.length">
-                    <h2 class="block-title">{{ t('Технологии кои ги користиме', 'Technologies We Use') }}</h2>
-                    <div class="tech-showcase">
-                        <div v-for="(tech, index) in technologies" :key="index" class="tech-item fade-in-up">
-                            <div class="tech-header">
-                                <div class="tech-number">{{ String(index + 1).padStart(2, '0') }}</div>
-                                <h3 class="tech-name">{{ tech.name || tech }}</h3>
-                            </div>
-                            <p v-if="tech.desc" class="tech-desc">{{ tech.desc }}</p>
-                            <div v-if="tech.suitable_for || tech.areas" class="tech-details">
-                                <div class="detail-group">
-                                    <span class="detail-label">{{ tech.areas ? t('Зони:', 'Areas:') : t('Погодно за:', 'Suitable for:') }}</span>
-                                    <ul class="detail-list">
-                                        <li v-for="item in (tech.areas || tech.suitable_for)" :key="item">{{ item }}</li>
-                                    </ul>
-                                </div>
-                                <div v-if="tech.areas && tech.suitable_for" class="detail-group">
-                                    <span class="detail-label">{{ t('Ефекти:', 'Effects:') }}</span>
-                                    <ul class="detail-list">
-                                        <li v-for="item in tech.suitable_for" :key="item">{{ item }}</li>
-                                    </ul>
-                                </div>
-                            </div>
+                <article v-for="(tech, index) in technologies" :key="index" class="bdy-tcard">
+                    <div class="bdy-tcard__top">
+                        <span class="bdy-tcard__num bm-numeral">{{ String(index + 1).padStart(2, '0') }}</span>
+                        <span class="bdy-tcard__orb" aria-hidden="true"></span>
+                    </div>
+                    <h3 class="bdy-tcard__name">{{ tech.name || tech }}</h3>
+                    <p v-if="tech.desc" class="bdy-tcard__desc">{{ tech.desc }}</p>
+                    <div v-if="tech.suitable_for || tech.areas" class="bdy-tcard__details">
+                        <div class="bdy-tcard__group">
+                            <span class="bdy-tcard__label">{{ tech.areas ? t('Зони:', 'Areas:') : t('Погодно за:', 'Suitable for:') }}</span>
+                            <ul class="bdy-tcard__chips">
+                                <li v-for="item in (tech.areas || tech.suitable_for)" :key="item">{{ item }}</li>
+                            </ul>
+                        </div>
+                        <div v-if="tech.areas && tech.suitable_for" class="bdy-tcard__group">
+                            <span class="bdy-tcard__label">{{ t('Ефекти:', 'Effects:') }}</span>
+                            <ul class="bdy-tcard__chips bdy-tcard__chips--fx">
+                                <li v-for="item in tech.suitable_for" :key="item">{{ item }}</li>
+                            </ul>
                         </div>
                     </div>
-                </div>
+                </article>
+            </HorizontalScroll>
+        </section>
 
+        <!-- Programs, individual plan, treatments, pricing -->
+        <section class="bdy-plan-sec bm-paper bm-sheet bm-section">
+            <div class="bm-container">
                 <!-- Programs -->
-                <div class="content-block fade-in-up" v-if="programs.length">
-                    <h2 class="block-title">{{ t('Програмски пристап', 'Program Approach') }}</h2>
-                    <p class="block-text">{{ t('Најдобри резултати се постигнуваат кога третманите се комбинираат во структуриран план.', 'Best results are achieved when treatments are combined in a structured plan.') }}</p>
-                    <div class="programs-grid">
-                        <div v-for="(program, index) in programs" :key="index" class="program-card fade-in-up">
-                            <h3 class="program-name">{{ program.name || program }}</h3>
-                            <p v-if="program.desc" class="program-desc">{{ program.desc }}</p>
-                        </div>
+                <div v-if="programs.length" class="bdy-programs">
+                    <div class="bdy-programs__head">
+                        <h2 class="bm-h2 bdy-ital"><MaskText :text="t('Програмски пристап', 'Program Approach')" /></h2>
+                        <p class="bm-lead bm-muted bdy-programs__lead" data-reveal style="--d: 0.15s">{{ t('Најдобри резултати се постигнуваат кога третманите се комбинираат во структуриран план.', 'Best results are achieved when treatments are combined in a structured plan.') }}</p>
+                    </div>
+                    <div class="bdy-programs__grid">
+                        <article
+                            v-for="(program, index) in programs"
+                            :key="index"
+                            class="bdy-prog"
+                            data-reveal
+                            :style="{ '--d': `${index * 0.12}s` }"
+                        >
+                            <div class="bdy-prog__arch" aria-hidden="true">
+                                <span class="bdy-prog__ring"></span>
+                                <span class="bdy-prog__ring"></span>
+                                <span class="bdy-prog__ring"></span>
+                                <span class="bdy-prog__num bm-numeral">{{ pad(index + 1) }}</span>
+                            </div>
+                            <h3 class="bdy-prog__name">{{ program.name || program }}</h3>
+                            <p v-if="program.desc" class="bdy-prog__desc">{{ program.desc }}</p>
+                        </article>
                     </div>
                 </div>
 
                 <!-- Individual Plan -->
-                <div class="content-block fade-in-up" v-if="individualPlanPoints.length">
-                    <h2 class="block-title">{{ t('Индивидуален план', 'Individual Plan') }}</h2>
-                    <p class="block-text">{{ t('Секој клиент добива индивидуална препорака според:', 'Every client receives an individual recommendation based on:') }}</p>
-                    <ul class="styled-list">
-                        <li v-for="point in individualPlanPoints" :key="point">{{ point }}</li>
-                    </ul>
-                    <p class="block-note">{{ t('Нашата цел е постепено, безбедно и природно подобрување на контурата на телото.', 'Our goal is gradual, safe and natural improvement of body contours.') }}</p>
+                <div v-if="individualPlanPoints.length" class="bdy-plan">
+                    <div class="bdy-plan__head">
+                        <span class="bdy-plan__badge" aria-hidden="true"><Icon name="body" :size="28" :stroke="1.3" /></span>
+                        <h2 class="bm-h2 bdy-ital"><MaskText :text="t('Индивидуален план', 'Individual Plan')" /></h2>
+                        <p class="bm-lead bdy-plan__lead" data-reveal style="--d: 0.15s">{{ t('Секој клиент добива индивидуална препорака според:', 'Every client receives an individual recommendation based on:') }}</p>
+                    </div>
+                    <div class="bdy-plan__body">
+                        <ol class="bdy-plan__list">
+                            <li
+                                v-for="(point, i) in individualPlanPoints"
+                                :key="point"
+                                class="bdy-plan__item"
+                                data-reveal
+                                :style="{ '--d': `${i * 0.08}s` }"
+                            >
+                                <span class="bdy-plan__num bm-numeral" aria-hidden="true">{{ pad(i + 1) }}</span>
+                                <span class="bdy-plan__text">{{ point }}</span>
+                            </li>
+                        </ol>
+                        <p class="bdy-note" data-reveal>
+                            <span class="bdy-note__icon" aria-hidden="true"><Icon name="sparkle" :size="18" :stroke="1.5" /></span>
+                            <span>{{ t('Нашата цел е постепено, безбедно и природно подобрување на контурата на телото.', 'Our goal is gradual, safe and natural improvement of body contours.') }}</span>
+                        </p>
+                    </div>
                 </div>
 
                 <!-- Admin-managed treatments -->
-                <div v-if="treatments.length" class="content-block fade-in-up">
-                    <h2 class="block-title">{{ t('Наши третмани', 'Our Treatments') }}</h2>
-                    <div class="tech-grid">
-                        <div v-for="item in treatments" :key="item.id" class="treatment-card fade-in-up">
-                            <h3 class="treatment-name">{{ item.name }}</h3>
-                            <div v-if="item.description" class="treatment-desc" v-html="item.description"></div>
-                            <a v-if="item.url" :href="item.url" class="treatment-link">
+                <div v-if="treatments.length" class="bdy-items">
+                    <h2 class="bm-h2 bdy-ital"><MaskText :text="t('Наши третмани', 'Our Treatments')" /></h2>
+                    <div class="bdy-items__grid">
+                        <article
+                            v-for="(item, i) in treatments"
+                            :key="item.id"
+                            class="bdy-item"
+                            data-reveal
+                            :style="{ '--d': `${(i % 3) * 0.08}s` }"
+                        >
+                            <span class="bdy-item__num" aria-hidden="true">{{ pad(i + 1) }}</span>
+                            <h3 class="bdy-item__name">{{ item.name }}</h3>
+                            <div v-if="item.description" class="bdy-item__desc bm-prose" v-html="item.description"></div>
+                            <a v-if="item.url" :href="item.url" class="bm-link bdy-item__link">
                                 {{ t('Прочитај повеќе', 'Learn more') }}
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M5 12h14M12 5l7 7-7 7"/>
-                                </svg>
+                                <Icon name="arrow-right" />
                             </a>
-                        </div>
+                        </article>
                     </div>
                 </div>
 
                 <!-- Pricing / PDF -->
-                <div v-if="priceListPdf" class="content-block fade-in-up pricing-block">
-                    <h2 class="block-title">{{ t('Ценовник', 'Pricing') }}</h2>
-                    <p class="block-text">{{ t('Погледнете го нашиот комплетен ценовник за третмани на тело.', 'View our complete price list for body treatments.') }}</p>
-                    <div class="pdf-actions">
-                        <a :href="priceListPdf" target="_blank" class="pdf-btn">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                <polyline points="14 2 14 8 20 8"/>
-                                <line x1="16" y1="13" x2="8" y2="13"/>
-                                <line x1="16" y1="17" x2="8" y2="17"/>
-                                <polyline points="10 9 9 9 8 9"/>
-                            </svg>
-                            {{ t('Отвори ценовник (PDF)', 'View Price List (PDF)') }}
+                <div v-if="priceListPdf" id="pricing" class="bdy-price bm-grain" data-reveal="scale">
+                    <span class="bdy-price__ghost" aria-hidden="true"><Icon name="file" :stroke="0.5" /></span>
+                    <div class="bdy-price__copy">
+                        <span class="bdy-price__icon" aria-hidden="true"><Icon name="file" :size="24" :stroke="1.4" /></span>
+                        <h2 class="bm-h2 bdy-ital bdy-price__title"><MaskText :text="t('Ценовник', 'Pricing')" /></h2>
+                        <p class="bdy-price__sub">{{ t('Погледнете го нашиот комплетен ценовник за третмани на тело.', 'View our complete price list for body treatments.') }}</p>
+                    </div>
+                    <div class="bdy-price__actions">
+                        <a :href="priceListPdf" target="_blank" rel="noopener" class="bm-btn bdy-price__btn">
+                            <span>{{ t('Отвори ценовник (PDF)', 'View Price List (PDF)') }}</span>
+                            <span class="bm-btn__icon"><Icon name="arrow-up-right" :stroke="2" /></span>
                         </a>
-                        <a :href="priceListPdf" download class="pdf-btn pdf-btn-secondary">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                                <polyline points="7 10 12 15 17 10"/>
-                                <line x1="12" y1="15" x2="12" y2="3"/>
-                            </svg>
-                            {{ t('Преземи ценовник', 'Download Price List') }}
+                        <a :href="priceListPdf" download class="bm-btn bm-btn--ghost bdy-price__dl">
+                            <Icon name="download" :size="16" :stroke="1.8" />
+                            <span>{{ t('Преземи ценовник', 'Download Price List') }}</span>
                         </a>
                     </div>
                 </div>
+            </div>
+        </section>
 
-                <!-- Closing -->
-                <div class="closing-block fade-in-up">
-                    <h2 class="closing-title">{{ t('Интегриран естетски план', 'Integrated Aesthetic Plan') }}</h2>
-                    <p class="closing-text">{{ t('За оптимален резултат, третманите на тело често се комбинираат со козметолошки и медицинско‑естетски процедури во рамките на интегриран естетски план.', 'For optimal results, body treatments are often combined with cosmetological and medical-aesthetic procedures within an integrated aesthetic plan.') }}</p>
-                    <a href="/contact" class="cta-btn">
-                        {{ t('Закажи консултација', 'Book a consultation') }}
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
+        <!-- Closing -->
+        <section class="bdy-cta bm-wine bm-grain">
+            <div class="bm-aura" aria-hidden="true"><span></span><span></span><span></span></div>
+            <div class="bm-container bdy-cta__inner">
+                <div class="bdy-cta__copy">
+                    <h2 class="bm-h1 bdy-ital bdy-cta__title"><MaskText :text="t('Интегриран естетски план', 'Integrated Aesthetic Plan')" /></h2>
+                    <p class="bm-lead bm-muted bdy-cta__text" data-reveal style="--d: 0.15s">{{ t('За оптимален резултат, третманите на тело често се комбинираат со козметолошки и медицинско‑естетски процедури во рамките на интегриран естетски план.', 'For optimal results, body treatments are often combined with cosmetological and medical-aesthetic procedures within an integrated aesthetic plan.') }}</p>
+                    <a href="/contact" class="bm-btn bdy-cta__btn" data-reveal style="--d: 0.3s">
+                        <span>{{ t('Закажи консултација', 'Book a consultation') }}</span>
+                        <span class="bm-btn__icon"><Icon name="arrow-right" :stroke="2" /></span>
                     </a>
                 </div>
-
+                <div class="bdy-venn" aria-hidden="true" data-reveal="scale" style="--d: 0.2s">
+                    <span class="bdy-venn__c bdy-venn__c--a"><Icon name="body" :size="30" :stroke="1.2" /></span>
+                    <span class="bdy-venn__c bdy-venn__c--b"><Icon name="face" :size="30" :stroke="1.2" /></span>
+                    <span class="bdy-venn__c bdy-venn__c--c"><Icon name="injectable" :size="30" :stroke="1.2" /></span>
+                    <span class="bdy-venn__core"></span>
+                </div>
             </div>
         </section>
 
         <!-- SEO Content Block -->
-        <section class="seo-content">
-            <div class="container">
-                <h2>{{ t('Третмани на тело во Скопје – Babor Medical', 'Body Treatments in Skopje – Babor Medical') }}</h2>
-                <p>{{ t('Babor Medical нуди напредни третмани на тело во Скопје со најсовремена апаратурна естетика. Нашите неинвазивни технологии – Ultraformer, Accent Prime, LaserShape, EM Time и Бодипрес терапија – овозможуваат обликување на тело, намалување на целулит, затегнување на кожа и подобрување на циркулацијата. Индивидуален пристап и програмски третмани за долгорочни резултати.', 'Babor Medical offers advanced body treatments in Skopje with state-of-the-art aesthetic technology. Our non-invasive technologies – Ultraformer, Accent Prime, LaserShape, EM Time and Body Press therapy – enable body contouring, cellulite reduction, skin tightening and circulation improvement. Individual approach and program treatments for long-term results.') }}</p>
+        <section class="bdy-seo bm-cream bm-sheet bm-section">
+            <div class="bm-container bdy-seo__grid">
+                <h2 class="bdy-seo__title" data-reveal>{{ t('Третмани на тело во Скопје – Babor Medical', 'Body Treatments in Skopje – Babor Medical') }}</h2>
+                <p class="bdy-seo__text" data-reveal style="--d: 0.12s">{{ t('Babor Medical нуди напредни третмани на тело во Скопје со најсовремена апаратурна естетика. Нашите неинвазивни технологии – Ultraformer, Accent Prime, LaserShape, EM Time и Бодипрес терапија – овозможуваат обликување на тело, намалување на целулит, затегнување на кожа и подобрување на циркулацијата. Индивидуален пристап и програмски третмани за долгорочни резултати.', 'Babor Medical offers advanced body treatments in Skopje with state-of-the-art aesthetic technology. Our non-invasive technologies – Ultraformer, Accent Prime, LaserShape, EM Time and Body Press therapy – enable body contouring, cellulite reduction, skin tightening and circulation improvement. Individual approach and program treatments for long-term results.') }}</p>
             </div>
         </section>
 
         <!-- FAQ Section -->
-        <section class="faq-section">
-            <div class="container">
-                <div class="faq-header fade-in-up">
-                    <h2 class="faq-title">{{ t('Најчесто поставувани прашања', 'Frequently Asked Questions') }}</h2>
+        <section class="bdy-faq bm-paper bm-section">
+            <div class="bm-container bdy-faq__grid">
+                <div class="bdy-faq__head">
+                    <h2 class="bm-h2 bdy-ital"><MaskText :text="t('Најчесто поставувани прашања', 'Frequently Asked Questions')" /></h2>
+                    <span class="bdy-faq__mark" aria-hidden="true">?</span>
                 </div>
-                <div class="faq-grid">
-                    <div class="faq-item fade-in-up">
-                        <h3 class="faq-question">{{ t('Кои третмани за тело ги нудите во Babor Medical?', 'What body treatments do you offer at Babor Medical?') }}</h3>
-                        <p class="faq-answer">{{ t('Нудиме широк спектар на апаратурни третмани за тело: Accent Prime за обликување и затегнување, EM Time за мускулна стимулација, LaserShape за намалување на масни наслаги, лимфна дренажа и третмани за стрии и целулит.', 'We offer a wide range of body treatments: Accent Prime for contouring and tightening, EM Time for muscle stimulation, LaserShape for fat reduction, lymphatic drainage and treatments for stretch marks and cellulite.') }}</p>
+                <div class="bm-faq bdy-faq__list" data-reveal style="--d: 0.1s">
+                    <div class="bm-faq__item" :class="{ 'is-open': openFaq === 0 }">
+                        <h3 class="bdy-faq__h">
+                            <button :id="`${faqId}-q0`" type="button" class="bm-faq__q" :aria-expanded="openFaq === 0" :aria-controls="`${faqId}-a0`" @click="toggleFaq(0)">
+                                <span>{{ t('Кои третмани за тело ги нудите во Babor Medical?', 'What body treatments do you offer at Babor Medical?') }}</span>
+                                <span class="bm-faq__icon" aria-hidden="true"></span>
+                            </button>
+                        </h3>
+                        <div :id="`${faqId}-a0`" class="bm-faq__a" role="region" :aria-labelledby="`${faqId}-q0`">
+                            <div><p>{{ t('Нудиме широк спектар на апаратурни третмани за тело: Accent Prime за обликување и затегнување, EM Time за мускулна стимулација, LaserShape за намалување на масни наслаги, лимфна дренажа и третмани за стрии и целулит.', 'We offer a wide range of body treatments: Accent Prime for contouring and tightening, EM Time for muscle stimulation, LaserShape for fat reduction, lymphatic drainage and treatments for stretch marks and cellulite.') }}</p></div>
+                        </div>
                     </div>
-                    <div class="faq-item fade-in-up">
-                        <h3 class="faq-question">{{ t('Дали третманите за обликување на тело се болни?', 'Are body contouring treatments painful?') }}</h3>
-                        <p class="faq-answer">{{ t('Не, нашите апаратурни третмани за тело се неинвазивни и безболни. Accent Prime и EM Time користат напредна технологија која обезбедува комфортен третман без период на закрепнување.', 'No, our body treatments are non-invasive and painless. Accent Prime and EM Time use advanced technology that ensures a comfortable treatment with no downtime.') }}</p>
+                    <div class="bm-faq__item" :class="{ 'is-open': openFaq === 1 }">
+                        <h3 class="bdy-faq__h">
+                            <button :id="`${faqId}-q1`" type="button" class="bm-faq__q" :aria-expanded="openFaq === 1" :aria-controls="`${faqId}-a1`" @click="toggleFaq(1)">
+                                <span>{{ t('Дали третманите за обликување на тело се болни?', 'Are body contouring treatments painful?') }}</span>
+                                <span class="bm-faq__icon" aria-hidden="true"></span>
+                            </button>
+                        </h3>
+                        <div :id="`${faqId}-a1`" class="bm-faq__a" role="region" :aria-labelledby="`${faqId}-q1`">
+                            <div><p>{{ t('Не, нашите апаратурни третмани за тело се неинвазивни и безболни. Accent Prime и EM Time користат напредна технологија која обезбедува комфортен третман без период на закрепнување.', 'No, our body treatments are non-invasive and painless. Accent Prime and EM Time use advanced technology that ensures a comfortable treatment with no downtime.') }}</p></div>
+                        </div>
                     </div>
-                    <div class="faq-item fade-in-up">
-                        <h3 class="faq-question">{{ t('Колку третмани се потребни за видливи резултати?', 'How many treatments are needed for visible results?') }}</h3>
-                        <p class="faq-answer">{{ t('Обично се препорачуваат 4-8 третмани за оптимални резултати, во зависност од третманот и индивидуалната состојба. Првите резултати може да се видат по 2-3 третмани.', 'Usually 4-8 treatments are recommended for optimal results, depending on the treatment and individual condition. First results can be seen after 2-3 treatments.') }}</p>
+                    <div class="bm-faq__item" :class="{ 'is-open': openFaq === 2 }">
+                        <h3 class="bdy-faq__h">
+                            <button :id="`${faqId}-q2`" type="button" class="bm-faq__q" :aria-expanded="openFaq === 2" :aria-controls="`${faqId}-a2`" @click="toggleFaq(2)">
+                                <span>{{ t('Колку третмани се потребни за видливи резултати?', 'How many treatments are needed for visible results?') }}</span>
+                                <span class="bm-faq__icon" aria-hidden="true"></span>
+                            </button>
+                        </h3>
+                        <div :id="`${faqId}-a2`" class="bm-faq__a" role="region" :aria-labelledby="`${faqId}-q2`">
+                            <div><p>{{ t('Обично се препорачуваат 4-8 третмани за оптимални резултати, во зависност од третманот и индивидуалната состојба. Првите резултати може да се видат по 2-3 третмани.', 'Usually 4-8 treatments are recommended for optimal results, depending on the treatment and individual condition. First results can be seen after 2-3 treatments.') }}</p></div>
+                        </div>
                     </div>
-                    <div class="faq-item fade-in-up">
-                        <h3 class="faq-question">{{ t('Колку чинат третманите за тело во Скопје?', 'How much do body treatments cost in Skopje?') }}</h3>
-                        <p class="faq-answer">{{ t('Цените за третмани на тело варираат зависно од процедурата и бројот на зони. За детален ценовник контактирајте нè на +389 75 340 933 или посетете го нашиот центар во Скопје.', 'Body treatment prices vary depending on the procedure and number of zones. For a detailed price list, contact us at +389 75 340 933 or visit our center in Skopje.') }}</p>
+                    <div class="bm-faq__item" :class="{ 'is-open': openFaq === 3 }">
+                        <h3 class="bdy-faq__h">
+                            <button :id="`${faqId}-q3`" type="button" class="bm-faq__q" :aria-expanded="openFaq === 3" :aria-controls="`${faqId}-a3`" @click="toggleFaq(3)">
+                                <span>{{ t('Колку чинат третманите за тело во Скопје?', 'How much do body treatments cost in Skopje?') }}</span>
+                                <span class="bm-faq__icon" aria-hidden="true"></span>
+                            </button>
+                        </h3>
+                        <div :id="`${faqId}-a3`" class="bm-faq__a" role="region" :aria-labelledby="`${faqId}-q3`">
+                            <div><p>{{ t('Цените за третмани на тело варираат зависно од процедурата и бројот на зони. За детален ценовник контактирајте нè на +389 75 340 933 или посетете го нашиот центар во Скопје.', 'Body treatment prices vary depending on the procedure and number of zones. For a detailed price list, contact us at +389 75 340 933 or visit our center in Skopje.') }}</p></div>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
-
-        <Footer />
-    </div>
+    </SiteLayout>
 </template>
 
 <style scoped>
-.body-page {
-    min-height: 100vh;
-    background: #0a0f14;
-    overflow-x: hidden;
-}
+/* ---------- Shared: italic accent on the last word of a MaskText heading ---------- */
+.bdy-ital :deep(.bm-mw:last-child .bm-mw__i) { font-style: italic; }
+.bm-cream .bdy-ital :deep(.bm-mw:last-child .bm-mw__i),
+.bm-paper .bdy-ital :deep(.bm-mw:last-child .bm-mw__i) { color: var(--wine-600); }
+.bm-dark .bdy-ital :deep(.bm-mw:last-child .bm-mw__i),
+.bm-wine .bdy-ital :deep(.bm-mw:last-child .bm-mw__i),
+.bdy-price .bdy-ital :deep(.bm-mw:last-child .bm-mw__i) { color: var(--gold-300); }
 
-/* Hero */
-.body-hero {
+/* ---------- Hero ---------- */
+.bdy-hero :deep(.bm-phero__title .bm-mw:last-child .bm-mw__i) {
+    font-style: italic;
+    color: var(--gold-300);
+}
+.bdy-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    max-width: 600px;
+}
+.bdy-stat {
     position: relative;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 120px 0 80px;
-    overflow: hidden;
+    padding: 20px 20px 18px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--line-dark);
+    background: linear-gradient(160deg, rgba(246, 238, 230, 0.06), rgba(246, 238, 230, 0.01));
 }
+.bdy-stat__num {
+    display: block;
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: clamp(2.2rem, 3.3vw, 3.1rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--gold-300);
+}
+.bdy-stat__label {
+    display: block;
+    margin-top: 12px;
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--on-dark-muted);
+    overflow-wrap: anywhere;
+}
+.bdy-hero__switch { margin-top: 30px; color: var(--on-dark); }
+.bdy-hero__switch svg { transition: transform 0.5s var(--ease-out); }
+.bdy-hero__switch:hover svg { transform: rotate(45deg); }
 
-.hero-bg {
+/* Body-contour visual */
+.bdy-contour {
+    position: relative;
+    width: 100%;
+    max-width: 460px;
+    margin-left: auto;
+}
+.bdy-contour__arch {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    border-radius: 999px 999px var(--radius-lg) var(--radius-lg);
+    border: 1px solid rgba(217, 185, 149, 0.2);
+    background:
+        radial-gradient(60% 45% at 50% 55%, rgba(196, 124, 135, 0.22) 0%, transparent 70%),
+        radial-gradient(100% 60% at 50% 100%, rgba(140, 42, 72, 0.6) 0%, transparent 70%),
+        linear-gradient(180deg, var(--wine-850) 0%, var(--wine-800) 100%);
+    box-shadow: 0 60px 120px -60px rgba(0, 0, 0, 0.8);
+}
+.bdy-contour__lines {
     position: absolute;
     inset: 0;
-    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    animation: bdy-breathe 7s var(--ease-in-out) infinite;
+    transform-origin: 50% 55%;
 }
-
-.gradient-orb {
+.bdy-contour__lines path {
+    fill: none;
+    stroke: rgba(217, 185, 149, 0.4);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+    stroke-dasharray: 640;
+    stroke-dashoffset: 640;
+    animation: bdy-draw 2.6s var(--ease-out) forwards;
+    animation-delay: calc(0.35s + var(--i) * 90ms);
+}
+.bdy-contour__lines path:nth-child(6) { stroke: rgba(236, 210, 203, 0.75); }
+.bdy-contour__glow {
     position: absolute;
+    left: 50%;
+    top: 55%;
+    width: 60%;
+    aspect-ratio: 1;
     border-radius: 50%;
-    filter: blur(80px);
+    background: radial-gradient(circle, rgba(217, 185, 149, 0.22), transparent 65%);
+    transform: translate(-50%, -50%);
 }
-
-.orb-1 {
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, rgba(201, 168, 124, 0.15), transparent 70%);
-    top: -200px;
-    right: -100px;
-    animation: float1 8s ease-in-out infinite;
+.bdy-contour__scan {
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    top: 18%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(236, 210, 203, 0.9), transparent);
+    box-shadow: 0 0 18px 2px rgba(217, 185, 149, 0.45);
+    animation: bdy-scan 6s var(--ease-in-out) infinite alternate;
 }
-
-.orb-2 {
-    width: 400px;
-    height: 400px;
-    background: radial-gradient(circle, rgba(201, 168, 124, 0.1), transparent 70%);
-    bottom: -100px;
-    left: -100px;
-    animation: float2 10s ease-in-out infinite;
-}
-
-.orb-3 {
-    width: 300px;
-    height: 300px;
-    background: radial-gradient(circle, rgba(201, 168, 124, 0.08), transparent 70%);
-    top: 50%;
+.bdy-contour__icon {
+    position: absolute;
     left: 50%;
-    animation: float3 12s ease-in-out infinite;
+    bottom: 26px;
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 1px solid rgba(217, 185, 149, 0.35);
+    background: rgba(22, 10, 14, 0.4);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    color: var(--gold-300);
+    transform: translateX(-50%);
+}
+.bdy-contour__chip {
+    position: absolute;
+    display: grid;
+    place-items: center;
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: var(--beige-200);
+    color: var(--wine-700);
+    box-shadow: 0 24px 50px -20px rgba(0, 0, 0, 0.6);
+    animation: bdy-float 6s var(--ease-in-out) infinite;
+}
+.bdy-contour__chip--a { left: -18px; top: 34%; }
+.bdy-contour__chip--b { right: -14px; top: 62%; animation-delay: -3s; }
+
+@keyframes bdy-draw { to { stroke-dashoffset: 0; } }
+@keyframes bdy-breathe {
+    0%, 100% { transform: scaleX(1); }
+    50% { transform: scaleX(1.035); }
+}
+@keyframes bdy-scan {
+    from { top: 16%; }
+    to { top: 82%; }
+}
+@keyframes bdy-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
 }
 
-@keyframes float1 {
-    0%, 100% { transform: translate(0, 0); }
-    50% { transform: translate(-30px, 20px); }
+/* ---------- Intro ---------- */
+.bdy-intro__statement {
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: clamp(1.8rem, 3.5vw, 3.25rem);
+    line-height: 1.17;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    max-width: 1200px;
 }
-
-@keyframes float2 {
-    0%, 100% { transform: translate(0, 0); }
-    50% { transform: translate(20px, -30px); }
-}
-
-@keyframes float3 {
-    0%, 100% { transform: translate(-50%, -50%); }
-    50% { transform: translate(-50%, -45%); }
-}
-
-.hero-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    position: relative;
-    z-index: 1;
-}
-
-.hero-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 24px;
-    background: rgba(201, 168, 124, 0.1);
-    border: 1px solid rgba(201, 168, 124, 0.2);
-    border-radius: 50px;
-    color: #c9a87c;
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 3px;
-    margin-bottom: 32px;
-}
-
-.hero-badge svg {
-    width: 16px;
-    height: 16px;
-}
-
-.hero-title {
-    font-size: 4rem;
-    font-weight: 800;
-    color: #fff;
-    margin: 0 0 20px;
-    letter-spacing: -2px;
-    line-height: 1.1;
-}
-
-.hero-subtitle {
-    font-size: 1.2rem;
-    color: rgba(255, 255, 255, 0.6);
-    max-width: 600px;
-    margin: 0 auto 48px;
-    line-height: 1.7;
-}
-
-.hero-stats {
-    display: inline-flex;
-    align-items: center;
+.bdy-intro__rest {
+    display: grid;
+    grid-template-columns: minmax(0, 0.32fr) minmax(0, 1fr);
     gap: 32px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 20px;
-    padding: 24px 48px;
-    margin-bottom: 40px;
+    margin-top: clamp(40px, 5vw, 72px);
+    padding-top: clamp(28px, 3vw, 40px);
+    border-top: 1px solid var(--line-light);
+}
+.bdy-intro__rule {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background:
+        radial-gradient(circle at 50% 50%, var(--wine-600) 0 5px, transparent 6px),
+        radial-gradient(circle, transparent 60%, rgba(110, 32, 57, 0.25) 61%, transparent 63%);
+    border: 1px solid rgba(110, 32, 57, 0.3);
+}
+.bdy-intro__text {
+    columns: 2;
+    column-gap: clamp(28px, 4vw, 56px);
+    font-size: 1.06rem;
+    line-height: 1.8;
+    color: var(--ink-soft);
 }
 
-.stat {
-    text-align: center;
+/* ---------- Technologies (pinned horizontal scroll) ---------- */
+.bdy-tech {
+    position: relative;
+    padding-block: clamp(84px, 11vw, 140px);
 }
-
-.stat-number {
-    display: block;
-    font-size: 2rem;
-    font-weight: 800;
-    color: #c9a87c;
-    line-height: 1;
-}
-
-.stat-label {
-    font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.5);
-    margin-top: 6px;
-    display: block;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.stat-divider {
-    width: 1px;
-    height: 40px;
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.other-category-link {
+.bdy-tech--first { padding-top: clamp(120px, 14vw, 180px); }
+.bdy-tech :deep(.bm-hs.is-pinned) { margin-block: calc(clamp(84px, 11vw, 140px) * -1); }
+.bdy-tech :deep(.bm-hs) { position: relative; z-index: 1; }
+.bdy-tech__count { display: block; font-size: clamp(4.5rem, 8vw, 7.5rem); margin-bottom: 8px; }
+.bdy-tech__title { max-width: 460px; }
+.bdy-tech__hint {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    color: rgba(255, 255, 255, 0.6);
-    text-decoration: none;
-    font-size: 0.95rem;
-    font-weight: 500;
-    padding: 12px 24px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 50px;
-    transition: all 0.3s ease;
+    gap: 14px;
+    margin-top: 40px;
+    color: var(--gold-300);
 }
+.bdy-tech__hint-line { width: 64px; height: 1px; background: currentColor; }
 
-.other-category-link:hover {
-    color: #c9a87c;
-    border-color: rgba(201, 168, 124, 0.3);
-    background: rgba(201, 168, 124, 0.05);
-}
-
-.other-category-link svg {
-    width: 16px;
-    height: 16px;
-    transition: transform 0.3s ease;
-}
-
-.other-category-link:hover svg {
-    transform: translateX(4px);
-}
-
-.scroll-indicator {
-    position: absolute;
-    bottom: 40px;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-.mouse {
-    width: 24px;
-    height: 38px;
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    border-radius: 12px;
+.bdy-tcard {
     position: relative;
-}
-
-.wheel {
-    width: 4px;
-    height: 8px;
-    background: rgba(255, 255, 255, 0.4);
-    border-radius: 2px;
-    position: absolute;
-    top: 8px;
-    left: 50%;
-    transform: translateX(-50%);
-    animation: scroll 2s ease infinite;
-}
-
-@keyframes scroll {
-    0%, 100% { opacity: 1; top: 8px; }
-    50% { opacity: 0.3; top: 20px; }
-}
-
-/* Main Content */
-.body-content {
-    padding: 80px 0 120px;
-}
-
-.body-content .container {
-    max-width: 900px;
-}
-
-/* Content Blocks */
-.content-block {
-    margin-bottom: 72px;
-}
-
-.intro-text {
-    font-size: 1.1rem;
-    color: rgba(255, 255, 255, 0.75);
-    line-height: 1.8;
-    margin: 0 0 16px;
-}
-
-.intro-sub {
-    font-size: 0.95rem;
-    color: rgba(255, 255, 255, 0.6);
-    line-height: 1.8;
-    margin: 0 0 16px;
-}
-
-.intro-highlight {
-    font-size: 0.95rem;
-    color: #c9a87c;
-    font-style: italic;
-    line-height: 1.8;
-    margin: 0;
-    padding: 16px 20px;
-    border-left: 3px solid rgba(201, 168, 124, 0.4);
-    background: rgba(201, 168, 124, 0.04);
-    border-radius: 0 8px 8px 0;
-}
-
-.block-title {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #fff;
-    margin: 0 0 24px;
-    letter-spacing: 0.3px;
-}
-
-.block-text {
-    font-size: 0.95rem;
-    color: rgba(255, 255, 255, 0.7);
-    line-height: 1.8;
-    margin: 0 0 16px;
-}
-
-.block-note {
-    font-size: 0.93rem;
-    color: rgba(255, 255, 255, 0.5);
-    font-style: italic;
-    margin: 20px 0 0;
-    padding-top: 16px;
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
-    line-height: 1.7;
-}
-
-/* Technology Showcase */
-.tech-showcase {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    width: clamp(330px, 29vw, 420px);
+    padding: clamp(26px, 2.4vw, 36px);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--line-dark);
+    background: linear-gradient(165deg, rgba(246, 238, 230, 0.06), rgba(246, 238, 230, 0.012));
+    overflow: hidden;
+    isolation: isolate;
+    transition: border-color 0.6s;
 }
-
-.tech-item {
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 20px;
-    padding: 32px;
-    transition: all 0.3s ease;
+.bdy-tcard::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+        radial-gradient(90% 60% at 100% 0%, rgba(217, 185, 149, 0.18), transparent 60%),
+        linear-gradient(165deg, var(--wine-700), var(--wine-800));
+    opacity: 0;
+    transform: scale(1.06);
+    transition: opacity 0.8s var(--ease-out), transform 1s var(--ease-out);
 }
-
-.tech-item:hover {
-    border-color: rgba(201, 168, 124, 0.2);
-    background: rgba(255, 255, 255, 0.03);
-}
-
-.tech-header {
+.bdy-tcard:hover { border-color: rgba(217, 185, 149, 0.35); }
+.bdy-tcard:hover::before { opacity: 1; transform: none; }
+.bdy-tcard__top {
     display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 16px;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: clamp(28px, 3vw, 44px);
+}
+.bdy-tcard__num {
+    font-size: clamp(4rem, 5.4vw, 5.4rem);
+    transition: color 0.7s var(--ease-out);
+}
+.bdy-tcard:hover .bdy-tcard__num { color: var(--gold-300); }
+.bdy-tcard__orb {
+    position: relative;
+    width: 46px;
+    height: 46px;
+    margin-top: 10px;
+    border-radius: 50%;
+    border: 1px solid rgba(217, 185, 149, 0.35);
+    transition: transform 0.9s var(--ease-out), background 0.6s;
+}
+.bdy-tcard__orb::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--gold-300);
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 16px 4px rgba(217, 185, 149, 0.45);
+}
+.bdy-tcard:hover .bdy-tcard__orb { transform: scale(1.15); background: rgba(217, 185, 149, 0.1); }
+.bdy-tcard__name {
+    font-size: clamp(1.5rem, 2vw, 1.95rem);
+    font-weight: 400;
+    line-height: 1.15;
+}
+.bdy-tcard__desc {
+    margin-top: 14px;
+    font-size: 0.94rem;
+    line-height: 1.65;
+    color: var(--on-dark-muted);
+}
+.bdy-tcard__details {
+    display: grid;
+    gap: 18px;
+    margin-top: auto;
+    padding-top: 24px;
+}
+.bdy-tcard__details::before {
+    content: '';
+    display: block;
+    height: 1px;
+    margin-top: 4px;
+    background: var(--line-dark);
+}
+.bdy-tcard__label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold-300);
+}
+.bdy-tcard__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.bdy-tcard__chips li {
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--line-dark);
+    font-size: 0.8rem;
+    line-height: 1.35;
+    color: var(--on-dark);
+    transition: border-color 0.5s, background 0.5s;
+}
+.bdy-tcard__chips--fx li { background: rgba(217, 185, 149, 0.1); border-color: rgba(217, 185, 149, 0.22); }
+.bdy-tcard:hover .bdy-tcard__chips li { border-color: rgba(246, 238, 230, 0.28); }
+
+/* ---------- Programs ---------- */
+.bdy-programs__head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+    gap: clamp(28px, 5vw, 80px);
+    align-items: end;
+    margin-bottom: clamp(48px, 6vw, 88px);
+}
+.bdy-programs__lead { max-width: 520px; }
+.bdy-programs__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(20px, 2.6vw, 40px);
+}
+.bdy-prog { display: flex; flex-direction: column; }
+.bdy-prog__arch {
+    position: relative;
+    display: grid;
+    place-items: center;
+    aspect-ratio: 1 / 1.02;
+    overflow: hidden;
+    border-radius: 999px 999px var(--radius-lg) var(--radius-lg);
+    background:
+        radial-gradient(60% 50% at 50% 46%, rgba(217, 185, 149, 0.2), transparent 70%),
+        radial-gradient(100% 70% at 50% 100%, rgba(140, 42, 72, 0.7), transparent 70%),
+        linear-gradient(180deg, var(--wine-850), var(--wine-700));
+    box-shadow: 0 50px 90px -50px rgba(82, 26, 47, 0.6);
+    transition: transform 1s var(--ease-out), box-shadow 1s var(--ease-out);
+}
+.bdy-prog__ring {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 38%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 1px solid rgba(217, 185, 149, 0.28);
+    transform: translate(-50%, -50%);
+    transition: transform 1.1s var(--ease-out), border-color 0.8s;
+}
+.bdy-prog__ring:nth-child(2) { width: 58%; border-color: rgba(217, 185, 149, 0.16); }
+.bdy-prog__ring:nth-child(3) { width: 80%; border-color: rgba(217, 185, 149, 0.08); border-style: dashed; }
+.bdy-prog .bdy-prog__num {
+    position: relative;
+    font-size: clamp(4rem, 6vw, 6rem);
+    -webkit-text-stroke-color: rgba(217, 185, 149, 0.6);
+    transition: color 0.8s var(--ease-out);
+}
+.bdy-prog:hover .bdy-prog__arch { transform: translateY(-8px); box-shadow: 0 60px 100px -50px rgba(82, 26, 47, 0.75); }
+.bdy-prog:hover .bdy-prog__num { color: var(--gold-300); }
+.bdy-prog:hover .bdy-prog__ring { transform: translate(-50%, -50%) scale(1.1); border-color: rgba(217, 185, 149, 0.45); }
+.bdy-prog:hover .bdy-prog__ring:nth-child(3) { transform: translate(-50%, -50%) scale(1.06) rotate(30deg); }
+.bdy-prog__name {
+    margin-top: 28px;
+    font-size: clamp(1.45rem, 2vw, 1.9rem);
+    font-weight: 400;
+    line-height: 1.15;
+    color: var(--ink);
+}
+.bdy-prog__desc {
+    margin-top: 12px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line-light);
+    font-size: 0.98rem;
+    line-height: 1.7;
+    color: var(--ink-soft);
 }
 
-.tech-number {
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: #c9a87c;
+/* ---------- Individual plan ---------- */
+.bdy-plan {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    gap: clamp(40px, 6vw, 110px);
+    align-items: start;
+    margin-top: clamp(96px, 12vw, 170px);
+}
+.bdy-programs + .bdy-plan {
+    padding-top: clamp(64px, 8vw, 110px);
+    border-top: 1px solid var(--line-light);
+}
+.bdy-plan__head { position: sticky; top: calc(var(--header-h) + 40px); }
+.bdy-plan__badge {
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    margin-bottom: 28px;
+    border-radius: 50%;
+    background: var(--wine-600);
+    color: var(--cream-50);
+    box-shadow: 0 20px 40px -20px rgba(82, 26, 47, 0.7);
+}
+.bdy-plan__lead { margin-top: 26px; max-width: 460px; color: var(--ink); }
+.bdy-plan__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--line-light);
+}
+.bdy-plan__item {
+    display: grid;
+    grid-template-columns: clamp(80px, 9vw, 120px) minmax(0, 1fr);
+    gap: 16px;
+    align-items: center;
+    padding: clamp(18px, 2.2vw, 28px) 0;
+    border-bottom: 1px solid var(--line-light);
+}
+.bdy-plan__num {
+    font-size: clamp(3rem, 4.6vw, 4.4rem);
+    transition: color 0.6s var(--ease-out);
+}
+.bdy-plan__text {
+    display: block;
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: clamp(1.5rem, 2.5vw, 2.3rem);
+    line-height: 1.15;
+    color: var(--ink);
+    transition: transform 0.8s var(--ease-out);
+}
+.bdy-plan__text::first-letter { text-transform: uppercase; }
+.bdy-plan__item:hover .bdy-plan__num { color: var(--wine-600); }
+.bdy-plan__item:hover .bdy-plan__text { transform: translateX(8px); }
+.bdy-note {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    margin-top: 36px;
+    padding: 24px 28px;
+    border-radius: var(--radius-md);
+    background: var(--cream-100);
+    border: 1px solid var(--line-light);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(1.1rem, 1.45vw, 1.32rem);
+    line-height: 1.5;
+    color: var(--wine-700);
+}
+.bdy-note__icon {
+    flex: none;
+    display: grid;
+    place-items: center;
     width: 36px;
     height: 36px;
+    margin-top: -3px;
+    border-radius: 50%;
+    background: var(--wine-600);
+    color: var(--cream-50);
+}
+
+/* ---------- Admin-managed treatments ---------- */
+.bdy-items { margin-top: clamp(96px, 12vw, 170px); }
+.bdy-items__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+    gap: clamp(16px, 2vw, 24px);
+    margin-top: clamp(40px, 5vw, 64px);
+}
+.bdy-item {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    padding: clamp(24px, 2.6vw, 36px);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--line-light);
+    background: #fffaf5;
+    box-shadow: 0 30px 60px -46px rgba(82, 26, 47, 0.4);
+    color: var(--ink);
+}
+.bdy-item__num { font-size: 0.74rem; font-weight: 700; letter-spacing: 0.18em; color: var(--wine-600); }
+.bdy-item__name { margin-top: 18px; font-size: clamp(1.4rem, 1.8vw, 1.7rem); font-weight: 400; line-height: 1.2; }
+.bdy-item__desc { margin-top: 12px; font-size: 0.96rem; color: var(--ink-soft); }
+.bdy-item__link { margin-top: auto; padding-top: 22px; align-self: flex-start; color: var(--wine-600); }
+
+/* ---------- Pricing panel ---------- */
+.bdy-price {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: clamp(32px, 5vw, 80px);
+    align-items: end;
+    margin-top: clamp(96px, 12vw, 170px);
+    padding: clamp(36px, 5.5vw, 80px);
+    border-radius: clamp(28px, 4vw, 48px);
+    border: 1px solid rgba(217, 185, 149, 0.22);
+    color: var(--on-dark);
+    background:
+        radial-gradient(70% 120% at 0% 100%, rgba(140, 42, 72, 0.55), transparent 60%),
+        linear-gradient(150deg, var(--wine-900), var(--wine-950));
+    box-shadow: 0 60px 120px -60px rgba(22, 10, 14, 0.8);
+}
+.bdy-price__ghost {
+    position: absolute;
+    left: 46%;
+    top: 50%;
+    z-index: -1;
+    width: clamp(240px, 26vw, 380px);
+    margin: calc(clamp(240px, 26vw, 380px) * -0.5) 0 0 calc(clamp(240px, 26vw, 380px) * -0.5);
+    color: rgba(217, 185, 149, 0.08);
+    transform: rotate(-10deg);
+    transition: transform 1.2s var(--ease-out), color 1.2s;
+}
+.bdy-price__ghost svg { width: 100%; height: auto; }
+.bdy-price:hover .bdy-price__ghost { transform: rotate(-2deg) translateY(-8px); color: rgba(217, 185, 149, 0.13); }
+.bdy-price__icon {
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    margin-bottom: 26px;
+    border-radius: 50%;
+    border: 1px solid rgba(217, 185, 149, 0.4);
+    color: var(--gold-300);
+}
+.bdy-price__sub { margin-top: 18px; max-width: 460px; color: var(--on-dark-muted); font-size: 1.05rem; }
+.bdy-price__actions { display: grid; gap: 12px; min-width: 300px; }
+.bdy-price__actions .bm-btn { justify-content: space-between; }
+.bdy-price .bdy-price__dl {
+    --btn-fill: rgba(246, 238, 230, 0.1);
     justify-content: center;
-    background: rgba(201, 168, 124, 0.1);
-    border: 1px solid rgba(201, 168, 124, 0.2);
-    border-radius: 10px;
-    flex-shrink: 0;
+    gap: 12px;
+    color: var(--on-dark);
+    border-color: rgba(246, 238, 230, 0.32);
+}
+.bdy-price .bdy-price__dl:hover { border-color: var(--on-dark); }
+
+/* ---------- Closing CTA ---------- */
+.bdy-cta {
+    position: relative;
+    overflow: hidden;
+    padding-block: clamp(110px, 13vw, 190px);
+}
+.bdy-cta__inner {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.7fr);
+    gap: clamp(40px, 6vw, 96px);
+    align-items: center;
+}
+.bdy-cta__text { margin-top: 30px; max-width: 620px; }
+.bdy-cta__btn { margin-top: 40px; }
+
+.bdy-venn {
+    position: relative;
+    width: 100%;
+    max-width: 380px;
+    aspect-ratio: 1;
+    margin-left: auto;
+}
+.bdy-venn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    animation: bdy-rotate 40s linear infinite;
+    border-radius: 50%;
+    border: 1px dashed rgba(217, 185, 149, 0.2);
+}
+.bdy-venn__c {
+    position: absolute;
+    display: grid;
+    place-items: center;
+    width: 56%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 1px solid rgba(217, 185, 149, 0.5);
+    background: radial-gradient(circle, rgba(217, 185, 149, 0.08), transparent 70%);
+    color: var(--gold-300);
+    transition: transform 1s var(--ease-out);
+}
+.bdy-venn__c--a { left: 22%; top: 4%; }
+.bdy-venn__c--b { left: 4%; top: 38%; }
+.bdy-venn__c--c { left: 40%; top: 38%; }
+.bdy-venn__c svg { opacity: 0.9; }
+.bdy-venn__c--a svg { transform: translateY(-28%); }
+.bdy-venn__c--b svg { transform: translate(-26%, 18%); }
+.bdy-venn__c--c svg { transform: translate(26%, 18%); }
+.bdy-venn:hover .bdy-venn__c--a { transform: translateY(-8px); }
+.bdy-venn:hover .bdy-venn__c--b { transform: translate(-8px, 6px); }
+.bdy-venn:hover .bdy-venn__c--c { transform: translate(8px, 6px); }
+.bdy-venn__core {
+    position: absolute;
+    left: 50%;
+    top: 57%;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--cream-50);
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 0 7px rgba(217, 185, 149, 0.15), 0 0 40px 14px rgba(217, 185, 149, 0.45);
+    animation: bdy-glow 3.4s var(--ease-in-out) infinite;
+}
+@keyframes bdy-rotate { to { transform: rotate(360deg); } }
+@keyframes bdy-glow {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -50%) scale(1.3); }
 }
 
-.tech-name {
-    font-size: 1.15rem;
-    font-weight: 700;
-    color: #fff;
-    margin: 0;
+/* ---------- SEO text ---------- */
+.bdy-seo__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    gap: clamp(32px, 6vw, 110px);
+    align-items: start;
+}
+.bdy-seo__title {
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: clamp(1.9rem, 3.2vw, 3rem);
+    line-height: 1.1;
+    color: var(--ink);
+}
+.bdy-seo__text {
+    font-size: 1.06rem;
+    line-height: 1.9;
+    color: var(--ink-soft);
+}
+.bdy-seo__text::first-letter {
+    float: left;
+    margin: 0.08em 0.12em 0 0;
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: 4.1em;
+    line-height: 0.8;
+    color: var(--wine-600);
 }
 
-.tech-desc {
-    font-size: 0.93rem;
-    color: rgba(255, 255, 255, 0.6);
-    line-height: 1.8;
-    margin: 0 0 20px;
+/* ---------- FAQ ---------- */
+.bdy-faq__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: clamp(40px, 6vw, 110px);
+    align-items: start;
 }
-
-.tech-details {
-    display: flex;
-    gap: 32px;
-    flex-wrap: wrap;
-}
-
-.detail-group {
-    flex: 1;
-    min-width: 200px;
-}
-
-.detail-label {
+.bdy-faq__head { position: sticky; top: calc(var(--header-h) + 40px); }
+.bdy-faq__mark {
     display: block;
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: #c9a87c;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 10px;
+    margin-top: 18px;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(7rem, 13vw, 12rem);
+    line-height: 0.9;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(110, 32, 57, 0.35);
+}
+.bdy-faq__h { font: inherit; letter-spacing: normal; }
+.bdy-faq .bm-faq__q { color: var(--ink); transition: color 0.4s; }
+.bdy-faq .bm-faq__q:hover { color: var(--wine-600); }
+.bdy-faq .bm-faq__item.is-open .bm-faq__q { color: var(--wine-600); }
+.bdy-faq .bm-faq__a p { color: var(--ink-soft); }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1199.98px) {
+    .bdy-cta__inner { grid-template-columns: minmax(0, 1fr) minmax(0, 0.6fr); }
 }
 
-.detail-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.detail-list li {
-    position: relative;
-    padding-left: 16px;
-    margin-bottom: 6px;
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 0.88rem;
-    line-height: 1.5;
-}
-
-.detail-list li::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 8px;
-    width: 5px;
-    height: 5px;
-    background: rgba(201, 168, 124, 0.5);
-    border-radius: 50%;
-}
-
-/* Programs Grid */
-.programs-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-    margin-top: 8px;
-}
-
-.program-card {
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 16px;
-    padding: 28px;
-    transition: all 0.3s ease;
-}
-
-.program-card:hover {
-    border-color: rgba(201, 168, 124, 0.2);
-    background: rgba(255, 255, 255, 0.03);
-}
-
-.program-name {
-    font-size: 1rem;
-    font-weight: 700;
-    color: #c9a87c;
-    margin: 0 0 10px;
-}
-
-.program-desc {
-    font-size: 0.88rem;
-    color: rgba(255, 255, 255, 0.6);
-    line-height: 1.7;
-    margin: 0;
-}
-
-/* Styled List */
-.styled-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.styled-list li {
-    position: relative;
-    padding-left: 20px;
-    margin-bottom: 10px;
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 0.95rem;
-    line-height: 1.6;
-}
-
-.styled-list li::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 10px;
-    width: 6px;
-    height: 6px;
-    background: #c9a87c;
-    border-radius: 50%;
-}
-
-/* Treatment Grid (admin-managed) */
-.tech-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-}
-
-.treatment-card {
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 16px;
-    padding: 28px;
-    transition: all 0.3s ease;
-}
-
-.treatment-card:hover {
-    border-color: rgba(201, 168, 124, 0.15);
-    background: rgba(255, 255, 255, 0.03);
-}
-
-.treatment-name {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #c9a87c;
-    margin: 0 0 12px;
-}
-
-.treatment-desc {
-    font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.6);
-    line-height: 1.7;
-    margin: 0;
-}
-
-.treatment-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    margin-top: 16px;
-    color: #c9a87c;
-    text-decoration: none;
-    font-size: 0.85rem;
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
-
-.treatment-link:hover {
-    color: #dfc09e;
-}
-
-.treatment-link svg {
-    width: 14px;
-    height: 14px;
-    transition: transform 0.3s ease;
-}
-
-.treatment-link:hover svg {
-    transform: translateX(4px);
-}
-
-/* Closing Block */
-.closing-block {
-    text-align: center;
-    padding: 60px 40px;
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 24px;
-}
-
-.closing-title {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #fff;
-    margin: 0 0 16px;
-}
-
-.closing-text {
-    font-size: 1rem;
-    color: rgba(255, 255, 255, 0.6);
-    max-width: 600px;
-    margin: 0 auto 32px;
-    line-height: 1.7;
-}
-
-.cta-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    padding: 16px 36px;
-    background: linear-gradient(135deg, #c9a87c, #a88a5c);
-    border-radius: 100px;
-    color: #0a0f14;
-    font-size: 0.95rem;
-    font-weight: 600;
-    text-decoration: none;
-    transition: all 0.3s ease;
-}
-
-.cta-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 30px rgba(201, 168, 124, 0.35);
-}
-
-.cta-btn svg {
-    width: 16px;
-    height: 16px;
-    transition: transform 0.3s ease;
-}
-
-.cta-btn:hover svg {
-    transform: translateX(4px);
-}
-
-/* SEO Content Block */
-.seo-content {
-    padding: 48px 0;
-    background: rgba(255, 255, 255, 0.01);
-    border-top: 1px solid rgba(255, 255, 255, 0.04);
-}
-
-.seo-content .container {
-    max-width: 900px;
-}
-
-.seo-content h2 {
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.25);
-    margin: 0 0 12px;
-}
-
-.seo-content p {
-    font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.15);
-    line-height: 1.6;
-    margin: 0;
-}
-
-/* Pricing / PDF Section */
-.pricing-block {
-    border: 1px solid rgba(201, 168, 124, 0.15);
-    border-radius: 16px;
-    padding: 40px;
-    background: rgba(201, 168, 124, 0.03);
-}
-
-.pdf-actions {
-    display: flex;
-    gap: 16px;
-    margin-top: 24px;
-    flex-wrap: wrap;
-}
-
-.pdf-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    padding: 14px 28px;
-    background: rgba(201, 168, 124, 0.1);
-    border: 1px solid rgba(201, 168, 124, 0.3);
-    border-radius: 100px;
-    color: #c9a87c;
-    font-size: 0.9rem;
-    font-weight: 600;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    letter-spacing: 0.5px;
-}
-
-.pdf-btn:hover {
-    background: rgba(201, 168, 124, 0.2);
-    border-color: rgba(201, 168, 124, 0.5);
-    color: #c9a87c;
-    transform: translateY(-2px);
-}
-
-.pdf-btn-secondary {
-    background: transparent;
-    border-color: rgba(201, 168, 124, 0.15);
-    color: rgba(201, 168, 124, 0.7);
-}
-
-.pdf-btn-secondary:hover {
-    background: rgba(201, 168, 124, 0.08);
-    color: #c9a87c;
-}
-
-/* Responsive */
 @media (max-width: 991.98px) {
-    .scroll-indicator {
-        display: none;
-    }
+    .bdy-contour { margin: 8px auto 0; max-width: 400px; }
+    .bdy-intro__rest { grid-template-columns: 1fr; gap: 24px; }
+    .bdy-intro__text { columns: 1; }
+    .bdy-tech__hint { display: none; }
+    .bdy-tcard { width: min(80vw, 360px); }
+    .bdy-programs__head, .bdy-plan, .bdy-seo__grid, .bdy-faq__grid { grid-template-columns: 1fr; }
+    .bdy-plan__head, .bdy-faq__head { position: static; }
+    .bdy-programs__grid { grid-template-columns: 1fr 1fr; }
+    .bdy-price { grid-template-columns: 1fr; align-items: start; }
+    .bdy-price__actions { min-width: 0; }
+    .bdy-cta__inner { grid-template-columns: 1fr; }
+    .bdy-venn { max-width: 300px; margin: 0 auto; }
+    .bdy-faq__mark { display: none; }
+}
 
-    .hero-stats {
-        flex-direction: column;
-        gap: 24px;
-        padding: 32px;
-    }
-
-    .stat-divider {
-        width: 60px;
-        height: 1px;
-    }
-
-    .tech-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .programs-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .tech-details {
-        flex-direction: column;
-        gap: 20px;
-    }
+@media (max-width: 767.98px) {
+    .bdy-programs__grid { grid-template-columns: 1fr; }
+    .bdy-prog__arch { aspect-ratio: 1 / 0.8; }
 }
 
 @media (max-width: 575.98px) {
-    .body-hero {
-        padding: 100px 0 60px;
-        min-height: auto;
-    }
-
-    .hero-badge {
-        padding: 10px 20px;
-        font-size: 0.7rem;
-    }
-
-    .hero-title {
-        font-size: 2.5rem;
-        letter-spacing: -1px;
-    }
-
-    .hero-subtitle {
-        font-size: 1rem;
-        margin-bottom: 32px;
-    }
-
-    .body-content {
-        padding: 60px 0 80px;
-    }
-
-    .block-title {
-        font-size: 1.2rem;
-    }
-
-    .tech-item {
-        padding: 24px;
-    }
-
-    .closing-block {
-        padding: 40px 24px;
-    }
-
-    .closing-title {
-        font-size: 1.25rem;
-    }
-
-    .pdf-actions {
-        flex-direction: column;
-    }
-
-    .pdf-btn {
-        justify-content: center;
-    }
+    .bdy-stats { gap: 8px; }
+    .bdy-stat { padding: 16px 12px 14px; }
+    .bdy-stat__label { letter-spacing: 0.1em; font-size: 0.6rem; }
+    .bdy-contour__arch { aspect-ratio: 1 / 1.1; }
+    .bdy-contour__chip { width: 46px; height: 46px; }
+    .bdy-contour__chip--a { left: -6px; }
+    .bdy-contour__chip--b { right: -6px; }
+    .bdy-tcard { width: 84vw; }
+    .bdy-plan__item { grid-template-columns: 64px minmax(0, 1fr); }
+    .bdy-price__actions .bm-btn { width: 100%; }
+    .bdy-cta__btn { width: 100%; justify-content: space-between; }
+    .bdy-venn { max-width: 240px; }
 }
 
-/* FAQ Section */
-.faq-section { padding: 100px 0; border-top: 1px solid rgba(255,255,255,0.06); }
-.faq-header { text-align: center; margin-bottom: 60px; }
-.faq-title { font-size: clamp(1.75rem,4vw,2.5rem); font-weight: 700; color: #fff; }
-.faq-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 24px; max-width: 1000px; margin: 0 auto; }
-.faq-item { padding: 32px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; transition: all 0.3s ease; }
-.faq-item:hover { border-color: rgba(201,168,124,0.2); background: rgba(201,168,124,0.03); }
-.faq-question { font-size: 1.05rem; font-weight: 600; color: #c9a87c; margin: 0 0 12px; line-height: 1.4; }
-.faq-answer { font-size: 0.95rem; color: rgba(255,255,255,0.6); line-height: 1.7; margin: 0; }
-@media (max-width: 767.98px) { .faq-section { padding: 60px 0; } .faq-grid { grid-template-columns: 1fr; } .faq-item { padding: 24px; } }
+@media (prefers-reduced-motion: reduce) {
+    .bdy-contour__lines, .bdy-contour__scan, .bdy-contour__chip, .bdy-venn::before, .bdy-venn__core { animation: none; }
+    .bdy-contour__lines path { animation: none; stroke-dashoffset: 0; }
+}
 </style>
