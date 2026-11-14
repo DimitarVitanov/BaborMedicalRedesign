@@ -300,7 +300,7 @@ const scrollTop = () => {
     letter-spacing: -0.04em;
     white-space: nowrap;
     text-align: center;
-    margin-bottom: -2.6vw;
+    margin-bottom: 0;
     background: linear-gradient(180deg, rgba(217, 185, 149, 0.82) 0%, rgba(217, 185, 149, 0.34) 70%, rgba(217, 185, 149, 0.12) 100%);
     -webkit-background-clip: text;
     background-clip: text;

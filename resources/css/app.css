@@ -719,6 +719,10 @@ select.bm-input option { color: #2a1219; }
 .js .fade-in-right:not(.is-visible) { opacity: 0; transform: translateX(40px); }
 .js .fade-in:not(.is-visible) { opacity: 0; }
 
+/* .visually-hidden used to come from Bootstrap; Bootstrap no longer loads on
+   public pages, so define it here or the screen-reader-only button labels
+   ("… - Alma Soprano Titanium") render as visible text. */
+.visually-hidden,
 .visually-hidden-bm {
     position: absolute !important;
     width: 1px !important;
