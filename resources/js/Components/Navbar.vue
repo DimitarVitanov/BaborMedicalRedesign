@@ -1,5 +1,5 @@
 <script setup>
-import { usePage } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
 import { computed, ref, onMounted, onUnmounted } from 'vue';
 import Icon from '@/Components/Site/Icon.vue';
 
@@ -97,6 +97,9 @@ const isActive = (href) => {
 
 onMounted(() => {
     currentPath.value = window.location.pathname;
+    // A fresh navbar always starts with the menu closed — clear any scroll
+    // lock left behind by a navigation that happened while the menu was open.
+    document.body.style.overflow = '';
     lastY = window.scrollY;
     window.addEventListener('scroll', handleScroll, { passive: true });
     document.addEventListener('click', closeDropdownOutside);
@@ -162,19 +165,19 @@ const primaryEmail = computed(() => locations.value.find((l) => l.email)?.email 
         :class="{ 'is-scrolled': isScrolled, 'is-hidden': isHidden, 'is-menu-open': mobileMenuOpen }"
     >
         <div class="bm-header__bar">
-            <a href="/" class="bm-header__logo" aria-label="Babor Medical - Home">
+            <Link href="/" class="bm-header__logo" aria-label="Babor Medical - Home">
                 <img src="/logo-light.webp" alt="Babor Medical" width="64" height="64" />
-            </a>
+            </Link>
 
-            <!-- Desktop navigation -->
+            <!-- Desktop navigation (internal links are SPA visits — no full reload) -->
             <nav class="bm-nav" aria-label="Main">
-                <a
+                <Link
                     v-for="link in navLinks.slice(0, 3)"
                     :key="link.name"
                     :href="link.href"
                     class="bm-nav__link"
                     :class="{ 'is-active': isActive(link.href) }"
-                >{{ link.name }}</a>
+                >{{ link.name }}</Link>
 
                 <div
                     class="bm-nav__item--dd"
@@ -195,10 +198,10 @@ const primaryEmail = computed(() => locations.value.find((l) => l.email)?.email 
                         <div class="bm-dd__panel">
                             <div v-for="group in serviceGroups" :key="group.label" class="bm-dd__group">
                                 <div class="bm-dd__label">{{ group.label }}</div>
-                                <a v-for="item in group.items" :key="item.href" :href="item.href" class="bm-dd__item">
+                                <Link v-for="item in group.items" :key="item.href" :href="item.href" class="bm-dd__item">
                                     <span>{{ item.name }}</span>
                                     <Icon name="arrow-up-right" :size="15" />
-                                </a>
+                                </Link>
                             </div>
                         </div>
                     </div>
@@ -233,7 +236,8 @@ const primaryEmail = computed(() => locations.value.find((l) => l.email)?.email 
                     </div>
                 </div>
 
-                <a
+                <component
+                    :is="link.external ? 'a' : Link"
                     v-for="link in navLinks.slice(3)"
                     :key="link.name"
                     :href="link.href"
@@ -241,7 +245,7 @@ const primaryEmail = computed(() => locations.value.find((l) => l.email)?.email 
                     :class="{ 'is-active': isActive(link.href) }"
                     :target="link.external ? '_blank' : null"
                     :rel="link.external ? 'noopener' : null"
-                >{{ link.name }}<Icon v-if="link.external" name="arrow-up-right" :size="12" :stroke="2" class="bm-nav__ext" /></a>
+                >{{ link.name }}<Icon v-if="link.external" name="arrow-up-right" :size="12" :stroke="2" class="bm-nav__ext" /></component>
             </nav>
 
             <div class="bm-header__right">
@@ -250,10 +254,10 @@ const primaryEmail = computed(() => locations.value.find((l) => l.email)?.email 
                     <button class="bm-lang__btn" :class="{ active: currentLocale === 'mk' }" @click="switchLanguage('mk')">MK</button>
                 </div>
 
-                <a href="/contact" class="bm-btn bm-btn--sm bm-header__cta" :aria-label="currentLocale === 'mk' ? 'Контактирајте го Babor Medical' : 'Contact Babor Medical'">
+                <Link href="/contact" class="bm-btn bm-btn--sm bm-header__cta" :aria-label="currentLocale === 'mk' ? 'Контактирајте го Babor Medical' : 'Contact Babor Medical'">
                     <span>{{ ctaText }}</span>
                     <span class="bm-btn__icon"><Icon name="arrow-right" :stroke="2" /></span>
-                </a>
+                </Link>
 
                 <button class="bm-burger" :class="{ active: mobileMenuOpen }" :aria-label="menuLabel" :aria-expanded="mobileMenuOpen ? 'true' : 'false'" @click="toggleMobileMenu">
                     <span></span>
@@ -268,7 +272,7 @@ const primaryEmail = computed(() => locations.value.find((l) => l.email)?.email 
     <div class="mobile-menu bm-mmenu" :class="{ open: mobileMenuOpen }" data-lenis-prevent>
         <div class="bm-aura" aria-hidden="true"><span></span><span></span><span></span></div>
         <nav class="bm-mmenu__nav" aria-label="Mobile">
-            <a
+            <Link
                 v-for="(link, i) in navLinks.slice(0, 3)"
                 :key="link.name"
                 :href="link.href"
@@ -277,7 +281,7 @@ const primaryEmail = computed(() => locations.value.find((l) => l.email)?.email 
                 @click="closeMobileMenu"
             >
                 <span class="bm-mmenu__idx">0{{ i + 1 }}</span>{{ link.name }}
-            </a>
+            </Link>
 
             <div class="bm-mmenu__group" :style="{ '--k': 3 }">
                 <button class="bm-mmenu__link bm-mmenu__trigger" :aria-expanded="mobileServicesOpen ? 'true' : 'false'" @click="toggleMobileServices">
@@ -288,7 +292,7 @@ const primaryEmail = computed(() => locations.value.find((l) => l.email)?.email 
                     <div>
                         <template v-for="group in serviceGroups" :key="group.label">
                             <span class="bm-mmenu__sublabel">{{ group.label }}</span>
-                            <a v-for="item in group.items" :key="item.href" :href="item.href" class="bm-mmenu__subitem" @click="closeMobileMenu">{{ item.name }}</a>
+                            <Link v-for="item in group.items" :key="item.href" :href="item.href" class="bm-mmenu__subitem" @click="closeMobileMenu">{{ item.name }}</Link>
                         </template>
                     </div>
                 </div>
@@ -308,7 +312,8 @@ const primaryEmail = computed(() => locations.value.find((l) => l.email)?.email 
                 </div>
             </div>
 
-            <a
+            <component
+                :is="link.external ? 'a' : Link"
                 v-for="(link, i) in navLinks.slice(3)"
                 :key="link.name"
                 :href="link.href"
@@ -319,7 +324,7 @@ const primaryEmail = computed(() => locations.value.find((l) => l.email)?.email 
                 @click="closeMobileMenu"
             >
                 <span class="bm-mmenu__idx">0{{ i + 6 }}</span>{{ link.name }}
-            </a>
+            </component>
         </nav>
 
         <div class="bm-mmenu__footer">
@@ -553,12 +558,12 @@ const primaryEmail = computed(() => locations.value.find((l) => l.email)?.email 
     overflow-y: auto;
     clip-path: circle(0% at calc(100% - 50px) 44px);
     visibility: hidden;
-    transition: clip-path 0.8s var(--ease-in-out), visibility 0s linear 0.8s;
+    transition: clip-path 0.38s var(--ease-in-out), visibility 0s linear 0.38s;
 }
 .bm-mmenu.open {
     clip-path: circle(150% at calc(100% - 50px) 44px);
     visibility: visible;
-    transition: clip-path 0.9s var(--ease-in-out), visibility 0s;
+    transition: clip-path 0.5s var(--ease-in-out), visibility 0s;
 }
 .bm-mmenu__nav { position: relative; display: grid; }
 .bm-mmenu__link {
@@ -578,19 +583,19 @@ const primaryEmail = computed(() => locations.value.find((l) => l.email)?.email 
     text-align: left;
     opacity: 0;
     transform: translate3d(0, 24px, 0);
-    transition: opacity 0.6s var(--ease-out), transform 0.8s var(--ease-out), color 0.3s;
+    transition: opacity 0.4s var(--ease-out), transform 0.5s var(--ease-out), color 0.3s;
 }
 .bm-mmenu__group .bm-mmenu__link { opacity: 1; transform: none; }
 .bm-mmenu__group {
     opacity: 0;
     transform: translate3d(0, 24px, 0);
-    transition: opacity 0.6s var(--ease-out), transform 0.8s var(--ease-out);
+    transition: opacity 0.4s var(--ease-out), transform 0.5s var(--ease-out);
 }
 .bm-mmenu.open .bm-mmenu__link,
 .bm-mmenu.open .bm-mmenu__group {
     opacity: 1;
     transform: none;
-    transition-delay: calc(0.25s + var(--k, 0) * 0.05s);
+    transition-delay: calc(0.08s + var(--k, 0) * 0.035s);
 }
 .bm-mmenu__link:hover { color: var(--gold-300); }
 .bm-mmenu__idx {
