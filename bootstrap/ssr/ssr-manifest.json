@@ -4,11 +4,11 @@
   ],
   "node_modules/laravel-vite-plugin/inertia-helpers/index.js": [],
   "resources/js/Components/AboutSection.vue": [
-    "/build/assets/Welcome-DfseBojX.js",
+    "/build/assets/Welcome-BAtxtmz4.js",
     "/build/assets/Welcome-BH6EeEQk.css"
   ],
   "resources/js/Components/AboutSection.vue?vue&type=style&index=0&scoped=6b37fb70&lang.css": [
-    "/build/assets/Welcome-DfseBojX.js",
+    "/build/assets/Welcome-BAtxtmz4.js",
     "/build/assets/Welcome-BH6EeEQk.css"
   ],
   "resources/js/Components/Admin/RichTextEditor.vue": [
@@ -27,11 +27,11 @@
     "/build/assets/DeleteUserForm-C1FFTzpr.js"
   ],
   "resources/js/Components/EquipmentSection.vue": [
-    "/build/assets/Welcome-DfseBojX.js",
+    "/build/assets/Welcome-BAtxtmz4.js",
     "/build/assets/Welcome-BH6EeEQk.css"
   ],
   "resources/js/Components/EquipmentSection.vue?vue&type=style&index=0&scoped=09abc613&lang.css": [
-    "/build/assets/Welcome-DfseBojX.js",
+    "/build/assets/Welcome-BAtxtmz4.js",
     "/build/assets/Welcome-BH6EeEQk.css"
   ],
   "resources/js/Components/Footer.vue": [
@@ -43,11 +43,11 @@
     "/build/assets/Footer-Bppnyxiz.css"
   ],
   "resources/js/Components/HeroSection.vue": [
-    "/build/assets/Welcome-DfseBojX.js",
+    "/build/assets/Welcome-BAtxtmz4.js",
     "/build/assets/Welcome-BH6EeEQk.css"
   ],
   "resources/js/Components/HeroSection.vue?vue&type=style&index=0&scoped=8563acb4&lang.css": [
-    "/build/assets/Welcome-DfseBojX.js",
+    "/build/assets/Welcome-BAtxtmz4.js",
     "/build/assets/Welcome-BH6EeEQk.css"
   ],
   "resources/js/Components/InputError.vue": [
@@ -68,11 +68,11 @@
     "/build/assets/Footer-Bppnyxiz.css"
   ],
   "resources/js/Components/NewsletterSection.vue": [
-    "/build/assets/Welcome-DfseBojX.js",
+    "/build/assets/Welcome-BAtxtmz4.js",
     "/build/assets/Welcome-BH6EeEQk.css"
   ],
   "resources/js/Components/NewsletterSection.vue?vue&type=style&index=0&scoped=8f6d1fe3&lang.css": [
-    "/build/assets/Welcome-DfseBojX.js",
+    "/build/assets/Welcome-BAtxtmz4.js",
     "/build/assets/Welcome-BH6EeEQk.css"
   ],
   "resources/js/Components/PrimaryButton.vue": [
@@ -82,20 +82,28 @@
     "/build/assets/DeleteUserForm-C1FFTzpr.js"
   ],
   "resources/js/Components/ServiceCategoriesSection.vue": [
-    "/build/assets/Welcome-DfseBojX.js",
+    "/build/assets/Welcome-BAtxtmz4.js",
     "/build/assets/Welcome-BH6EeEQk.css"
   ],
   "resources/js/Components/ServiceCategoriesSection.vue?vue&type=style&index=0&scoped=d140d628&lang.css": [
-    "/build/assets/Welcome-DfseBojX.js",
+    "/build/assets/Welcome-BAtxtmz4.js",
     "/build/assets/Welcome-BH6EeEQk.css"
   ],
   "resources/js/Components/ServicesSection.vue": [
-    "/build/assets/Welcome-DfseBojX.js",
+    "/build/assets/Welcome-BAtxtmz4.js",
     "/build/assets/Welcome-BH6EeEQk.css"
   ],
   "resources/js/Components/ServicesSection.vue?vue&type=style&index=0&scoped=eee35c24&lang.css": [
-    "/build/assets/Welcome-DfseBojX.js",
+    "/build/assets/Welcome-BAtxtmz4.js",
     "/build/assets/Welcome-BH6EeEQk.css"
+  ],
+  "resources/js/Components/Site/BlackFridayJournal.vue": [
+    "/build/assets/useInView-B_i8FHxn.js",
+    "/build/assets/useInView-DIsxhh99.css"
+  ],
+  "resources/js/Components/Site/BlackFridayJournal.vue?vue&type=style&index=0&scoped=0d660ae5&lang.css": [
+    "/build/assets/useInView-B_i8FHxn.js",
+    "/build/assets/useInView-DIsxhh99.css"
   ],
   "resources/js/Components/Site/Counter.vue": [
     "/build/assets/Counter-D9QhkEw9.js",
@@ -118,11 +126,11 @@
     "/build/assets/Footer-Bppnyxiz.css"
   ],
   "resources/js/Components/Site/Marquee.vue": [
-    "/build/assets/Marquee-BW44XveL.js",
+    "/build/assets/Marquee-DRBFwWuw.js",
     "/build/assets/Marquee-ESbrhkaW.css"
   ],
   "resources/js/Components/Site/Marquee.vue?vue&type=style&index=0&scoped=5abe1ba4&lang.css": [
-    "/build/assets/Marquee-BW44XveL.js",
+    "/build/assets/Marquee-DRBFwWuw.js",
     "/build/assets/Marquee-ESbrhkaW.css"
   ],
   "resources/js/Components/Site/MaskText.vue": [
@@ -138,29 +146,31 @@
     "/build/assets/PageHero-nlSjordF.css"
   ],
   "resources/js/Components/Site/RotatingBadge.vue": [
-    "/build/assets/RotatingBadge-139J2yQu.js",
+    "/build/assets/RotatingBadge-BD3v2tF1.js",
     "/build/assets/RotatingBadge-CR8ECz5h.css"
   ],
   "resources/js/Components/Site/RotatingBadge.vue?vue&type=style&index=0&scoped=723ac42a&lang.css": [
-    "/build/assets/RotatingBadge-139J2yQu.js",
+    "/build/assets/RotatingBadge-BD3v2tF1.js",
     "/build/assets/RotatingBadge-CR8ECz5h.css"
   ],
   "resources/js/Components/Site/ScrollWords.vue": [
-    "/build/assets/ScrollWords-BXYuyk_1.js",
+    "/build/assets/ScrollWords-Cljcku_x.js",
     "/build/assets/ScrollWords-8kxNQrZN.css"
   ],
   "resources/js/Components/Site/ScrollWords.vue?vue&type=style&index=0&scoped=bc8a599e&lang.css": [
-    "/build/assets/ScrollWords-BXYuyk_1.js",
+    "/build/assets/ScrollWords-Cljcku_x.js",
     "/build/assets/ScrollWords-8kxNQrZN.css"
   ],
   "resources/js/Components/TextInput.vue": [
     "/build/assets/TextInput-A0-GkXWF.js"
   ],
   "resources/js/Composables/useInView.js": [
-    "/build/assets/useInView-Den8Gs11.js"
+    "/build/assets/useInView-B_i8FHxn.js",
+    "/build/assets/useInView-DIsxhh99.css"
   ],
   "resources/js/Composables/useReveal.js": [
-    "/build/assets/useInView-Den8Gs11.js"
+    "/build/assets/useInView-B_i8FHxn.js",
+    "/build/assets/useInView-DIsxhh99.css"
   ],
   "resources/js/Composables/useScrollAnimation.js": [
     "/build/assets/Services-BuP9TWS1.js",
@@ -181,14 +191,15 @@
     "/build/assets/admin-CNObcI-1.css"
   ],
   "resources/js/Layouts/SiteLayout.vue": [
-    "/build/assets/useInView-Den8Gs11.js"
+    "/build/assets/useInView-B_i8FHxn.js",
+    "/build/assets/useInView-DIsxhh99.css"
   ],
   "resources/js/Pages/About.vue": [
-    "/build/assets/About-DPkiQx2N.js",
+    "/build/assets/About-BGRKAcN9.js",
     "/build/assets/About-CeK6MGtC.css"
   ],
   "resources/js/Pages/About.vue?vue&type=style&index=0&scoped=c494ad9f&lang.css": [
-    "/build/assets/About-DPkiQx2N.js",
+    "/build/assets/About-BGRKAcN9.js",
     "/build/assets/About-CeK6MGtC.css"
   ],
   "resources/js/Pages/Admin/About/Edit.vue": [
@@ -314,7 +325,7 @@
     "/build/assets/admin-CNObcI-1.css"
   ],
   "resources/js/Pages/Admin/Settings/Index.vue": [
-    "/build/assets/Index-DDV58Dk8.js",
+    "/build/assets/Index-Carxxo86.js",
     "/build/assets/admin-CNObcI-1.css"
   ],
   "resources/js/Pages/Auth/ConfirmPassword.vue": [
@@ -348,19 +359,19 @@
     "/build/assets/admin-CNObcI-1.css"
   ],
   "resources/js/Pages/Careers.vue": [
-    "/build/assets/Careers-BJA_7dIY.js",
+    "/build/assets/Careers-Cr_wVJQ7.js",
     "/build/assets/Careers-CGTGEvsj.css"
   ],
   "resources/js/Pages/Careers.vue?vue&type=style&index=0&scoped=00838ea5&lang.css": [
-    "/build/assets/Careers-BJA_7dIY.js",
+    "/build/assets/Careers-Cr_wVJQ7.js",
     "/build/assets/Careers-CGTGEvsj.css"
   ],
   "resources/js/Pages/Contact.vue": [
-    "/build/assets/Contact-CWKib-72.js",
+    "/build/assets/Contact-TqAtabZc.js",
     "/build/assets/Contact-7ivfMuKc.css"
   ],
   "resources/js/Pages/Contact.vue?vue&type=style&index=0&scoped=6e6e8553&lang.css": [
-    "/build/assets/Contact-CWKib-72.js",
+    "/build/assets/Contact-TqAtabZc.js",
     "/build/assets/Contact-7ivfMuKc.css"
   ],
   "resources/js/Pages/Dashboard.vue": [
@@ -374,27 +385,27 @@
     "/build/assets/admin-CNObcI-1.css"
   ],
   "resources/js/Pages/LaserDetail.vue": [
-    "/build/assets/LaserDetail-uO1LDXOw.js",
+    "/build/assets/LaserDetail-D-vwkung.js",
     "/build/assets/LaserDetail-9o1Vp-dw.css"
   ],
   "resources/js/Pages/LaserDetail.vue?vue&type=style&index=0&scoped=3fec4ecc&lang.css": [
-    "/build/assets/LaserDetail-uO1LDXOw.js",
+    "/build/assets/LaserDetail-D-vwkung.js",
     "/build/assets/LaserDetail-9o1Vp-dw.css"
   ],
   "resources/js/Pages/Lasers.vue": [
-    "/build/assets/Lasers-CNo8-otv.js",
+    "/build/assets/Lasers-BfaMruLX.js",
     "/build/assets/Lasers-BaZpfxC-.css"
   ],
   "resources/js/Pages/Lasers.vue?vue&type=style&index=0&scoped=ebeaa77f&lang.css": [
-    "/build/assets/Lasers-CNo8-otv.js",
+    "/build/assets/Lasers-BfaMruLX.js",
     "/build/assets/Lasers-BaZpfxC-.css"
   ],
   "resources/js/Pages/PrivacyPolicy.vue": [
-    "/build/assets/PrivacyPolicy-BiJRvSmL.js",
+    "/build/assets/PrivacyPolicy-DkxxUDHn.js",
     "/build/assets/PrivacyPolicy-BU5D2LRQ.css"
   ],
   "resources/js/Pages/PrivacyPolicy.vue?vue&type=style&index=0&scoped=703048fe&lang.css": [
-    "/build/assets/PrivacyPolicy-BiJRvSmL.js",
+    "/build/assets/PrivacyPolicy-DkxxUDHn.js",
     "/build/assets/PrivacyPolicy-BU5D2LRQ.css"
   ],
   "resources/js/Pages/Profile/Edit.vue": [
@@ -419,52 +430,55 @@
     "/build/assets/Services-Cih38VJw.css"
   ],
   "resources/js/Pages/Services/BodyTreatmentsPage.vue": [
-    "/build/assets/BodyTreatmentsPage-DprdfHok.js",
+    "/build/assets/BodyTreatmentsPage-CJPErzaQ.js",
     "/build/assets/BodyTreatmentsPage-QsobIbbn.css"
   ],
   "resources/js/Pages/Services/BodyTreatmentsPage.vue?vue&type=style&index=0&scoped=a14e35c8&lang.css": [
-    "/build/assets/BodyTreatmentsPage-DprdfHok.js",
+    "/build/assets/BodyTreatmentsPage-CJPErzaQ.js",
     "/build/assets/BodyTreatmentsPage-QsobIbbn.css"
   ],
   "resources/js/Pages/Services/CategoryPage.vue": [
-    "/build/assets/CategoryPage-BrMoQ972.js",
+    "/build/assets/CategoryPage-BWLaNzLy.js",
     "/build/assets/CategoryPage-Cu8MQf5O.css"
   ],
   "resources/js/Pages/Services/CategoryPage.vue?vue&type=style&index=0&scoped=3f478c1b&lang.css": [
-    "/build/assets/CategoryPage-BrMoQ972.js",
+    "/build/assets/CategoryPage-BWLaNzLy.js",
     "/build/assets/CategoryPage-Cu8MQf5O.css"
   ],
   "resources/js/Pages/Services/Index.vue": [
-    "/build/assets/Index-CBiXNTyq.js",
+    "/build/assets/Index-BJ2Oc9AZ.js",
     "/build/assets/Index-ChwMHqBA.css"
   ],
   "resources/js/Pages/Services/Index.vue?vue&type=style&index=0&scoped=d0cf8504&lang.css": [
-    "/build/assets/Index-CBiXNTyq.js",
+    "/build/assets/Index-BJ2Oc9AZ.js",
     "/build/assets/Index-ChwMHqBA.css"
   ],
   "resources/js/Pages/Services/InjectablePage.vue": [
-    "/build/assets/InjectablePage-BEQAIJZO.js",
+    "/build/assets/InjectablePage-Cp_YBTKm.js",
     "/build/assets/InjectablePage-ofWyr-Jd.css"
   ],
   "resources/js/Pages/Services/InjectablePage.vue?vue&type=style&index=0&scoped=fb7ca4a1&lang.css": [
-    "/build/assets/InjectablePage-BEQAIJZO.js",
+    "/build/assets/InjectablePage-Cp_YBTKm.js",
     "/build/assets/InjectablePage-ofWyr-Jd.css"
   ],
   "resources/js/Pages/Services/LaserPage.vue": [
-    "/build/assets/LaserPage-B-V5kc_X.js",
+    "/build/assets/LaserPage-cymvbAiu.js",
     "/build/assets/LaserPage-BC68zsa0.css"
   ],
   "resources/js/Pages/Services/LaserPage.vue?vue&type=style&index=0&scoped=7d3cbd26&lang.css": [
-    "/build/assets/LaserPage-B-V5kc_X.js",
+    "/build/assets/LaserPage-cymvbAiu.js",
     "/build/assets/LaserPage-BC68zsa0.css"
   ],
   "resources/js/Pages/Welcome.vue": [
-    "/build/assets/Welcome-DfseBojX.js",
+    "/build/assets/Welcome-BAtxtmz4.js",
     "/build/assets/Welcome-BH6EeEQk.css"
   ],
   "resources/js/Pages/Welcome.vue?vue&type=style&index=0&scoped=21bc3e46&lang.css": [
-    "/build/assets/Welcome-DfseBojX.js",
+    "/build/assets/Welcome-BAtxtmz4.js",
     "/build/assets/Welcome-BH6EeEQk.css"
+  ],
+  "resources/js/data/black-friday.json": [
+    "/build/assets/black-friday-Cbd3cBlI.js"
   ],
   "resources/js/ssr.js": [],
   "vendor/tightenco/ziggy/dist/index.js": []

@@ -11,6 +11,7 @@ const defaultSettings = [
     { key: 'social_instagram', label: 'Instagram URL', group: 'social' },
     { key: 'social_tiktok', label: 'TikTok URL', group: 'social' },
     { key: 'notification_emails', label: 'Notification Emails', group: 'notifications' },
+    { key: 'black_friday_popup', label: 'Black Friday Journal Popup', group: 'promo' },
 ];
 
 const getSettingValue = (key, lang) => {
@@ -44,6 +45,7 @@ const submit = () => {
 
 const socialSettings = defaultSettings.filter(s => s.group === 'social');
 const notificationSettings = defaultSettings.filter(s => s.group === 'notifications');
+const promoSettings = defaultSettings.filter(s => s.group === 'promo');
 </script>
 
 <template>
@@ -96,6 +98,27 @@ const notificationSettings = defaultSettings.filter(s => s.group === 'notificati
                                     class="form-control"
                                     placeholder="email@example.com, another@example.com"
                                 />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Promotions -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Promotions</h5>
+                        </div>
+                        <div class="card-body">
+                            <div v-for="setting in promoSettings" :key="setting.key" class="mb-3">
+                                <label class="form-label fw-bold">{{ setting.label }}</label>
+                                <select
+                                    v-model="form[`${setting.key}_en`]"
+                                    @change="form[`${setting.key}_mk`] = form[`${setting.key}_en`]"
+                                    class="form-select"
+                                >
+                                    <option value="1">On — visitors see the popup</option>
+                                    <option value="0">Off</option>
+                                </select>
+                                <small class="text-muted">The popup also turns itself off automatically after November 30.</small>
                             </div>
                         </div>
                     </div>

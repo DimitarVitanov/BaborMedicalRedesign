@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import Navbar from '@/Components/Navbar.vue';
 import Footer from '@/Components/Footer.vue';
+import BlackFridayJournal from '@/Components/Site/BlackFridayJournal.vue';
 import { useReveal } from '@/Composables/useReveal';
 
 // Shell for every public page: header, <main>, footer + the reveal observer.
@@ -16,5 +17,6 @@ useReveal(root);
             <slot />
         </main>
         <Footer />
+        <BlackFridayJournal />
     </div>
 </template>

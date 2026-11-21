@@ -41,6 +41,8 @@ class HandleInertiaRequests extends Middleware
             ],
             'locale' => app()->getLocale(),
             'availableLocales' => ['en', 'mk'],
+            // Black Friday journal popup (toggle in Admin > Settings; defaults to on)
+            'blackFriday' => fn () => \App\Models\Setting::get('black_friday_popup', 'en', '1') === '1',
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),
                 'error' => fn () => $request->session()->get('error'),
