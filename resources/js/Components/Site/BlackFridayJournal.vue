@@ -10,7 +10,9 @@ import { usePage } from '@inertiajs/vue3';
 const page = usePage();
 const locale = computed(() => page.props.locale || 'en');
 
-const LAST_DAY = '2026-11-30'; // hard stop: never shows past this date
+const FIRST_DAY = '2026-11-27'; // Black Friday window: Nov 27–28 only
+const LAST_DAY = '2026-11-28';
+const mounted = ref(false); // render the Teleport only client-side (SSR hydration safety)
 const open = ref(false);
 const products = ref([]);
 const current = ref(0);
@@ -42,7 +44,6 @@ const go = (dir) => {
 const close = () => {
     open.value = false;
     document.documentElement.style.overflow = '';
-    try { sessionStorage.setItem('bm-bf-journal', '1'); } catch (e) { /* private mode */ }
 };
 
 const onKey = (e) => {
@@ -60,9 +61,15 @@ const onTouchEnd = (e) => {
 };
 
 onMounted(() => {
-    if (!page.props.blackFriday) return;
-    if (new Date() > new Date(LAST_DAY + 'T23:59:59')) return;
-    try { if (sessionStorage.getItem('bm-bf-journal')) return; } catch (e) { /* ignore */ }
+    mounted.value = true;
+    if (!page.props.blackFriday) return; // admin toggle: Settings > Promotions
+    // ?bf=1 opens it on any page, any day (preview / direct link for socials)
+    const force = new URLSearchParams(window.location.search).has('bf');
+    if (!force) {
+        const now = new Date();
+        if (now < new Date(FIRST_DAY + 'T00:00:00') || now > new Date(LAST_DAY + 'T23:59:59')) return;
+        if (page.component !== 'Welcome') return; // landing page only
+    }
 
     // wait for full load + a beat, so the popup never competes with LCP
     const show = () => setTimeout(async () => {
@@ -70,7 +77,7 @@ onMounted(() => {
         products.value = data.default;
         open.value = true;
         document.documentElement.style.overflow = 'hidden';
-    }, 1400);
+    }, force ? 400 : 1400);
     if (document.readyState === 'complete') show();
     else window.addEventListener('load', show, { once: true });
 
@@ -84,7 +91,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <Teleport to="body">
+    <Teleport v-if="mounted" to="body">
         <Transition name="bfj">
             <div v-if="open" class="bfj" role="dialog" aria-modal="true" :aria-label="t('Black Friday offers', 'Black Friday понуди')">
                 <div class="bfj__scrim" @click="close"></div>
@@ -212,13 +219,14 @@ onUnmounted(() => {
 .bfj__close svg { width: 17px; height: 17px; }
 
 /* ---------- pages ---------- */
-.bfj__page { position: absolute; inset: 0; display: grid; overflow: hidden; backface-visibility: hidden; }
+.bfj__page { position: absolute; inset: 0; display: grid; overflow: hidden; }
 .bfj__page--dark {
     background:
         radial-gradient(85% 70% at 50% 115%, rgba(140, 42, 72, 0.5), transparent 70%),
         linear-gradient(170deg, #1f0c14, #160a0e);
     color: #f6eee6;
     place-items: center;
+    padding: 20px 20px 48px;
 }
 .bfj__rings {
     position: absolute; left: 50%; top: -4%; width: 1100px; aspect-ratio: 2/1; transform: translateX(-50%);
@@ -248,7 +256,7 @@ onUnmounted(() => {
 
 .bfj__cta {
     display: inline-flex; align-items: center; gap: 12px;
-    margin-top: 30px; padding: 15px 30px; border-radius: 999px;
+    margin-top: 26px; padding: 14px 28px; border-radius: 999px;
     background: #e8d5c4; color: #381322; border: 0; cursor: pointer;
     font-size: 0.78rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;
     font-family: inherit; text-decoration: none;
@@ -271,12 +279,14 @@ onUnmounted(() => {
 .bfj__page--paper { background: #f4ece4; color: #2a1219; grid-template-rows: auto 1fr; }
 .bfj__paperhead {
     display: flex; justify-content: space-between; align-items: center;
-    padding: 16px 24px 12px; border-bottom: 1px solid rgba(42, 18, 25, 0.14);
+    padding: 16px 64px 12px 24px; border-bottom: 1px solid rgba(42, 18, 25, 0.14);
     font-size: 0.68rem; font-weight: 700; letter-spacing: 0.26em; text-transform: uppercase; color: #6e2039;
 }
 .bfj__grid {
     display: grid; grid-template-columns: 1fr 1fr; grid-auto-rows: 1fr;
     gap: 1px; background: rgba(42, 18, 25, 0.12); overflow-y: auto;
+    /* last row of cards stays clear of the pager pill */
+    padding-bottom: 64px;
 }
 .bfj__card {
     position: relative; display: flex; flex-direction: column; align-items: center; text-align: center;
@@ -304,7 +314,7 @@ onUnmounted(() => {
 
 /* ---------- nav ---------- */
 .bfj__nav {
-    position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); z-index: 10;
+    position: absolute; right: 16px; bottom: 14px; z-index: 10;
     display: flex; align-items: center; gap: 14px;
     padding: 7px 14px; border-radius: 999px;
     background: rgba(22, 10, 14, 0.82); border: 1px solid rgba(217, 185, 149, 0.3);
@@ -326,25 +336,39 @@ onUnmounted(() => {
 .bfj-leave-active { transition: opacity 0.3s ease; }
 .bfj-enter-from, .bfj-leave-to { opacity: 0; }
 
-.bfj-flip-next-enter-active, .bfj-flip-prev-enter-active { transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s; transform-origin: left center; }
-.bfj-flip-next-leave-active, .bfj-flip-prev-leave-active { transition: transform 0.22s ease-in, opacity 0.22s; transform-origin: right center; }
-.bfj-flip-next-enter-from { transform: rotateY(-26deg) translateX(40px); opacity: 0; }
-.bfj-flip-next-leave-to { transform: rotateY(14deg) translateX(-30px); opacity: 0; }
-.bfj-flip-prev-enter-active { transform-origin: right center; }
-.bfj-flip-prev-leave-active { transform-origin: left center; }
-.bfj-flip-prev-enter-from { transform: rotateY(26deg) translateX(-40px); opacity: 0; }
-.bfj-flip-prev-leave-to { transform: rotateY(-14deg) translateX(30px); opacity: 0; }
+/* simple, GPU-safe page turn: slide + fade (3D rotate flashed on some GPUs) */
+.bfj-flip-next-enter-active, .bfj-flip-prev-enter-active { transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease; }
+.bfj-flip-next-leave-active, .bfj-flip-prev-leave-active { transition: transform 0.18s ease-in, opacity 0.18s ease; }
+.bfj-flip-next-enter-from { transform: translateX(5%); opacity: 0; }
+.bfj-flip-next-leave-to { transform: translateX(-5%); opacity: 0; }
+.bfj-flip-prev-enter-from { transform: translateX(-5%); opacity: 0; }
+.bfj-flip-prev-leave-to { transform: translateX(5%); opacity: 0; }
 
-/* ---------- mobile ---------- */
+/* ---------- mobile: a framed card, not a fullscreen takeover ---------- */
 @media (max-width: 639.98px) {
-    .bfj { padding: 10px; }
-    .bfj__book { height: calc(100dvh - 20px); border-radius: 18px; }
-    .bfj__grid { grid-template-columns: 1fr 1fr; }
-    .bfj__imgwrap { height: 84px; }
-    .bfj__imgwrap img { max-height: 84px; }
-    .bfj__name { font-size: 0.82rem; }
-    .bfj__order { font-size: 0.6rem; }
-    .bfj__prices strong { font-size: 0.92rem; }
+    .bfj { padding: 16px; }
+    .bfj__book { width: min(420px, 100%); height: min(76dvh, 680px); border-radius: 20px; }
+    .bfj__grid {
+        grid-template-columns: 1fr 1fr; grid-auto-rows: auto; align-content: start;
+        background: transparent; gap: 10px; padding: 12px 12px 70px;
+    }
+    .bfj__card { padding: 14px 12px 12px; border: 1px solid rgba(42, 18, 25, 0.12); border-radius: 14px; }
+    .bfj__imgwrap { height: 76px; margin-bottom: 8px; }
+    .bfj__imgwrap img { max-height: 76px; }
+    .bfj__name { font-size: 0.8rem; min-height: 2.4em; }
+    .bfj__order { font-size: 0.58rem; margin-top: 5px; }
+    .bfj__prices { margin-top: 5px; }
+    .bfj__prices strong { font-size: 0.9rem; }
+    .bfj__prices s { font-size: 0.74rem; }
+    .bfj__badge { top: 7px; left: 7px; padding: 4px 8px; font-size: 0.64rem; }
+    .bfj__close { top: 10px; right: 10px; width: 38px; height: 38px; }
+    .bfj__page--dark { padding-bottom: 92px; }
+    .bfj__nav { right: auto; left: 50%; transform: translateX(-50%); bottom: 10px; padding: 5px 10px; gap: 10px; }
+    .bfj__arrow { width: 32px; height: 32px; }
+    .bfj__paperhead { padding: 15px 62px 11px 16px; font-size: 0.58rem; }
+    .bfj__bf { font-size: clamp(2.6rem, 16vw, 3.6rem); }
+    .bfj__epi-off { font-size: clamp(3.4rem, 20vw, 4.6rem); }
+    .bfj__cta { margin-top: 20px; padding: 12px 22px; font-size: 0.72rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {

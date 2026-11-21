@@ -169,7 +169,7 @@ const primaryEmail = computed(() => locations.value.find((l) => l.email)?.email 
                 <img src="/logo-light.webp" alt="Babor Medical" width="64" height="64" />
             </Link>
 
-            <!-- Desktop navigation (internal links are SPA visits — no full reload) -->
+            <!-- Desktop navigation -->
             <nav class="bm-nav" aria-label="Main">
                 <Link
                     v-for="link in navLinks.slice(0, 3)"
