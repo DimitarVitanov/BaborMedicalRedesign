@@ -10,8 +10,7 @@ import { usePage } from '@inertiajs/vue3';
 const page = usePage();
 const locale = computed(() => page.props.locale || 'en');
 
-const FIRST_DAY = '2026-11-27'; // Black Friday window: Nov 27–28 only
-const LAST_DAY = '2026-11-28';
+const LAST_DAY = '2026-11-28'; // shows from now until the end of Black Friday weekend
 const mounted = ref(false); // render the Teleport only client-side (SSR hydration safety)
 const open = ref(false);
 const products = ref([]);
@@ -66,8 +65,7 @@ onMounted(() => {
     // ?bf=1 opens it on any page, any day (preview / direct link for socials)
     const force = new URLSearchParams(window.location.search).has('bf');
     if (!force) {
-        const now = new Date();
-        if (now < new Date(FIRST_DAY + 'T00:00:00') || now > new Date(LAST_DAY + 'T23:59:59')) return;
+        if (new Date() > new Date(LAST_DAY + 'T23:59:59')) return;
         if (page.component !== 'Welcome') return; // landing page only
     }
 
